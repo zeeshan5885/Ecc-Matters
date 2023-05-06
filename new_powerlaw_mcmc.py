@@ -451,7 +451,7 @@ def _main(raw_args=None):
     for event_fname in cli_args.events:
         data_table = numpy.genfromtxt(event_fname, names=True)
         m1_m2_ecc = numpy.column_stack(    #how it's reading the file and how we are telling him to look for specific data file. 
-            (data_table["m1_source"], data_table["m2_source"],data_table["ecc"]),
+            (data_table["m1_source"], data_table["m2_source"], data_table["ecc"]),
         )
         data_posterior_samples.append(m1_m2_ecc)
 
