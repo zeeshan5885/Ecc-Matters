@@ -116,24 +116,13 @@
 
 \begin{document}
 
-\title{Accelerating parameter inference with graphics processing units}
-\author{D. Wysocki}
+\title{Population Inference of Eccentric Black Holes Binaries}
+\author{M. Zeeshan}
 \affiliation{\RIT}
 \author{R. O'Shaughnessy}
 \affiliation{\RIT}
-\author{Yao-Lung L. Fang}
-%\author{Yao-Lung L. Fang (方耀龍)}
-\affiliation{Computational Science Initiative, Brookhaven National Laboratory, Upton, NY 11973, USA}
-\affiliation{National Synchrotron Light Source II, Brookhaven National Laboratory, Upton, NY 11973, USA}
-\author{Jacob Lange}  % for all the convergence material we work on ... it comes from Jake's practice
-\affiliation{\RIT}
 \begin{abstract}
-Gravitational wave Bayesian parameter inference involves repeated comparisons of GW data to generic candidate predictions.
-Even with algorithmically efficient methods like RIFT or reduced-order quadrature, the time needed to perform these
-calculations and overall computational cost can be significant compared to the minutes to hours needed to achieve the
-goals of low-latency multimessenger astronomy.  By translating some elements of the RIFT algorithm to operate on
-graphics processing units (GPU), we demonstrate substantial performance improvements, enabling dramatically reduced
-overall cost and latency. 
+Yet to work. 
 \end{abstract}
 \maketitle
 
@@ -203,182 +192,51 @@ population inference.
 \section{Methods}
 \label{sec:methods}
 
-\subsection{Parameter inference with the RIFT likelihood}
-% From RIFT paper
-\ILE{}  -- a specific algorithm to ``Integrate (the Likeilhood) over Extrinsic parameters'' -- provides a straightforward and efficient mechanism to compare any specific candidate gravitational wave source with
-real or synthetic data   \cite{gwastro-PE-AlternativeArchitectures,NRPaper,2017PhRvD..96j4041L,2017CQGra..34n4002O},
-by marginalizing the likelihood of the data over the seven coordinates characterizing the spacetime coordinates and
-orientation of the binary relative to the earth.  
-Specifically the likelihood of the data given gaussian noise, relative to gaussian noise, has the form  (up to normalization)
-\begin{equation}
-\label{eq:lnL}
-\ln {\cal L}(\bm{\lambda} ,\theta )=-\frac{1}{2}\sum\limits_{k}\langle h_{k}(\bm{\lambda} ,\theta )-d_{k} |h_{k}(\bm{\lambda} ,\theta )-d_{k}\rangle _{k}-\langle d_{k}|d_{k}\rangle _{k},
-\end{equation}
-where $h_{k}$ are the predicted response of the k$^{th}$ detector due to a source with parameters ($\bm{\lambda}$, $\theta$) and
-$d_{k}$ are the detector data in each instrument k; $\bm{\lambda}$ denotes the combination of redshifted mass $M_{z}$ and the
-remaining parameters needed to uniquely specify the binary's dynamics; $\theta$ represents the
-seven extrinsic parameters (4 spacetime coordinates for the coalescence event and 3 Euler angles for the binary's
-orientation relative to the Earth); and $\langle a|b\rangle_{k}\equiv
-\int_{-\infty}^{\infty}2df\tilde{a}(f)^{*}\tilde{b}(f)/S_{h,k}(|f|)$ is an inner product implied by the k$^{th}$ detector's
-noise power spectrum $S_{h,k}(f)$. 
-%In all calculations, we adopt the fiducial O1 noise power spectra associated with data near GW150914 \cite{DiscoveryPaper}.
-In practice we adopt both  low- and high- frequency cutoffs $f_{\rm max},f_{\rm min}$ so all inner products are modified to
-\begin{equation}
-\label{eq:overlap}
-\langle a|b\rangle_{k}\equiv 2 \int_{|f|>f_{\rm min},|f|<f_{\rm max}}df\frac{[\tilde{a}(f)]^{*}\tilde{b}(f)}{S_{h,k}(|f|)}.
-\end{equation}
-The joint posterior probability of $\bm{\lambda} ,\theta$ follows from Bayes' theorem:
-\begin{equation}
-p_{\rm post}(\bm{\lambda} ,\theta)=\frac{ {\cal L}(\bm{\lambda} ,\theta)p(\theta)p(\bm{\lambda})}{\int d\bm{\lambda} d\theta {\cal L}(\bm{\lambda} ,\theta)p(\bm{\lambda})p(\theta)},
-\end{equation}
-where $p(\theta)$ and $p(\bm{\lambda})$ are priors on the (independent) variables $\theta ,\bm{\lambda}$. For each $\bm{\lambda}$, we evaluate the marginalized likelihood
-\begin{equation}
-\label{eq:lnLmarg}
- {\cal L}_{\rm marg}\equiv\int  {\cal L}(\bm{\lambda} ,\theta )p(\theta )d\theta
-\end{equation}
-via direct Monte Carlo integration over almost all parameters $\theta$, where $p(\theta)$ is uniform in 4-volume and source orientation.  
-For the event time parameter, we marginalize by direct quadrature, for each choice of the remaining Monte Carlo parameters.
-For the remaining dimensions, to evaluate the likelihood in regions of high importance, we use an adaptive Monte Carlo as described in
-\cite{gwastro-PE-AlternativeArchitectures}.    
-
-
-This marginalized likelihood can be evaluated efficiently
-by  generating the dynamics and outgoing radiation in all possible directions once and for all for fixed
-$\bm{\lambda}$, using a spherical harmonic decomposition.  Using this cached information effectively,  the likelihood can be evaluated as a function of $\theta$ at very low computational cost.  
-% From ROM paper
-A dimensionless, complex gravitational-wave
-strain
-%% ~\footnote{\scott{\sout{We use a distance-independent dimensionless strain $R h/M$, where
-%% $R$ is the distance from the binary's center-of-mass
-%% and $M$ is the total mass. In this paper we choose units so that $c=G=1$.}
-%% [Remove this? I think it conflicts with other conventions/definitions 
-%% used throughout the paper.]}}
-\begin{align} \label{eq:strain}
-h(t,\vartheta,\phi;\bm{\lambda}) =  h_+(t,\vartheta,\phi;\bm{\lambda}) - 
-                                i h_\times (t,\vartheta,\phi;\bm{\lambda}) \, ,
-\end{align}
-can be expressed in terms of its two fundamental polarizations $h_+$ and $h_\times$.
-Here, $t$ denotes time, $\vartheta$ and $\phi$ are the polar and azimuthal angles
-for the direction of gravitational wave propagation away from the source. 
-The complex gravitational-wave strain can be written in terms of
-spin-weighted spherical harmonics $\Y{-2}_{\ell m} \left(\vartheta, \phi \right)$ as 
-\begin{align} \label{eq:strain_mode}
-h(t,\vartheta,\phi;\bm{\lambda}) = 
-\sum_{\ell=2}^{\infty} \sum_{m=-\ell}^{\ell} \frac{D_{\rm ref}}{D} h^{\ell m}(t;\bm{\lambda}) \Y{-2}_{\ell m} \left(\vartheta, \phi \right) \, ,
-\end{align}
-where the sum includes all available harmonic modes $h^{\ell m}(t;\pmb{\bm{\lambda}})$ made available by the model;  where
-$D_{\rm ref}$ is a fiducial reference distance; and where $D$, the luminosity distance to the  source, is one of the
-extrinsic parameters.  
-
-Following \citet{gwastro-PE-AlternativeArchitectures}, we substitute expression~\eqref{eq:strain_mode} 
-for $h_{\ell m}$ into the expression $h_k(t) =F_{+,k} h_+(t_k) +
-  F_{\times,k}h_\times(t_k)$ for the detector response $h_k$, 
-where $t_k=t_c - \vec{x}_k \cdot \hat{n}$ is the arrival time at the $k$th detector (at position $\vec{x}_k$)
-for a plane wave propagating along $\hat{n}$ \cite{gwastro-PE-AlternativeArchitectures}.
-We then substitute these expressions for $h_k$ into the likelihood function~\eqref{eq:lnL}
-thereby generating~\cite{gwastro-PE-AlternativeArchitectures}
-\begin{widetext}
-\begin{align}
-\ln {\cal L}(\bm{\lambda}, \theta) 
-&= (D_{\rm ref}/D) \text{Re} \sum_k \sum_{\ell m}(F_k \Y{-2}_{\ell m})^* Q_{k,lm}(\bm{\lambda},t_k)\nonumber \\
-&   -\frac{(D_{\rm ref}/D)^2}{4}\sum_k \sum_{\ell m \ell' m'}
-\left[
-{
-|F_k|^2 [\Y{-2}_{\ell m}]^*\Y{-2}_{\ell'm'} U_{k,\ell m,\ell' m'}(\bm{\lambda})
-}
-% \right. \nonumber \\ & \left.
- {
-+  \text{Re} \left( F_k^2 \Y{-2}_{\ell m} \Y{-2}_{\ell'm'} V_{k,\ell m,\ell'm'} \right)
-}
-\right]
-\label{eq:def:lnL:Decomposed}
-\end{align}
-\end{widetext}
-%% \noindent \scott{[FOR RICHARD: is eq 9/10 missing objects? Looks like $t_c$ an $F_k$ just appeared. On the other hand,
-%%     putting them into earlier equations will complicate the discussion and is awkward.]}  
-where 
- where $F_k = F_{+,k} - i F_{\times,k}$ are the
-complex-valued detector
-response functions of the $k$th detector \cite{gwastro-PE-AlternativeArchitectures} and 
-the quantities $Q,U,V$ depend on $h$ and the data as
-\begin{subequations}
-%\label{eq:ComputeRhoViaInnerProductMatrix}
-\label{eq:QUV}
-\begin{align}
-Q_{k,\ell m}(\bm{\lambda},t_k) &\equiv \qmstateproduct{h_{\ell m}(\bm{\lambda},t_k)}{d}_k \nonumber\\
-&= 2 \int_{|f|>f_{\rm low}} \frac{df}{S_{n,k}(|f|)} e^{2\pi i f t_k} \tilde{h}_{\ell m}^*(\bm{\lambda};f) \tilde{d}(f)\ , \\
-{ U_{k,\ell m,\ell' m'}(\bm{\lambda})}& = \qmstateproduct{h_{\ell m}}{h_{\ell'm'}}_k\ , \\
-V_{k,\ell m,\ell' m'}(\bm{\lambda})& = \qmstateproduct{h_{\ell m}^*}{h_{\ell'm'}}_k  \ .
-\end{align}
-\end{subequations}
-
-\AddedResponse{In RIFT, the marginalization in Eq. (\ref{eq:lnLmarg}) over extrinsic parameters is performed by evaluating this likelihood $\ln {\cal
-    L}(\bm{\lambda},\theta)$ on long
-  arrays $\theta_\alpha$ of extrinsic parameters, including $D_\alpha$ but excluding time.    Treating the block of quantities that arise
-  in one sequence of evaluations together,  the expressions $Q,F,U,V$ and $D$ can be considered as multi-dimensional
-  arrays.  For example, $F_k(\theta_\alpha)$ is a matrix indexed over $k$ (detectors) and $\alpha$
-  (extrinsic parameters); $\Y{-2}_{lm}(\theta_k)$ is a matrix of shape (modes)$\times$(extrinsic); and $D_\alpha$ is a one-dimensional array over $\alpha$.  By contrast, the  $U,V$ are arrays of shape
-  (detectors)$\times$ (modes)$^2$ are independent of extrinsic parameters.  While $Q$ depends explicitly on time, and
-  varies rapidly on short timescales, $F$ varies on the earth's rotation timescale, so we  approximate $F$ as  time-independent. }
-
-
-At a fixed set of intrinsic parameters $\bm{\lambda}$, \ILE{} will repeatedly evaluate the time-marginalized likelihood 
-for each candidate Monte Carlo set of extrinsic parameters $\theta$:
-\begin{eqnarray}
-{\cal L}_{\rm margT} \equiv  \int {\cal L} \frac{dt}{T}
-\label{eq:lnL:tmarg}
-\end{eqnarray}
-where $T$ is a small coincidence window consistent with the candidate event time; here and previously,
-$T=0.3\unit{sec}$.  
-%
-\AddedResponse{
-Because we treat the  parameter  asymmetrically when marginalizing over all extrinsic parameters, we likewise organize
-a multidimensional array representation of $Q$ to emphasize the special role of time: for each $k,l,m$ we construct a uniformly-sampled timeseries
-$Q_{k,lm}(\bm{\lambda},\tau)$ versus $\tau$, truncating it to a narrow coincidence window.   In effect, we represent $Q$
-by a matrix 
-  $Q_{k,lm}(\bm{\lambda},t+\hat{n}\cdot x_k)$ with  shape (detectors)$\times$(modes)$\times$(extrinsic)$\times$(time).
-}
-%
-\AddedResponse{In terms of these multidimensional arrays, r}ewriting sums as matrix operations, the likelihood can be equivalently expressed as
-\begin{align}
-\ln {\cal L} &= \frac{D_{\rm ref}}{D} \text{Re}[ (F Y)^\dag Q]  \nonumber \\
- & - \frac{D_{\rm ref}^2}{4 D^2} [ (FY)^\dag U FY + (FY)^TV FY]
-\label{eq:lnL:MatrixForm}
-\end{align}
-\AddedResponse{where this symbolic expression employs an implicit index-summation convention such that all naturally paired
-  indices are contracted.  The result is an array of shape (time)$\times$(extrinsic).}
-%where $F,D$ are arrays over extrinsic parameters; $Q$ is an array over time and $(l,m)$; and $U,V$ are matrices over
-%$(l,m)$. 
+I need to start writing from here.
 
 
 
-\subsection{Accelerated evaluation via efficient multiplication}
-%* GPU code
-%* Refactoring code to use the efficient GPU loops
+\subsection{Power law Model}
 
 
-%% At a fixed set of intrinsic parameters $\bm{\lambda}$, \ILE{} will repeatedly evaluate the time-marginalized likelihood 
-%% for each candidate Monte Carlo set of extrinsic parameters $\theta$:
-%% \begin{eqnarray}
-%% {\cal L}_{\rm margT} \equiv  \int {\cal L} \frac{dt}{T}
-%% \label{eq:lnL:tmarg}
-%% \end{eqnarray}
-%% where $T$ is a small coincidence window consistent with the candidate event time; here and previously,
-%% $T=0.3\unit{sec}$. 
-  To accelerate the code, after precomputing the inner products $U,V,Q$, we simply shift them to the
-graphics card, then carry out all calculations necessary to implement Eqs. (\ref{eq:lnL:MatrixForm}, \ref{eq:lnL:tmarg})
-on the GPU.  
-\AddedResponse{These arrays are only a few kilobytes.  We then construct blocks of $10^4$ random extrinsic parameters $\theta_\alpha$
-  with the CPU; transfer them to the board; and use on-board code to construct $10^4$ values for $\lnLmarg$. }
-To enable this implementation with portable code, we use \texttt{cupy} \cite{cupy_learningsys2017}, a drop-in-replacement for equivalent
-\texttt{numpy} code used for the CPU-based version of ILE.    For the most costly part of the calculation -- the inner
-products necessary to evaluate $Q_{lm}(t)$, accounting for distinct time-of-flight-dependent time windows for each
-interferometer's data -- we use a custom CUDA kernel to perform the necessary matrix multiplication.  
-%
-With these changes alone, the likelihood evaluation is roughly $60\times$ faster on equivalent hardware.  
-After this update, individual likelihood evaluation costs are not the performance- or cost-limiting feature of RIFT-based source
-parameter inference.  Instead, the overhead associated with the adaptive Monte Carlo and with the (CPU-based) inner
-product evaluations for $Q,U,V$ dominate our computational cost.
+% \begin{equation}
+% \label{eq:lnL}
+% \ln {\cal L}(\bm{\lambda} ,\theta )=-\frac{1}{2}\sum\limits_{k}\langle h_{k}(\bm{\lambda} ,\theta )-d_{k} |h_{k}(\bm{\lambda} ,\theta )-d_{k}\rangle _{k}-\langle d_{k}|d_{k}\rangle _{k},
+% \end{equation}
+
+% For the remaining dimensions, to evaluate the likelihood in regions of high importance, we use an adaptive Monte Carlo as described in
+% \cite{gwastro-PE-AlternativeArchitectures}.    
+
+
+
+% \begin{align} \label{eq:strain_mode}
+% h(t,\vartheta,\phi;\bm{\lambda}) = 
+% \sum_{\ell=2}^{\infty} \sum_{m=-\ell}^{\ell} \frac{D_{\rm ref}}{D} h^{\ell m}(t;\bm{\lambda}) \Y{-2}_{\ell m} \left(\vartheta, \phi \right) \, ,
+% \end{align}
+
+
+% \begin{widetext}
+% \begin{align}
+% \ln {\cal L}(\bm{\lambda}, \theta) 
+% &= (D_{\rm ref}/D) \text{Re} \sum_k \sum_{\ell m}(F_k \Y{-2}_{\ell m})^* Q_{k,lm}(\bm{\lambda},t_k)\nonumber \\
+% &   -\frac{(D_{\rm ref}/D)^2}{4}\sum_k \sum_{\ell m \ell' m'}
+% \left[
+% {
+% |F_k|^2 [\Y{-2}_{\ell m}]^*\Y{-2}_{\ell'm'} U_{k,\ell m,\ell' m'}(\bm{\lambda})
+% }
+% % \right. \nonumber \\ & \left.
+%  {
+% +  \text{Re} \left( F_k^2 \Y{-2}_{\ell m} \Y{-2}_{\ell'm'} V_{k,\ell m,\ell'm'} \right)
+% }
+% \right]
+% \label{eq:def:lnL:Decomposed}
+% \end{align}
+% \end{widetext}
+
+% \begin{eqnarray}
+% {\cal L}_{\rm margT} \equiv  \int {\cal L} \frac{dt}{T}
+% \label{eq:lnL:tmarg}
+% \end{eqnarray}
 
 
 
