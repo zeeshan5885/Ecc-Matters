@@ -164,20 +164,55 @@ The Binary Black Holes (BBHs) can be described by three intrinsic and seven extr
     \item We denote population parameters with \\ $\Lambda \equiv  (\alpha, \mathcal{R}, m_{min}, m_{max}, e)$.
     \item uncertainty in $\Lambda$ is a likelihood which can be written as $\mathcal{L}(\Lambda)\equiv p(d_1,d_2,d_3,...,d_N|\Lambda)$
     \item By applying the Bayes theorem, we can turn above likelihood into posterior probability of a parameter.
-    $p(\Lambda|d_1,d_2,d_3,...,d_N)= \frac{p(\Lambda)*p(d_1,d_2,d_3,...,d_N|\Lambda)}{p(d_1,d_2,d_3,...,d_N)}$
+\begin{equation}
+\label{eq:Bayes}    
+p(\Lambda|d_1,d_2,...,d_N)= \frac{p(\Lambda)p(d_1,d_2,...,d_N|\Lambda)}{p(d_1,d_2,...,d_N)}
+\end{equation}
+
     \item where $p(\Lambda|d_1,d_2,d_3,...,d_N)$ is posterior, $p(\Lambda)$ is prior, $p(d_1,d_2,d_3,...,d_N)$ is normalization/evidence, and $p(d_1,d_2,d_3,...,d_N|\Lambda)$ is likelihood.
     \item We will use inhomogeneous Poisson Process scaled by rate $\mathcal{R} = \frac{dN}{dtdV_c}$ and parameterize by $\Lambda$ to find the likelihood  $\mathcal{L}(\mathcal{R},\Lambda)\equiv p(D|\mathcal{R},\Lambda)$ of an astrophysical population given the merger rate and parameter $\Lambda$. 
     {\color{red}I think these values of $\Lambda$ are provided by the power law model}. \\
-    $\mathcal{L}(\mathcal{R},\Lambda) \propto e^{-\mu(\mathcal{R},\Lambda)}\prod_{n=1}^N\int d\lambda l_n(\lambda) \mathcal{R} p(\lambda|\Lambda)$
+\begin{equation}
+\label{eq: likelihood}
+\mathcal{L}(\mathcal{R},\Lambda) \propto e^{-\mu(\mathcal{R},\Lambda)}\prod_{n=1}^N\int d\lambda l_n(\lambda) \mathcal{R} p(\lambda|\Lambda)    
+\end{equation}
+        
     \item where $\mu(\mathcal{R},\Lambda)$ are the expected number of detections under the given population parametrization $\Lambda$ with overall rate $\mathcal{R}$. $l_n(\lambda)=p(d_n|\lambda)$ is the likelihood of the data $d_n$ given binary parameter.
     \item now we can find the posterior by Baye's theorem. \\
-    $p(\mathcal{R,\Lambda})\propto p(\mathcal{R},\Lambda) * \mathcal{L}(\mathcal{R},\Lambda)$
+    $p(\mathcal{R},\Lambda)\propto p(\mathcal{R},\Lambda)  \mathcal{L}(\mathcal{R},\Lambda)$
     \item calculation of this posterior is computationally expensive, therefore, we will use MCMC method to find the posterior distribution.
     
 \end{itemize}
+\subsection{VT Estimation}
+\begin{itemize}
+    \item Estimation of VT (sensitivity of the LVK) only depend on the mass. For the sake of simplicity {\color{red}(physics reason)}, we consider only non-spinning, non-eccentric and nonprecessing BH Binaries. 
+    \item Sources are detected if SNR is greater than 8.
+    \item V is characteristic volume in which source can be detected by LVK. It is orientation averaged sensitive 3-volume.
+\begin{equation}
+\label{eq:volume}
+V(\lambda) = \int P((<D(z))/D_n(\lambda))\frac{dV_c}{dz}\frac{dz}{1+z}
+\end{equation}    
+    \item where $D(z)$ is the luminosity distance for redshift z, $V_c$ is the comoving volume.
+
+    \item to compute the $\mu(\mathcal{R},\Lambda)$, we use previously defined Volume in $Gpc^{-3}yr^{-1}$ and observing at this senstivity for the time $T$, the average number of detections would be as follows: \\
+\begin{equation}
+\label{eq:mu}
+  \mu(\mathcal{R},\Lambda) = \int(VT)\lambda \mathcal{R}p(\lambda|\Lambda)d\lambda  
+\end{equation}
+    \item where $p(\lambda|\Lambda)$ is the probability density function for a random binary in the universe to have intrinsic paramter $\lambda$. Keep in mind that $\lambda$ is equal to all the 15 parameters of a binary.
+\end{itemize}
 
 \subsection{Power law Model}
+The following is the power law model. We added the Gaussian eccentricity in it. 
 
+\begin{align}
+\label{eq:plawg}
+p(m_1,m_2,e) = &C(\alpha,k_m,m_{min},m_{max},M_{max},e)  
+\nonumber \\ & \frac{(\frac{m_2}{m_1})^{k_m}m_1^{-\alpha}}{(m_1-m_{min})\sigma_e} 
+\nonumber \\ &
+\sqrt{\frac{2}{\pi}} e^{(-1/2)(e/\sigma_e)^2}
+\end{align}
+We use $k_m=0$, because GW networks are much more senstive to more massive BHs with $M\geq 200 M_\odot$
 
 \begin{align}
 \label{eq:plaw}
@@ -186,6 +221,14 @@ p(m_1,m_2,e) = &C(\alpha,m_{min},m_{max},M_{max},e)
 \nonumber \\ &
 \sqrt{\frac{2}{\pi}} e^{(-1/2)(e/\sigma_e)^2}
 \end{align}
+
+The probability density would be non zero only for the two following conditions.
+
+\begin{itemize}
+    \item $m_{min}\leq m_2 \leq m_1 \leq m_{max}$
+    \item $m_1+m_2 \leq M_{max}$
+\end{itemize}
+Where $M_{max}$ depends on the detector (LVK)
 
    
 
