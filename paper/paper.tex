@@ -141,11 +141,42 @@ The Binary Black Holes (BBHs) can be described by three intrinsic and seven extr
 
 {\color{red}Most of the eccentric binaries are driven by low mass events \cite{?}}. Therefore,  in this study, we  will consider modest masses $(1M_\odot-40M_\odot)$, non-spinning $(\chi_i = 0)$, and eccentric $(0-1)$ binaries. In addition, we will use mass ratio $q=m_1/m_2$ with condition $m_1>m_2$ and total mass $M=m_1+m_2$. 
 
+\subsection{Hierarchical Bayesian Modeling}
+\begin{itemize}
+    \item We have N discrete detection.
+    \item each detection has data $d_1,d_2,d_3,...,d_N$
+    \item each data point $d_N$ has properties denoted by $\lambda_1,\lambda_2,...,\lambda_i$
+    \item  $ \lambda_i$ are parameters such as mass, spin, eccentricity, and location.
+    \item Each parameter has its uncertainty.
+    \item This uncertainty is described by the probability of the data given the parameter value. We call it the likelihood function of one single event. $\mathcal{L}(\lambda) = p(d|\lambda)$
+    \item the waveform gives the parameter value.
+    \item waveform is a mathematical function.
+    \item Once you have a likelihood function, you can use prior( usually it's uniform: which gives equal probability to each event) to find the posterior. $p(\lambda|d) \propto p(d|\lambda) p(\lambda)$  
+    
+\end{itemize}
 
+
+\subsection{Population Inference}
+
+\begin{itemize}
+    \item We have the parameter estimation from RIFT or any other method. It will give us a distribution for each parameter, and we may take the mean value of it.
+    \item Our first task is to find the likelihood function for the population parameters: such as mass and eccentricity.
+    \item We denote population parameters with \\ $\Lambda \equiv  (\alpha, \mathcal{R}, m_{min}, m_{max}, e)$.
+    \item uncertainty in $\Lambda$ is a likelihood which can be written as $\mathcal{L}(\Lambda)\equiv p(d_1,d_2,d_3,...,d_N|\Lambda)$
+    \item By applying the Bayes theorem, we can turn above likelihood into posterior probability of a parameter.
+    $p(\Lambda|d_1,d_2,d_3,...,d_N)= \frac{p(\Lambda)*p(d_1,d_2,d_3,...,d_N|\Lambda)}{p(d_1,d_2,d_3,...,d_N)}$
+    \item where $p(\Lambda|d_1,d_2,d_3,...,d_N)$ is posterior, $p(\Lambda)$ is prior, $p(d_1,d_2,d_3,...,d_N)$ is normalization/evidence, and $p(d_1,d_2,d_3,...,d_N|\Lambda)$ is likelihood.
+    \item We will use inhomogeneous Poisson Process scaled by rate $\mathcal{R} = \frac{dN}{dtdV_c}$ and parameterize by $\Lambda$ to find the likelihood  $\mathcal{L}(\mathcal{R},\Lambda)\equiv p(D|\mathcal{R},\Lambda)$ of an astrophysical population given the merger rate and parameter $\Lambda$. 
+    {\color{red}I think these values of $\Lambda$ are provided by the power law model}. \\
+    $\mathcal{L}(\mathcal{R},\Lambda) \propto e^{-\mu(\mathcal{R},\Lambda)}\prod_{n=1}^N\int d\lambda l_n(\lambda) \mathcal{R} p(\lambda|\Lambda)$
+    \item where $\mu(\mathcal{R},\Lambda)$ are the expected number of detections under the given population parametrization $\Lambda$ with overall rate $\mathcal{R}$. $l_n(\lambda)=p(d_n|\lambda)$ is the likelihood of the data $d_n$ given binary parameter.
+    \item now we can find the posterior by Baye's theorem. \\
+    $p(\mathcal{R,\Lambda})\propto p(\mathcal{R},\Lambda) * \mathcal{L}(\mathcal{R},\Lambda)$
+    \item calculation of this posterior is computationally expensive, therefore, we will use MCMC method to find the posterior distribution.
+    
+\end{itemize}
 
 \subsection{Power law Model}
-
-
 
 
 \begin{align}
