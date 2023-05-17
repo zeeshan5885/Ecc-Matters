@@ -1,1 +1,2 @@
-python pop_genrator.py ; rename txt dat *.txt ; mkdir dat_events_files ;mkdir dat_row_files ;  mv eve* ./dat_events_files ; mv row* ./dat_row_files
+rm -r txt_events ; rm -r dat_events ; rm -r __pycache__ ;
+python population_gen.py ; mkdir txt_events ; mkdir dat_events; mv eve* ./txt_events ; cd txt_events ; cp eve* /home/muhammad.zeeshan/ms-work/ms-project/pop_genrator/dat_events ; cd .. ; cd dat_events;  rename txt dat *.txt
