@@ -14,10 +14,10 @@ def intensity(
         M_max=None,
         **kwargs
         ):
-    import prob  #we are importing this library from the python file (prob.py) in the same folder. 
+    import prob 
     import numpy as np
-    m_1, m_2, ecc = indiv_params.T  #adding ecc into the individual parameters of each events that we will get from our input data.  
-    log_rate, alpha, m_min, m_max, sigma_ecc = pop_params #adding sigma_ecc into the population model parameters which will be our output.
+    m_1, m_2, ecc = indiv_params.T  #adding ecc as a random variable into the model. it would be given in the input data files.   
+    log_rate, alpha, m_min, m_max, sigma_ecc = pop_params #adding sigma_ecc into the population model as a parameters which will be our output.
 
     pdf_const = aux_info["pdf_const"]
     rate = aux_info["rate"]
@@ -25,7 +25,6 @@ def intensity(
     return (
         # powerlaw in mass, one-sided normal distribution in ecc.  Assume ecc must be < 1 for sanity, but not enforcing
        rate *  prob.joint_pdf(m_1, m_2, alpha, m_min, m_max, M_max, const=pdf_const)* np.exp(-0.5*(ecc/sigma_ecc)**2)*np.sqrt(2/np.pi)/sigma_ecc
-       #The above pdf has defined in equation 7 of Dan's Paper without eccentricity.
     )
 '''
 In the fowlling function "expval_mc", we are making a setup to calculate the equation 6 in the Paper. The equation 6 is basically the integral which is calculated by the mcmc integral and defined at the very end of the "expval_mc" function.
@@ -56,7 +55,7 @@ def expval_mc(
     log_rate, alpha, m_min, m_max, sigma_ecc = pop_params
     rate = aux_info["rate"]
 
-    def p(N): #random number genrator from the pdf defined in the prob.py file
+    def p(N): #random number genrator from the pdf defined in the prob.py file and modifed above
         val= prob.joint_rvs(
             N,
             alpha, m_min, m_max, M_max,
@@ -107,8 +106,8 @@ def log_prior_pop(
         alpha_min=None, alpha_max=None,
         m_min_min=None, m_min_max=None,
         m_max_min=None, m_max_max=None,
-        ecc_min=0, ecc_max=1,
-        ecc_scale = "uniform",
+        sigma_ecc_min=0, sigma_ecc_max=1,
+        sigma_ecc_scale = "uniform",
         log_rate_scale="uniform", alpha_scale="uniform",
         m_min_scale="uniform", m_max_scale="uniform",
         **kwargs
@@ -154,8 +153,8 @@ def log_prior_pop(
     if m_min + m_max > M_max:
         return -numpy.inf
 
-    if ecc_scale == "uniform":
-        if not (ecc_min <= sigma_ecc <= ecc_max):
+    if sigma_ecc_scale == "uniform":
+        if not (sigma_ecc_min <= sigma_ecc <= sigma_ecc_max):
             return -numpy.inf
     else:
         raise NotImplementedError
@@ -171,7 +170,7 @@ def init_uniform(
         alpha_min, alpha_max,
         m_min_min, m_min_max,
         m_max_min, m_max_max,
-        ecc_min, ecc_max,
+        sigma_ecc_min, sigma_ecc_max,
         log_rate_scale="uniform",
         alpha_scale="uniform",
         m_min_scale="uniform",
@@ -185,7 +184,7 @@ def init_uniform(
 
     columns = []
 
-    if fixed_log_rate is None: # I need to know the syntax of it and how it's working???????????
+    if fixed_log_rate is None:
         if log_rate_scale == "uniform":
             log_rate = rand_state.uniform(log_rate_min, log_rate_max, nwalkers)
         else:
@@ -489,7 +488,7 @@ def _main(raw_args=None):
         cli_args.m_min_min, cli_args.m_min_max,
         cli_args.m_max_min, cli_args.m_max_max,
         log_rate_scale=cli_args.log_rate_initial_cond,
-        ecc_min=0, ecc_max=1,
+        sigma_ecc_min=0, sigma_ecc_max=1,
         alpha_scale=cli_args.alpha_initial_cond,
         m_min_scale=cli_args.m_min_initial_cond,
         m_max_scale=cli_args.m_max_initial_cond,
