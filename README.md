@@ -3,7 +3,7 @@
 * We modified this code to add the eccentircity parameter in the power law model.
 * Example: You may want to look at the example of this code but without eccentricity paramter. https://gitlab.com/dwysocki/pop-models-examples
 
-**How to run this code to get the paramter estimation for the power law model **
+* ** How to run this code to get the paramter estimation for the power law model **
 
 * First, you need a data containing three colums: m1_source , m2_source, ecc
 * You may make a fake data with known parametes to check that if code actually works or not.
