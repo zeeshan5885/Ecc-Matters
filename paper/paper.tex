@@ -208,7 +208,7 @@ The following is the power law model. We added the Gaussian eccentricity in it.
 \begin{align}
 \label{eq:plawg}
 p(m_1,m_2,e) = &C(\alpha,k_m,m_{min},m_{max},M_{max},e)  
-\nonumber \\ & \frac{(\frac{m_2}{m_1})^{k_m}m_1^{-\alpha}}{(m_1-m_{min})\sigma_e} 
+\nonumber \\ & \frac{(m_2/m_1)^{k_m}m_1^{-\alpha}}{(m_1-m_{min})\sigma_e} 
 \nonumber \\ &
 \sqrt{\frac{2}{\pi}} e^{(-1/2)(e/\sigma_e)^2}
 \end{align}
@@ -231,6 +231,73 @@ The probability density would be non zero only for the two following conditions.
 Where $M_{max}$ depends on the detector (LVK)
 
    
+\section{Inference of Synthetic BBH Population}
+We have generated two distinct populations consistent of $100$ BBH by fixing the power law model parameter $\Lambda$ given in Eq. \ref{eq:plaw}. 
+The parameters $\alpha=-2$, $m_{min}=10$, $m_{max}=50$ are same for both populations. The only difference between two generated populations is the dispersion of $\sigma_e$. The range for the first populations is $0<\sigma_e<0.5$ and for the second one is $0<\sigma_e<0.38$.
+Furthermore, to make the comparison of the eccentric population with non-eccentric, we have created two more different populations by scaling already generated two populations by using the Eq. \ref{eq:scaling}. The Eq. \ref{eq:scaling} removes the eccentric component from the population, scales the masses and eventually we get non-eccentric population.
+\begin{align}
+\label{eq:scaling}
+M^{ecc} = \frac{M}{(1-\frac{157}{24}e^2)^{3/5}}
+\end{align}
+
+\subsection{First Population: $0<\sigma_e<0.5$}
+The following is the figure which shows the 
+
+\begin{figure}
+\includegraphics[width=0.45\textwidth]{paper/figures/pop3d05.png}
+\caption{\label{fig:population05}\textbf{Synthetic Population of Eccentric BBHs}}
+\end{figure}
+
+\begin{figure}
+\includegraphics[width=0.45\textwidth]{paper/figures/pop2d05.png}
+\caption{\label{fig:population05}\textbf{Synthetic Population of Eccentric BBHs}}
+\end{figure}
+
+\begin{figure}
+\includegraphics[width=0.45\textwidth]{paper/figures/pop2d05scl.png}
+\caption{\label{fig:population05}\textbf{Synthetic Population of Eccentric BBHs}}
+\end{figure}
+\begin{figure}
+\includegraphics[width=0.45\textwidth]{paper/figures/pop2d05diff.png}
+\caption{\label{fig:population05}\textbf{Synthetic Population of Eccentric BBHs}}
+\end{figure}
+\begin{figure}
+\includegraphics[width=0.45\textwidth]{paper/figures/massloss05.png}
+\caption{\label{fig:population05}\textbf{Synthetic Population of Eccentric BBHs}}
+\end{figure}
+
+
+
+
+
+\subsection{Second Population: $0<\sigma_e<0.38$}
+
+
+
+\begin{figure}
+\includegraphics[width=0.45\textwidth]{paper/figures/massloss.png}
+\caption{\label{fig:population05}\textbf{Synthetic Population of Eccentric BBHs}}
+\end{figure}
+
+\begin{figure}
+\includegraphics[width=0.45\textwidth]{paper/figures/massloss.png}
+\caption{\label{fig:population05}\textbf{Synthetic Population of Eccentric BBHs}}
+\end{figure}
+
+\begin{figure}
+\includegraphics[width=0.45\textwidth]{paper/figures/massloss.png}
+\caption{\label{fig:population05}\textbf{Synthetic Population of Eccentric BBHs}}
+\end{figure}
+
+\begin{figure}
+\includegraphics[width=0.45\textwidth]{paper/figures/massloss.png}
+\caption{\label{fig:population05}\textbf{Synthetic Population of Eccentric BBHs}}
+\end{figure}
+
+\begin{figure}
+\includegraphics[width=0.45\textwidth]{paper/figures/massloss.png}
+\caption{\label{fig:population05}\textbf{Synthetic Population of Eccentric BBHs}}
+\end{figure}
 
 
 
