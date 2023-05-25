@@ -272,7 +272,9 @@ where $p(\lambda|\Lambda)$ is the probability density function for a random bina
 %\end{itemize}
 
 \subsection{Power law Model}
-The following is the power law model. We added the Gaussian eccentricity in it. 
+There are various weak and pure phenomenological population models proposed in previous studies \cite{2016PRXAbbot_BBH_model,2017FishBach_BBH_model,2018talbot_bbh_model}. However, our analysis used the pure truncated power law defined in \cite{2016PRXAbbot_BBH_model,2017FishBach_BBH_model} and added the Gaussian eccentricity. This model computes the intrinsic probability of $m_1$, $m_2$, and $e$.  
+We also assume that non-zero probability density only exists for $m_{min}<\leq m_2 \leq m_1 \leq m_{max}$ and for total mass $M_{max}=m_1+m_2 = 200 M_\odot$. The condition of the total mass is only because of the limitations of the detectors towards the higher masses \cite{2016PRXAbbot_BBH_model}. The generalized form of the truncated power-law model with parameters $m_{min}$, $m_{max}$, $k_m$, $\alpha$, $\sigma_e$ and random variable $m_1$, $m_2$, and $e$ has the functional form in Eq. \ref{eq:plawg} within provided mass limit.
+
 
 \begin{align}
 \label{eq:plawg}
@@ -281,23 +283,15 @@ p(m_1,m_2,e) = &C(\alpha,k_m,m_{min},m_{max},M_{max},e)
 \nonumber \\ &
 \sqrt{\frac{2}{\pi}} e^{(-1/2)(e/\sigma_e)^2}
 \end{align}
-We use $k_m=0$, because GW networks are much more senstive to more massive BHs with $M\geq 200 M_\odot$
+
+The Eq. \ref{eq:plawg} represent a truncated power law for primary mass $m_1$ with index $-\alpha_m$ and conditional power law distribution $p(m_2|m_1)$ for secondary mass $m_2$ using simple power law, and Gaussian distribution for orbital eccentricity $e$.   
+For our analysis, we defined the constant of integration as equal to $\int_A dm_1 dm_2 p(m_1,m_2) dm_1 dm_2 = 1$.  Our detectors are very sensitive to high-mass BBHs, particularly $M_{max}\geq 200 M_\odot$; therefore, we will use $k_m=0$ throughout the studies. Therefore, we have our reduced form of the truncated power law in Eq. \ref{eq:plaw}
 
 \begin{align}
 \label{eq:plaw}
-p(m_1,m_2,e) = &C(\alpha,m_{min},m_{max},M_{max},e)  
-\nonumber \\ & \frac{m_1^{-\alpha}}{(m_1-m_{min})\sigma_e} 
-\nonumber \\ &
+p(m_1,m_2,e) =   \frac{m_1^{-\alpha}}{(m_1-m_{min})\sigma_e}  
 \sqrt{\frac{2}{\pi}} e^{(-1/2)(e/\sigma_e)^2}
 \end{align}
-
-The probability density would be non zero only for the two following conditions.
-
-\begin{itemize}
-    \item $m_{min}\leq m_2 \leq m_1 \leq m_{max}$
-    \item $m_1+m_2 \leq M_{max}$
-\end{itemize}
-Where $M_{max}$ depends on the detector (LVK)
 
    
 \section{Inference of Synthetic BBH Population}
