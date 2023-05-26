@@ -18,6 +18,7 @@
 %\usepackage{adjustbox}
 \usepackage{float}
 \usepackage{multirow}
+\usepackage{amssymb}
 %
 %
 \usepackage{times}
@@ -284,7 +285,7 @@ p(m_1,m_2,e) = &C(\alpha,k_m,m_{min},m_{max},M_{max},e)
 \sqrt{\frac{2}{\pi}} e^{(-1/2)(e/\sigma_e)^2}
 \end{align}
 
-The Eq. \ref{eq:plawg} represent a truncated power law for primary mass $m_1$ with index $-\alpha_m$ and conditional power law distribution $p(m_2|m_1)$ for secondary mass $m_2$ using simple power law, and Gaussian distribution for orbital eccentricity $e$.   
+The Eq. \ref{eq:plawg} represent a truncated power law for primary mass $m_1$ with index $-\alpha$ and conditional power law distribution $p(m_2|m_1)$ for secondary mass $m_2$ using simple power law, and Gaussian distribution for orbital eccentricity $e$.   
 For our analysis, we defined the constant of integration as equal to $\int_A dm_1 dm_2 p(m_1,m_2) dm_1 dm_2 = 1$.  Our detectors are very sensitive to high-mass BBHs, particularly $M_{max}\geq 200 M_\odot$; therefore, we will use $k_m=0$ throughout the studies. Therefore, we have our reduced form of the truncated power law in Eq. \ref{eq:plaw}
 
 \begin{align}
@@ -293,71 +294,96 @@ p(m_1,m_2,e) =   \frac{m_1^{-\alpha}}{(m_1-m_{min})\sigma_e}
 \sqrt{\frac{2}{\pi}} e^{(-1/2)(e/\sigma_e)^2}
 \end{align}
 
-   
-\section{Inference of Synthetic BBH Population}
-We have generated two distinct populations consistent of $100$ BBH by fixing the power law model parameter $\Lambda$ given in Eq. \ref{eq:plaw}. 
-The parameters $\alpha=-2$, $m_{min}=10$, $m_{max}=50$ are same for both populations. The only difference between two generated populations is the dispersion of $\sigma_e$. The range for the first populations is $0<\sigma_e<0.5$ and for the second one is $0<\sigma_e<0.38$.
-Furthermore, to make the comparison of the eccentric population with non-eccentric, we have created two more different populations by scaling already generated two populations by using the Eq. \ref{eq:scaling}. The Eq. \ref{eq:scaling} removes the eccentric component from the population, scales the masses and eventually we get non-eccentric population.
+\subsection{Fiducial Model for Synthetic Population}
+
+We choose the fixed parameters $\alpha = -2$, $m_{min} = 10$, $m_{max}=50$ to generate the population of $N=100$ sources from the power model given in Eq. \ref{eq:plawg}. We have generated two different populations from the fiducial model to show the significance of the eccentricity on the population. The selection of all the parameters is the same for both populations instead of $\sigma_e$. This different eccentricity distribution in both models will show how the events can be missed by not including the eccentricity in our analysis.
+
+Furthermore, to compare the synthetic EBBHs population with the non-eccentric BBHs (NEBBHS), we have created two more different populations by scaling the existing populations using the Eq. \ref{eq:scaling} defined in \cite{2021_scaling_paper}. The Eq. \ref{eq:scaling} removes the eccentric component from the population, scales the masses, and eventually, we get a non-eccentric population to compare with the existing eccentric population.
 \begin{align}
 \label{eq:scaling}
 M^{ecc} = \frac{M}{(1-\frac{157}{24}e^2)^{3/5}}
 \end{align}
 
-\subsection{First Population: $0<\sigma_e<0.5$}
-The following is the figure which shows the 
 
-\begin{figure}
+\subsubsection{EBBH and NEBBH Population with $0\leq \sigma_e \leq 0.5$}
+ The first population has the Gaussian distribution bounded between $0\leq \sigma_e \leq 0.5$ given in Fig. \ref{fig:pop3d05}.  
+
+\begin{figure}[H]
 \includegraphics[width=0.45\textwidth]{paper/figures/pop3d05.png}
-\caption{\label{fig:population05}\textbf{Synthetic Population of Eccentric BBHs}}
+\caption{\label{fig:pop3d05}\textbf{3D-Synthetic Population of EBBHs for $0\leq \sigma_e \leq 0.5$}}
 \end{figure}
 
-\begin{figure}
+We have the total $100$ events with a minimum and maximum primary mass of $17.73 M_\odot$ and $49.14 M_\odot$, respectively. Similarly, we have the secondary minimum and maximum masses $10.11 M_\odot$ and $46.68 M_\odot$ given in Fig \ref{fig:pop2d05}.
+
+\begin{figure}[H]
 \includegraphics[width=0.45\textwidth]{paper/figures/pop2d05.png}
-\caption{\label{fig:population05}\textbf{Synthetic Population of Eccentric BBHs}}
+\caption{\label{fig:pop2d05}\textbf{Mass distribution of EBBHs for $0\leq \sigma_e \leq 0.5$}}
 \end{figure}
 
-\begin{figure}
+To get the non-eccentric population, we apply the Eq. \ref{eq:scaling} on the population given in Fig. \ref{fig:pop2d05} and get the new population with scaled masses. We get the new minimum and maximum values for the primary and secondary masses in Fig. \ref{fig:pop2dscal05}. 
+   
+\begin{figure}[H]
 \includegraphics[width=0.45\textwidth]{paper/figures/pop2d05scl.png}
-\caption{\label{fig:population05}\textbf{Synthetic Population of Eccentric BBHs}}
+\caption{\label{fig:pop2dscal05}\textbf{Scaled Mass distribution of NEBBHs for  $0\leq \sigma_e \leq 0.5$}}
 \end{figure}
-\begin{figure}
+
+The significant effect after the scaling is not only the mass shift, but one may notice in Fig. \ref{fig:pop2dscal05} that $14$ sources were missed out of $100$. This reflects that we may miss the various sources by ignoring the effect of eccentricity. The mass scaling effect is visible in Fig. \ref{fig:pop2d05diff}, and we also notice that sources start missing after $e \gtrsim 0.38$.
+
+\begin{figure}[H]
 \includegraphics[width=0.45\textwidth]{paper/figures/pop2d05diff.png}
-\caption{\label{fig:population05}\textbf{Synthetic Population of Eccentric BBHs}}
+\caption{\label{fig:pop2d05diff}\textbf{Total Mass of Binaries for EBBHs and NEBBHs for $0\leq \sigma_e \leq 0.5$:} The blue dots show the EBBHs, the orange shows scaled NEBBHs, and green color shows the increasing difference between those masses with eccentricity}
 \end{figure}
-\begin{figure}
+
+\begin{figure}[H]
 \includegraphics[width=0.45\textwidth]{paper/figures/massloss05.png}
-\caption{\label{fig:population05}\textbf{Synthetic Population of Eccentric BBHs}}
+\caption{\label{fig:population05}\textbf{The relation between eccentricity and mass loss}}
 \end{figure}
 
 
 
+\subsubsection{EBBH and NEBBH Population with $0\leq \sigma_e \leq 0.38$}
+ The second population has the Gaussian distribution bounded between $0\leq \sigma_e \leq 0.38$ given in Fig. \ref{fig:pop3d038}.  
 
-
-\subsection{Second Population: $0<\sigma_e<0.38$}
-
-
-\begin{figure}
+\begin{figure}[H]
 \includegraphics[width=0.45\textwidth]{paper/figures/pop3d038.png}
-\caption{\label{fig:population05}\textbf{Synthetic Population of Eccentric BBHs}}
+\caption{\label{fig:pop3d038}\textbf{3D-Synthetic Population of EBBHs for $0\leq \sigma_e \leq 0.38$}}
 \end{figure}
 
-\begin{figure}
+We have the total $100$ events with a minimum and maximum primary mass of $15.12 M_\odot$ and $49.98 M_\odot$, respectively. Similarly, we have the secondary minimum and maximum masses $10.12 M_\odot$ and $46.01 M_\odot$ given in Fig \ref{fig:pop2d038}.
+
+\begin{figure}[H]
 \includegraphics[width=0.45\textwidth]{paper/figures/pop2d038.png}
-\caption{\label{fig:population05}\textbf{Synthetic Population of Eccentric BBHs}}
+\caption{\label{fig:pop2d038}\textbf{Mass distribution of EBBHs with $0\leq \sigma_e \leq 0.38$}}
 \end{figure}
 
-\begin{figure}
+Similarly, to get the non-eccentric population, we apply the Eq. \ref{eq:scaling} on the population given in Fig. \ref{fig:pop2d038} and get the new population with scaled masses. We get the new minimum and maximum values for the primary and secondary masses in Fig. \ref{fig:pop2d038scl}. 
+   
+\begin{figure}[H]
 \includegraphics[width=0.45\textwidth]{paper/figures/pop2d038scl.png}
-\caption{\label{fig:population05}\textbf{Synthetic Population of Eccentric BBHs}}
+\caption{\label{fig:pop2d038scl}\textbf{Scaled mass distribution of NEBBHs for $0\leq \sigma_e \leq 0.38$}}
 \end{figure}
-\begin{figure}
+
+Selecting a reduced range of $\sigma_e$ leads to avoiding the missing events. Although mass gets scaled, we did not see any missing events in Fig. \ref{fig:pop2d038scl}. The mass scaling effect is visible in Fig. \ref{fig:pop2d038diff} and reflects the importance of eccentricity.
+
+\begin{figure}[H]
 \includegraphics[width=0.45\textwidth]{paper/figures/pop2d038diff.png}
-\caption{\label{fig:population05}\textbf{Synthetic Population of Eccentric BBHs}}
+\caption{\label{fig:pop2d038diff}\textbf{Total Mass of Binaries for EBBHs and NEBBHs for $0\leq \sigma_e \leq 0.38$:} The blue dots show the EBBHs, the orange shows scaled NEBBHs, and green color shows the increasing difference between those masses with eccentricity}
 \end{figure}
-\begin{figure}
+
+\begin{figure}[H]
 \includegraphics[width=0.45\textwidth]{paper/figures/massloss038.png}
-\caption{\label{fig:population05}\textbf{Synthetic Population of Eccentric BBHs}}
+\caption{\label{fig:population038}\textbf{The relation between eccentricity and mass loss}}
 \end{figure}
+
+\section{Inference of Synthetic BBH Population}
+
+
+Need to write it later. 
+
+
+
+
+
 
 
 % \begin{align} \label{eq:strain_mode}
