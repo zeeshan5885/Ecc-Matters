@@ -2,6 +2,8 @@
 from __future__ import division, print_function
 
 import numpy
+from multiprocessing import Pool
+from multiprocessing import cpu_count
 
 LN_TEN = numpy.log(10.0)
 
@@ -42,6 +44,8 @@ def expval_mc(
 
     log_rate, alpha, m_min, m_max = pop_params
     rate = aux_info["rate"]
+#    print(" >>> PREP >>> ", raw_interpolator, raw_interpolator.method)
+
 
     def p(N):
         return prob.joint_rvs(
@@ -50,13 +54,12 @@ def expval_mc(
             rand_state=rand_state,
         )
 
-    def efficiency_fn(m1_m2):
+    def efficiency_fn(m1_m2,raw_interpolator=raw_interpolator):
         import numpy
 
         m1 = m1_m2[:,0]
         m2 = m1_m2[:,1]
-
-        return numpy.vectorize(raw_interpolator)(m1, m2)
+        return raw_interpolator(m1_m2)
 
 
     I, err_abs, err_rel = mc.integrate_adaptive(
@@ -76,7 +79,7 @@ def VT_interp(m1_m2, raw_interpolator, **kwargs):
     m1 = m1_m2[:,0]
     m2 = m1_m2[:,1]
 
-    return numpy.vectorize(raw_interpolator)(m1, m2)
+    return raw_interpolator(m1, m2)
 
 
 def log_prior_pop(
@@ -394,12 +397,16 @@ def _main(raw_args=None):
         raw_args = sys.argv[1:]
 
     cli_args = _get_args(raw_args)
+    print(cli_args)
 
     rand_state = numpy.random.RandomState(cli_args.seed)
 
     M_max = cli_args.total_mass_max
 
     assert M_max is not None
+
+    ncpu = cpu_count()
+    print("{0} CPUs".format(ncpu))
 
     constants = {}
     if cli_args.fixed_log_rate is not None:
@@ -517,8 +524,9 @@ def _main(raw_args=None):
             "err_rel": cli_args.mc_err_rel,
             "rand_state": rand_state,
         }
-
-        mcmc.run_mcmc(
+        pool=None;
+        if True: #with None as pool:
+         mcmc.run_mcmc(
             intensity, expval_mc, data_posterior_samples,
             log_prior_pop,
             init_state,
@@ -531,7 +539,7 @@ def _main(raw_args=None):
             out_pos=posterior_pos, out_log_prob=posterior_log_prob,
             nsamples=cli_args.n_samples,
             rand_state=rand_state,
-            nthreads=cli_args.n_threads, pool=None,
+            nthreads=cli_args.n_threads, pool=pool,
             runtime_sortingfn=None,
             dtype=numpy.float64,
             verbose=cli_args.verbose,

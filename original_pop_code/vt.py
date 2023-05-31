@@ -275,9 +275,15 @@ def interpolate(m1_grid, m2_grid, VT_grid):
     import numpy
     import scipy.interpolate
 
-    interpolator = scipy.interpolate.interp2d(
-        m1_grid, m2_grid, VT_grid,
-        kind="linear",
+#    print(m1_grid,m2_grid)
+    points = (m1_grid[0], m2_grid[:,0])
+#    values = VT_grid.flatten()
+#    print(points)
+    interpolator = scipy.interpolate.RegularGridInterpolator( #scipy.interpolate.interp2d(
+        points, VT_grid,
+        method='linear',
+        bounds_error=False,
+        fill_value=0
     )
 
     return interpolator
@@ -396,7 +402,7 @@ def _main_plot(raw_args=None):
             m1 = m1_m2[:,0]
             m2 = m1_m2[:,1]
 
-            return raw_interpolator(m1, m2)
+            return raw_interpolator(m1_m2)
 
     fig, (ax_mchirp, ax_m1_m2) = plt.subplots(1, 2)
 
