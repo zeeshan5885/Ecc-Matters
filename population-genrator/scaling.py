@@ -2,7 +2,7 @@ import numpy as np
 import os
 
 # Directory containing the input files
-input_dir = './txt_events/'
+input_dir = './weighted_events/'
 
 # Directory to save the output files
 output_dir = './scaled_events/'
@@ -10,9 +10,9 @@ col_names = ["m1_source", "m2_source"]
 # Iterate over the text files
 for i in range(1, 101):
     # Generate the file path for the current iteration
-    file_path = os.path.join(input_dir, f'event_{i}.txt')
+    file_path = os.path.join(input_dir, f'event_{i}.dat')
 
-    # Load the data from the text file
+    # Load the data from the .dat file
     data = np.loadtxt(file_path)
 
     # Extract the columns
@@ -28,11 +28,11 @@ for i in range(1, 101):
     scaled_data = np.column_stack((scaled_col1, scaled_col2))
 
     # Generate the output file path for the current iteration
-    output_file_path = os.path.join(output_dir, f'event_{i}.txt')
+    output_file_path = os.path.join(output_dir, f'event_{i}.dat')
 
     # Save the scaled data to a new text file
     #np.savetxt(output_file_path, scaled_data, header='m1_source m2_source', comments='')
-    np.savetxt(output_file_path, scaled_data, delimiter="\t", fmt="%.3f", header="\t".join(col_names))
+    np.savetxt(output_file_path, scaled_data, delimiter="\t", header="\t".join(col_names))
 
 
 
@@ -50,7 +50,7 @@ count = 0
 
 # Iterate over the files in the folder
 for file_name in os.listdir(folder_path):
-    if file_name.endswith('.txt'):
+    if file_name.endswith('.dat'):
         file_path = os.path.join(folder_path, file_name)
 
         # Load the data from the text file
@@ -70,7 +70,7 @@ print(f"Total files with NaN or zero values: {count}")
 
 
 # Load the data from the text file and scaling the single txt file which have the complete population
-data01 = np.loadtxt('combine_pop.txt')
+data01 = np.loadtxt('weighted_population.dat')
 
 # Extract the columns
 col01 = data01[:, 0]
@@ -87,5 +87,5 @@ scaled_col02 = col02 * scale_factor01
 scaled_data01 = np.column_stack((scaled_col01, scaled_col02))
 
 # Save the scaled data to a new text file
-np.savetxt('combine_scaled_pop.txt', scaled_data01,delimiter="\t", fmt="%.3f", header="\t".join(col_names))
+np.savetxt('scaled_population.dat', scaled_data01,delimiter="\t", header="\t".join(col_names))
 
