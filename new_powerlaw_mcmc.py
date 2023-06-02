@@ -72,7 +72,7 @@ def expval_mc(
         m1 = m1_m2[:,0]
         m2 = m1_m2[:,1]
 
-        return raw_interpolator(m1_m2)
+        return raw_interpolator(m1_m2[:,:1])
 
     I, err_abs, err_rel = mc.integrate_adaptive(
         p, efficiency_fn,
