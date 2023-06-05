@@ -12,5 +12,5 @@ To generate the population, you need to run the script as **./run_complete.sh**
 * So, to get a desired population, you need to edit the parameters in the **genrating.py** file. Particualraly, the arguments of the defined function **syn_pop_prob.joint_rvs(10000,-2,10,50,100,0.2)**
 
 * The **generating.py** only creates the 10000 random events from the power_law_model.
-* The **weighting.py** will choose the 100 weighted events out of 1000. These 100 are those which are well suited to be observed with LVK or you can say they may be in the sensitivity range of the LVK.
-* Finally, **scaling.py** will remove the eccentricity form those 100 events will give us scaled events without eccentricity.
+* The **weighting.py** choose the 100 weighted events out of 1000. These 100 are those which are well suited to be observed with LVK or you can say they may be in the sensitivity range of the LVK.
+* Finally, **scaling.py** removes the eccentricity form those 100 events and give us scaled events without eccentricity.
