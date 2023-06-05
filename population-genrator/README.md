@@ -7,7 +7,7 @@ To generate the population, you need to run the script as **./run_complete.sh**
 
 * In addition to the scaled events, this run will also count and identify any missing events after scaling. Because, high eccentric events tends to miss after scaling.
 
-* By default, this code will generate the population with set parameters **N= 10000 , $\alpha$ = -2 , m_min = 10 , m_max = 50 , M= 100 , sigma_ecc =0.2.**
+* By default, this code will generate the population with set parameters **$N= 10000$ , $\alpha = -2$ , $m_{min} = 10$ , $m_{max} = 50$ , $M = 100$ , $\sigma_\epsilon =0.2$.**
 
 * So, to get a desired population, you need to edit the parameters in the **genrating.py** file. Particualraly, the arguments of the defined function **syn_pop_prob.joint_rvs(10000,-2,10,50,100,0.2)**
 
