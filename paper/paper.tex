@@ -128,20 +128,47 @@ Yet to work.
 \maketitle
 
 \section{Introduction}
-Later this section
+Big Picture
+\begin{itemize}
+    \item GWs are important
+    \item ecccentricity is a signature that can be measued with GWs
+    \item it is a unique signature of strong events
+\end{itemize}
+Why Population, smaller picture
+\begin{itemize}
+    \item population inference of eccentricity is important.
+    \item some events may have unabmoguis eccentricty (refs to PE, richard will send them), but many will have only faint signatures or none at all.
+    \item critical for astrophysoics to acces distribution of eccentricites and any subpopulation
+\end{itemize}
+Previous work
+\begin{itemize}
+    \item What other people have done with eccentricty, 
+    \item cite any preious work realted to eccentricty with population.
+    \item mostly it's real events or high mass evenets
+    \item what sort of eccentricy we expect to appear
+\end{itemize}
+\begin{itemize}
+    \item Explain,what and how you are doing here.
+    \item assess how well eccentricity of population  can be inferreed using low mass BHS where eccentricity measurement should be much more precise.
+    \item for simplicity using a proof of concept population model to emphasize eccentric inference
+\end{itemize}
+
+We discussed the various formation scenario of EBBHs in the previous section; each one has a distinct signature in the GW signals. Hence, it's trivial to observe the effect of each scenario or the mixed effect on the merging population. It leads us to make the population model, which considers each scenario and allows distinct merger rates for them.
+
+Most of the eccentric binary black hole (EBBHs) are driven by low masses $(10M_\odot-30M_\odot)$ and if any component of the binary have mass less than $30 M_\odot$ then only $10\%$ of them are able to maintain eccentricity near the last stable orbit.  \cite{mass_ecc_limit_2018}. Therefore,  in this study, we  will consider binaries with non-spinning $(\chi_i = 0)$, eccentric $(0-0.5)$ and moderate mass range $(10M_\odot-50M_\odot)$. In addition, we will use mass ratio $q=m_1/m_2$ with condition $m_1>m_2$ and total mass $M=m_1+m_2=100M_\odot$.
 
 
 
 \section{Methods}
 \label{sec:methods}
 
-The coalescing BBH can be completely described by three intrinsic and seven extrinsic parameters. The intrinsic parameters mass of binary component ($m_i$), spin $( \chi_i)$, and eccentricity $(e)$  are subject to the orbital evolution of the binary. The extrinsic parameters are orientation (orbital phase, polarization, and inclination), sky location (right ascension and declination), luminosity distance, and coalescence time depend on the observer.
+The coalescing BBH can be completely described by three intrinsic and seven extrinsic parameters. The intrinsic parameters mass of binary component ($m_i$), spin $( \chi_i)$, and eccentricity $\epsilon$  are subject to the orbital evolution of the binary. The extrinsic parameters are orientation (orbital phase, polarization, and inclination), sky location (right ascension and declination), luminosity distance, and coalescence time depend on the observer.
 
-Most of the eccentric binary black hole (EBBHs) are driven by low masses $(10M_\odot-30M_\odot)$ and if any component of the binary have mass less than $30 M_\odot$ then only $10\%$ of them are able to maintain eccentricity near the last stable orbit.  \cite{mass_ecc_limit_2018}. Therefore,  in this study, we  will consider binaries with non-spinning $(\chi_i = 0)$, eccentric $(0-0.5)$ and moderate mass range $(10M_\odot-50M_\odot)$. In addition, we will use mass ratio $q=m_1/m_2$ with condition $m_1>m_2$ and total mass $M=m_1+m_2=100M_\odot$.
+
 
 \subsection{Hierarchical Bayesian Modeling (HBM)}
 
-We discussed the various formation scenario of EBBHs in the previous section; each one has a distinct signature in the GW signals. Hence, it's trivial to observe the effect of each scenario or the mixed effect on the merging population. It leads us to make the population model, which considers each scenario and allows distinct merger rates for them.
+
 
 Once we have the population models, our next obstacle is constraining them with observational data. While constraining the model, we must consider the sensitivity of LIGO-VIRGO-KAGRA (LVK) and uncertainty in each detection. Therefore, the HBM is a good choice to constrain the population model.
 
@@ -172,14 +199,14 @@ This posterior probability will constrain the properties of each binary, such as
 
 \subsection{Population Inference}
 
-Now having the parameters of individual sources, we are ready to make a population inference. Following the Bayesian framework for inference, our first task is to find the likelihood of the population parameter $\Lambda$, also considered as uncertainty in $\Lambda$ equivalent to the probability of the individual sources given the population parameter $\Lambda \equiv  (\alpha, \mathcal{R}, m_{min}, m_{max}, \sigma_e)$ written as follows. 
+Now having the parameters of individual sources, we are ready to make a population inference. Following the Bayesian framework for inference, our first task is to find the likelihood of the population parameter $\Lambda$, also considered as uncertainty in $\Lambda$ equivalent to the probability of the individual sources given the population parameter $\Lambda$ written as follows. 
 
 \begin{equation}
 \label{eq:likelihood_pop}    
 \mathcal{L}(\Lambda)\equiv p(d_1,d_2,d_3,...,d_N|\Lambda)
 \end{equation}
 
-where $\alpha$ is the power law index given in Eq. \ref{eq:plaw}, $\mathcal{R}$ is the merger rate, $m_{min}, m_{max}$ are the minimum, and maximum masses of the binary components in the population respectively, and $\sigma_e$ is the orbital eccentricity distribution. 
+ 
 
 The second step is to find the posterior probability, and we can do this by using the above likelihood in the Bayes theorem as given below.
 
@@ -200,8 +227,7 @@ To conduct our specific analysis for mass and eccentricity distribution, we will
 Where $\mu(\mathcal{R},\Lambda)$ is the expected number of detection under the given population parametrization $\Lambda$ with the overall rate $\mathcal{R}$. $\ell_n(\lambda)=p(d_n|\lambda)$ is the likelihood of the data $d_n$ given binary parameter.
 Finally, we will get our posterior as $p(\mathcal{R},\Lambda)\propto p(\mathcal{R},\Lambda)  \mathcal{L}(\mathcal{R},\Lambda)$.
 
-The soundest approach is to find the analytical posterior. However, most of the time, it's difficult to find the analytical solution to such a complicated equation involving multidimensional integrals. Therefore, a practical approach is to use the computational methods.
-Our study will use Goodman and Weare's affine invariant Markov chain Monte Carlo (MCMC) \cite{mcmc_paper} method to find the posterior distribution of population parameters. This method draws samples (set of parameters $\alpha,\mathcal{R},m_{min},m_{max},\sigma_e$ that make one model) from the targeted distribution; in our case, it's the power law model given in Eq. \ref{eq:plaw}, then compares it with the given data (collection of individual events) and store the best-fit sample. We may iterate this as we need and store multiple sample values untill they converge. 
+These calculations are analytically intractable and must be performed numerically. Specifically, we will use Goodman and Weare's affine invariant Markov chain Monte Carlo (MCMC) \cite{mcmc_paper} method to find the posterior distribution of population parameters. This method draws samples from the targeted distribution for $\Lambda$; in our case, it's the power law model given in Eq. \ref{eq:plawg}, then compares it with the given data (collection of individual events) and store the best-fit sample. We may iterate this as we need and store multiple sample values untill they converge. 
 This method is in a Python package called EMCEE \cite{emcee_paper}.
 
 
@@ -238,7 +264,7 @@ This method is in a Python package called EMCEE \cite{emcee_paper}.
 \subsection{Volume Time (VT) Estimation}
 
 To make our study realistic, including the sensitivity of the LVK instruments is significant. This sensitivity is defined by VT estimation. $V$ is the characteristic volume with units $Gpc^{-3}yr^{-1}$, which refers to the possible detection region in the sky for the LVK \cite{Volume_1993}, and $T$ is the time duration of making observations at this sensitivity.
-Existing LVK instruments' sensitivity depends only on the mass; therefore, we will get the same VT calculated previously \cite{Dan_2019} for non-spinning, non-eccentric, and no-precessing binaries. Hence, we briefly explain the calculations, but one may read Daniel Wysocki's article \cite{Dan_2019} for a deeper study.
+Existing LVK instruments' sensitivity depends only on the mass; therefore, we will get the same VT calculated previously \cite{Dan_2019} for non-spinning, non-eccentric, and no-precessing binaries. Hence, we briefly explain the calculations, see \cite{Dan_2019} for details.
 
 The Eq. \ref{eq:volume} calculates the orientation averaged sensitive volume \cite{Abbott_2016,richard2010volume}
 
@@ -273,35 +299,32 @@ where $p(\lambda|\Lambda)$ is the probability density function for a random bina
 %\end{itemize}
 
 \subsection{Power law Model}
-There are various weak and pure phenomenological population models proposed in previous studies \cite{2016PRXAbbot_BBH_model,2017FishBach_BBH_model,2018talbot_bbh_model}. However, our analysis used the pure truncated power law defined in \cite{2016PRXAbbot_BBH_model,2017FishBach_BBH_model} and added the Gaussian eccentricity. This model computes the intrinsic probability of $m_1$, $m_2$, and $e$.  
-We also assume that non-zero probability density only exists for $m_{min}<\leq m_2 \leq m_1 \leq m_{max}$ and for total mass $M_{max}=m_1+m_2 = 200 M_\odot$. The condition of the total mass is only because of the limitations of the detectors towards the higher masses \cite{2016PRXAbbot_BBH_model}. The generalized form of the truncated power-law model with parameters $m_{min}$, $m_{max}$, $k_m$, $\alpha$, $\sigma_e$ and random variable $m_1$, $m_2$, and $e$ has the functional form in Eq. \ref{eq:plawg} within provided mass limit.
+There are various weak and pure phenomenological population models proposed in previous studies \cite{2016PRXAbbot_BBH_model,2017FishBach_BBH_model,2018talbot_bbh_model}. However, our analysis used the pure truncated power law defined in \cite{2016PRXAbbot_BBH_model,2017FishBach_BBH_model} and added the Gaussian eccentricity. This model computes the intrinsic probability of $m_1$, $m_2$, and $\epsilon$.  
+We also assume that non-zero probability density only exists for $m_{min}\leq m_2 \leq m_1 \leq m_{max}$ and for total mass $M_{max}=m_1+m_2 = 200 M_\odot$. The condition of the total mass is only because of the limitations of the detectors towards the higher masses \cite{2016PRXAbbot_BBH_model}. The generalized form of the truncated power-law model with parameters $\Lambda \equiv  (\alpha, \mathcal{R}, k_m, m_{min}, m_{max}, \sigma_\epsilon, M_{max})$ and random variable $m_1$, $m_2$, and $\epsilon$ has the functional form in Eq. \ref{eq:plawg} within provided mass limit.
 
 
 \begin{align}
 \label{eq:plawg}
-p(m_1,m_2,e) = &C(\alpha,k_m,m_{min},m_{max},M_{max},e)  
-\nonumber \\ & \frac{(m_2/m_1)^{k_m}m_1^{-\alpha}}{(m_1-m_{min})\sigma_e} 
-\nonumber \\ &
-\sqrt{\frac{2}{\pi}} e^{(-1/2)(e/\sigma_e)^2}
+p(m_1,m_2,\epsilon) = &C(\alpha,k_m,m_{min},m_{max},M_{max},\epsilon)  
+\nonumber \\ & \sqrt{\frac{2}{\pi}} \frac{(m_2/m_1)^{k_m} m_1^{-\alpha} e^{-(\epsilon/\sqrt{2}\sigma_\epsilon)^2}}{(m_1-m_{min})\sigma_\epsilon} 
 \end{align}
 
-The Eq. \ref{eq:plawg} represent a truncated power law for primary mass $m_1$ with index $-\alpha$ and conditional power law distribution $p(m_2|m_1)$ for secondary mass $m_2$ using simple power law, and Gaussian distribution for orbital eccentricity $e$.   
-For our analysis, we defined the constant of integration as equal to $\int_A dm_1 dm_2 p(m_1,m_2) dm_1 dm_2 = 1$.  Our detectors are very sensitive to high-mass BBHs, particularly $M_{max}\geq 200 M_\odot$; therefore, we will use $k_m=0$ throughout the studies. Therefore, we have our reduced form of the truncated power law in Eq. \ref{eq:plaw}
+where $\alpha$ is the power law index, $\mathcal{R}$ is the merger rate, $m_{min}, m_{max}$ are the minimum, and maximum masses of the binary components in the population respectively, and $\sigma_e$ is the orbital eccentricity distribution. The Eq. \ref{eq:plawg} represent a truncated power law for primary mass $m_1$ with index $-\alpha$ and conditional power law distribution $p(m_2|m_1)$ for secondary mass $m_2$ using simple power law, and Gaussian distribution for orbital eccentricity $e$. 
+For our analysis, we defined the constant of integration equals to $\int_V dm_1 dm_2 d\epsilon p(m_1,m_2,\epsilon) = 1$.  Our detectors are very sensitive to high-mass BBHs, particularly $M_{max}\geq 200 M_\odot$; therefore, we will use $k_m=0$ throughout the studies. Therefore, we have our reduced form of the truncated power law in Eq. \ref{eq:plaw}
 
 \begin{align}
 \label{eq:plaw}
-p(m_1,m_2,e) =   \frac{m_1^{-\alpha}}{(m_1-m_{min})\sigma_e}  
-\sqrt{\frac{2}{\pi}} e^{(-1/2)(e/\sigma_e)^2}
+p(m_1,m_2,\epsilon) =   \sqrt{\frac{2}{\pi}} \frac{ m_1^{-\alpha}  e^{-(\epsilon/\sqrt{2}\sigma_\epsilon)^2}}{(m_1-m_{min})\sigma_\epsilon}  
 \end{align}
 
 \subsection{Fiducial Model for Synthetic Population}
 
-We choose the fixed parameters $\alpha = -2$, $m_{min} = 10$, $m_{max}=50$ to generate the population of $N=100$ sources from the power model given in Eq. \ref{eq:plawg}. We have generated two different populations from the fiducial model to show the significance of the eccentricity on the population. The selection of all the parameters is the same for both populations instead of $\sigma_e$. This different eccentricity distribution in both models will show how the events can be missed by not including the eccentricity in our analysis.
+We choose fixed parameters $\alpha = -2$, $m_{min} = 10$, $m_{max}=50$ to generate a population of $N=100$ sources from the power model given in Eq. \ref{eq:plawg}. We have generated two different populations from the fiducial model to show the significance of the eccentricity on the population. The selection of all the parameters is the same for both populations instead of $\sigma_\epsilon$. This different eccentricity distribution in both models will show how the events can be missed by not including the eccentricity in our analysis.
 
 Furthermore, to compare the synthetic EBBHs population with the non-eccentric BBHs (NEBBHS), we have created two more different populations by scaling the existing populations using the Eq. \ref{eq:scaling} defined in \cite{2021_scaling_paper}. The Eq. \ref{eq:scaling} removes the eccentric component from the population, scales the masses, and eventually, we get a non-eccentric population to compare with the existing eccentric population.
 \begin{align}
 \label{eq:scaling}
-M^{ecc} = \frac{M}{(1-\frac{157}{24}e^2)^{3/5}}
+M^{ecc} = \frac{M}{(1-\frac{157}{24}\epsilon^2)^{3/5}}
 \end{align}
 
 
