@@ -5,7 +5,7 @@
 
 # How to run this code to get the population inference
 
-* First, build the appropriate vt_m1_m2.hdf5 and copy it into population-genrator. (you will need it for weighting the synthetic populaiton)
+* First, build the appropriate vt_m1_m2.hdf5 and copy it into population-genrator. (you will need it for weighting the synthetic population)
 ```
 python vt.py 10 50 100 4 vt_m1_m2.hdf5
 ```
