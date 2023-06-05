@@ -11,3 +11,5 @@ python weighting.py --dat population.dat --vt vt_m1_m2.hdf5 --n-out 100
 
 #script for scaling
 rm -r scaled_events; mkdir scaled_events ; python scaling.py
+
+#moving the events in the desired directory
