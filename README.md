@@ -6,7 +6,7 @@
 # How to run this code to get the paramter estimation for the power law model
 
 * First, you need a data containing three colums: m1_source , m2_source, ecc
-* You may make a fake data with known parametes to check that if code actually works or not.
+* You may make a **fake.dat** data with known parametes to check that if code actually works or not. fake.dat is given in repo.
 * You can also generate the desired data from the code stored in the directory **pop_genrator**.
 * To create the synthetic population/data you may need to read the README.md file in the **pop_genrator** direcotry.
 * Once you have the fake/synthetic/real data, you can tun this code as follows to get the parameters values.
