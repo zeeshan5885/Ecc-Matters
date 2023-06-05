@@ -1,16 +1,16 @@
 * This directory is solely created to generate the synthetic population by using the eccentric power law model. 
-To generate the population, you just need to run the bash script named **pop-genrator.sh** 
+To generate the population, you need to run the script as **./run_complete.sh** 
 
-* This script will  auto delete the previously existed data and will create two fresh directories called **dat-evetns**, **txt-events** and one file with whole population named **combine-pop.txt**. These two directoreis contain the same population but with different format.
-
-* As this model creates the population with eccentricity, you can scale (removing the role of eccentricity from the events and getting the lesser mass of BHs) those events by using the equation (1.1) in the following paper.
-
+* This script will delete the previously existed file **population.dat** and will create new **population.dat** file which will contain 10000 events be default. In addition to single population file, it will create the two directories called **weighted_events** and **scaled_events**. The weighted directory will contain the 100 weighted events with VT files out of 10000. Afterwards, we will will use equation 1.1 in the following paper to scale those events and remove the ecentricity.
+* 
 * https://arxiv.org/abs/2108.05861 (Scaling equation 1.1)
 
-* To get the scaled events, just run the **run-scaling.sh** script and you will get the new directory with the name scaled-events.
+* In addition to the scaled events, this run will also count and identify any missing events after scaling. Because, high eccentric events tends to miss after scaling.
 
-* In addition to the scaled events, this run will also count and identify any missing events after scaling.
+* By default, this code will generate the population with set parameters **N= 10000 , Alpha = -2 , m-min = 10 , m-max = 50 , M= 100 , sigma_ecc =0.2.**
 
-* By default, this code will generate the population with set parameters **N= 100 , Alpha = 2 , m-min = 10 , m-max = 50 , M= 200.**
+* So, to get a desired population, you need to edit the parameters in the **genrating.py** file. Particualraly, the arguments of the defined function **syn_pop_prob.joint_rvs(10000,-2,10,50,100,0.2)**
 
-* So to get the any desired population, you need to edit the parameters in the **population-gen.py** file. 
+* The **generating.py** only creates the 10000 random events from the power_law_model.
+* The **weighting.py** will choose the 100 weighted events out of 1000. These 100 are those which are well suited to be observed with LVK or you can say they may be in the sensitivity range of the LVK.
+* Finally, **scaling.py** will remove the eccentricity form those 100 events will give us scaled events without eccentricity.
