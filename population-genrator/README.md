@@ -1,7 +1,7 @@
 * This directory is solely created to generate the synthetic population by using the eccentric power law model. 
 To generate the population, you need to run the script as **./run_complete.sh** 
 
-* This script will delete the previously existed file **population.dat** and will create new **population.dat** file which will contain 10000 events by default. In addition to single population file, it will create the two directories called **weighted_events** and **scaled_events**. The weighted directory will contain the 100 weighted events with VT files out of 10000. Afterwards, we will will use equation 1.1 in the following paper to scale those events and remove the ecentricity.
+* This script will delete the previously existed file **population.dat** and will create new **population.dat** file which will contain 10000 events by default. In addition to single population file, it will create the two directories called **weighted_events** and **scaled_events**. The weighted directory will contain the 100 weighted events with VT files out of 10000. Afterwards, we will use equation 1.1 in the following paper to scale those events and remove the ecentricity.
 * 
 * https://arxiv.org/abs/2108.05861 (Scaling equation 1.1)
 
