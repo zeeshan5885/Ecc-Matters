@@ -323,7 +323,22 @@ p(m_1,m_2,\epsilon) = \sqrt{\frac{2}{\pi}} \frac{ m_1^{-\alpha}  e^{-(\epsilon/\
 We have created four different populations by fixing the
 power law parameters $\alpha = -2$, $m_{min} = 10$, $m_{max}=50$. Each population has the same values for $\alpha$, $m_{min}$, and $m_{max}$ except $\sigma_\epsilon$. We selected four values of $\sigma_\epsilon = 0.05,0.1,0.15,0.2$ and each synthetic population contains $N=10000$ sources. After getting those populations, we find the probability for each event to be detected by computing the VT of each source. Finally, we will randomly pick $100$ sources for each population to perform our analysis.
 
-Our first and second weighted populations with $\sigma_\epsilon=0.05, 0.1$ are given in \ref{fig:pop3d0.05_0.1}.
+Our weighted populations with $\sigma_\epsilon=0.05, 0.1$ and $\sigma_\epsilon=0.15, 0.2$ are given in Fig. \ref{fig:pop3d0.05_0.1} and Fig. \ref{fig:pop3d0.15_0.2} respectively. 
+ 
+
+\begin{table*}[]
+    \centering
+    \begin{tabular}{|ccccccc|}
+        \hline
+        $\sigma_\epsilon$ & $m^1_{min} [M_\odot] $ & $m^1_{max} [M_\odot]$ & $m^2_{min} [M_\odot]$ & $m^2_{max} [M_\odot]$ & $\epsilon_{min}$ & $\epsilon_{max}$\\ \hline
+        0.05 & 16.81 & 49.81 & 10.8 & 46.82 & 0.01 & 0.05\\ \hline
+        0.1 & 19.03 & 49.93 & 10.1 & 48.64 & 0.05 & 0.1\\ \hline
+        0.15 & 10.04 & 49.9 & 10.01 & 49.2 & 0.1 & 0.15\\ \hline
+        0.2 & 19.6 & 49.97 & 10.73 & 48.39 & 0.15 & 0.2\\ \hline
+    \end{tabular}
+    \caption{Weighted Population Properties}
+    \label{tab:pop_prop}
+\end{table*}
 
 \begin{figure*}
 
@@ -339,7 +354,7 @@ Our first and second weighted populations with $\sigma_\epsilon=0.05, 0.1$ are g
 
 \includegraphics[width=0.45\textwidth]{paper/figures/pop3d0.15.png}
 \includegraphics[width=0.45\textwidth]{paper/figures/pop3d0.2.png}
-\caption{\label{fig:pop3d0.15_0.2} Synthetic Population of EBBHs. The left figure represents the population for $\sigma_\epsilon=0.15$ and right figure represetns the population for $\sigma_\epsilon=0.2$}
+\caption{\label{fig:pop3d0.15_0.2} Synthetic Population of EBBHs. The left figure represents the population for $\sigma_\epsilon=0.15$ and right figure represents the population for $\sigma_\epsilon=0.2$}
 
 \end{figure*}
 
@@ -353,8 +368,21 @@ M^{ecc} = \frac{M}{(1-\frac{157}{24}\epsilon^2)^{3/5}}
 
 
 
-The first population is given in 
-given in Fig. \ref{fig:pop3d05}.  
+
+\begin{table*}[]
+    \centering
+    \begin{tabular}{|ccccccc|}
+        \hline
+        $\sigma_\epsilon$ & $m^1_{min} [M_\odot] $ & $m^1_{max} [M_\odot]$ & $m^2_{min} [M_\odot]$ & $m^2_{max} [M_\odot]$ & $\epsilon_{min}$ & $\epsilon_{max}$\\ \hline
+        0.05 & 16.68 & 49.64 & 10.77 & 46.75 & 0.01 & 0.05\\ \hline
+        0.1 & 18.95 & 49.51 & 9.89 & 48.33 & 0.05 & 0.1\\ \hline
+        0.15 & 9.13 & 49.55 & 9.1 & 49.11 & 0.1 & 0.15\\ \hline
+        0.2 & 18.2 & 49.79 & 10.3 & 47.08 & 0.15 & 0.2\\ \hline
+    \end{tabular}
+    \caption{Scaled Population Properties}
+    \label{tab:popscl_prop}
+\end{table*}
+ 
 
 \begin{figure*}
 
@@ -389,18 +417,12 @@ The significant effect after the scaling is not only the mass shift, but one may
 
 
 
-The second population is given in Fig. \ref{fig:pop3d038}.  
 
 
 
-We have the total $100$ events with a minimum and maximum primary mass of $15.12 M_\odot$ and $49.98 M_\odot$, respectively. Similarly, we have the secondary minimum and maximum masses $10.12 M_\odot$ and $46.01 M_\odot$ given in Fig \ref{fig:pop2d038}.
 
 
-The second population is given in Fig. \ref{fig:pop3d038}.  
-
-
-
-Similarly, to get the non-eccentric population, we apply the Eq. \ref{eq:scaling} on the population given in Fig. \ref{fig:pop2d038} and get the new population with scaled masses. We get the new minimum and maximum values for the primary and secondary masses in Fig. \ref{fig:pop2d038scl}. 
+ 
    
 
                             
