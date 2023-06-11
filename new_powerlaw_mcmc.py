@@ -80,7 +80,7 @@ def expval_mc(
     )
 
     if return_err:
-        return rate*I*124, err_abs, err_rel
+        return rate*I, err_abs, err_rel
     else:
         return rate*I*124
 

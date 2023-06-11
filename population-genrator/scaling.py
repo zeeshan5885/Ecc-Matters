@@ -2,7 +2,7 @@ import numpy as np
 import os
 
 # Directory containing the input files
-input_dir = './weighted_events/'
+input_dir = './rPE_events/'
 
 # Directory to save the output files
 output_dir = './scaled_events/'
@@ -16,10 +16,11 @@ for i in range(1, 101):
     data = np.loadtxt(file_path)
 
     # Extract the columns
-    col1 = data[:, 0]
-    col2 = data[:, 1]
-    col3 = data[:, 2]
+    col1 = data[:,0]
+    col2 = data[:,1]
+    col3 = data[:,2] # need to discuss that should I scale with same ecc or with error
     scale_factor = ((1-(157/24)*col3**2)**(3/5))
+    print(col3)
     # Scaling equation: scaled_value = column_value * scale_factor
     scaled_col1 = col1 * scale_factor
     scaled_col2 = col2 * scale_factor
@@ -73,9 +74,9 @@ print(f"Total files with NaN or zero values: {count}")
 data01 = np.loadtxt('weighted_population.dat')
 
 # Extract the columns
-col01 = data01[:, 0]
-col02 = data01[:, 1]
-col03 = data01[:, 2]
+col01 = data01[:,0]
+col02 = data01[:,1]
+col03 = data01[:,2]
 scale_factor01 = ((1-(157/24)*col03**2)**(3/5))
 
 
