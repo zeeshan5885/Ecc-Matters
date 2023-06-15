@@ -108,7 +108,7 @@ def log_prior_pop(
         alpha_min=None, alpha_max=None,
         m_min_min=None, m_min_max=None,
         m_max_min=None, m_max_max=None,
-        sigma_ecc_min=0, sigma_ecc_max=1,
+        sigma_ecc_min=0, sigma_ecc_max=0.4,
         sigma_ecc_scale = "uniform",
         log_rate_scale="uniform", alpha_scale="uniform",
         m_min_scale="uniform", m_max_scale="uniform",
