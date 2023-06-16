@@ -2,6 +2,7 @@ import numpy as np
 import os
 from scipy.stats import truncnorm
 import matplotlib.pyplot as plt
+import RIFT.lalsimutils as lalsimutils
 
 # Directory paths
 input_directory = "./weighted_events"  # Replace with the path to the input directory
@@ -30,25 +31,33 @@ for input_file in input_files:
     #print("Mc_True: ", Mc_true, "eta_true: ", eta_true)
 
     # Adding Errors in True M chirp and Eta according to paper
+    row = 9 /np.power(np.random.uniform(), 1./3.) #SNR
     
-    alpha = 0.1  # Percentage error, we are adding 10%
+    v_PN_param = (np.pi* Mc_true*20*lalsimutils.MsunInSec)**(1./3.)  # 'v' parameter
+    v_PN_param_max = 0.2
+    v_PN_param = np.min([v_PN_param,v_PN_param_max])
+    snr_fac = row/15
+    ln_mc_error_pseudo_fisher = 1.5*0.3*(v_PN_param/v_PN_param_max)**(7.)/snr_fac  # this ignores range due to redshift / distance, based on a low-order esti
+
+#    print(ln_mc_error_pseudo_fisher, v_PN_param,Mc_true)
+    alpha = np.min([0.07/snr_fac, ln_mc_error_pseudo_fisher])  # Percentage error, we are adding 10%.  Note already accounts for SNR effects
+#    print(alpha)
     # Shifting the mean using standard normal distribution
     ro = np.random.normal(0, 1)
     rop = np.random.normal(0, 1)
     #print("ro: ", ro, "rop: ", rop)
 
-    size = 4000
+    size = 20000
     std_dev = 1
     #print("std_dev: ", std_dev)
     
     # Changing the width across the shifted mean
-    r = np.random.normal(ro, std_dev, size)
-    rp = np.random.normal(rop,std_dev, size)
-    row = 9 #SNR
+    r = np.random.normal(0, std_dev, size)
+    rp = np.random.normal(0,std_dev, size)
     
     # Defining the relation
-    Mc = Mc_true * (1 + alpha * (12 / row) * (ro + r))
-    eta = eta_true * (1 + 0.03 * (12 / row) * (rop + rp))
+    Mc = Mc_true * (1 + alpha * (ro + r))
+    eta = eta_true * (1 + 0.03 * (8 / row) * (rop + rp))
 
     #print("Mc_array: ", Mc, "eta_array: ", eta)
 
@@ -69,6 +78,8 @@ for input_file in input_files:
     m2 = 0.5 * Mc * eta ** (-3. / 5.) * (1. - etaV_sqrt)
     ecc = truncnorm.rvs(0, 1, loc=d3, scale=0.05, size=size)
     output_data = np.column_stack((m1, m2, ecc))
+    print(input_file, np.sum(indx_ok))
+    output_data = output_data[indx_ok,:]
     col_names = ["m1_source", "m2_source", "ecc"]
     
     # Get the output file name by replacing the extension of the input file
