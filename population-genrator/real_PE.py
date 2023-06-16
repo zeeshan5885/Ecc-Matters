@@ -110,14 +110,3 @@ col_names_ms = ["m1_mean", "m2_mean", "ecc_mean","m1_std","m2_std","ecc_std"]
 output_file_path = "./mean_std.dat"
 np.savetxt(output_file_path, combined_data, delimiter="\t", fmt="%.6f",header="\t".join(col_names_ms))
 
-#print(combined_data[:,0])
-
-# Now plotting the final population
-lines={'linestyle': 'None'}
-plt.rc('lines', **lines)
-plt.xlabel("$m_1 [M_\odot$]")
-plt.ylabel("$m_2 [M_\odot$]")
-plt.plot(combined_data[:,0], combined_data[:,1], 'ob', markersize=6)
-plt.errorbar(combined_data[:,0], combined_data[:,1], yerr=None,xerr=None
-             ,fmt='b', ecolor='green')
-plt.savefig("mean_masses.png")

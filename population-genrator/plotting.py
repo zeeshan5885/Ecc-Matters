@@ -27,9 +27,10 @@ for i, file_path in enumerate(file_list):
 plt.title("Scatter Plot")
 plt.xlabel("$m_1 [M_\odot]$")
 plt.ylabel("$m_2 [M_\odot]$")
-plt.legend()  # Display legend
-#plt.savefig("scatter_plot.png")
+#plt.legend()  # Display legend
 plt.show()
+plt.savefig("scatter_plot.png")
+
 
 # Plotting the whole population with median and std of each event
 combined_data = np.loadtxt("mean_std.dat")
@@ -38,4 +39,6 @@ plt.rc('lines', **lines)
 plt.xlabel("$m_1 [M_\odot]$")
 plt.ylabel("$m_2 [M_\odot]$")
 plt.plot(combined_data[:,0], combined_data[:,1], 'ro', markersize=10)
-#plt.savefig("mean_masses.png")
+plt.show()
+plt.savefig("mean_masses.png")
+
