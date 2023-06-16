@@ -35,11 +35,11 @@ for input_file in input_files:
     # Shifting the mean using standard normal distribution
     ro = np.random.normal(0, 1)
     rop = np.random.normal(0, 1)
-    print("ro: ", ro, "rop: ", rop)
+    #print("ro: ", ro, "rop: ", rop)
 
     size = 4000
     std_dev = 1
-    print("std_dev: ", std_dev)
+    #print("std_dev: ", std_dev)
     
     # Changing the width across the shifted mean
     r = np.random.normal(ro, std_dev, size)
@@ -50,7 +50,7 @@ for input_file in input_files:
     Mc = Mc_true * (1 + alpha * (12 / row) * (ro + r))
     eta = eta_true * (1 + 0.03 * (12 / row) * (rop + rp))
 
-    print("Mc_array: ", Mc, "eta_array: ", eta)
+    #print("Mc_array: ", Mc, "eta_array: ", eta)
 
     # Compute component masses from Mc, eta. Returns m1 >= m2
     etaV = np.array(1 - 4 * eta, dtype=float)
@@ -110,14 +110,14 @@ col_names_ms = ["m1_mean", "m2_mean", "ecc_mean","m1_std","m2_std","ecc_std"]
 output_file_path = "./mean_std.dat"
 np.savetxt(output_file_path, combined_data, delimiter="\t", fmt="%.6f",header="\t".join(col_names_ms))
 
-print(combined_data[:,0])
+#print(combined_data[:,0])
 
 # Now plotting the final population
 lines={'linestyle': 'None'}
 plt.rc('lines', **lines)
-plt.xlabel("$m_1 M_\odot$")
-plt.ylabel("$m_2 M_\odot$")
-plt.plot(combined_data[:,0], combined_data[:,1], 'ro', markersize=6)
-plt.errorbar(combined_data[:,0], combined_data[:,1], yerr=combined_data[:,3],xerr=combined_data[:,4]
+plt.xlabel("$m_1 [M_\odot$]")
+plt.ylabel("$m_2 [M_\odot$]")
+plt.plot(combined_data[:,0], combined_data[:,1], 'ob', markersize=6)
+plt.errorbar(combined_data[:,0], combined_data[:,1], yerr=None,xerr=None
              ,fmt='b', ecolor='green')
 plt.savefig("mean_masses.png")

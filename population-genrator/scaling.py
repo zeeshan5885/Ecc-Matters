@@ -20,7 +20,7 @@ for i in range(1, 101):
     col2 = data[:,1]
     col3 = data[:,2] # need to discuss that should I scale with same ecc or with error
     scale_factor = ((1-(157/24)*col3**2)**(3/5))
-    print(col3)
+    #print(col3)
     # Scaling equation: scaled_value = column_value * scale_factor
     scaled_col1 = col1 * scale_factor
     scaled_col2 = col2 * scale_factor
