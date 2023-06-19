@@ -18,6 +18,8 @@ mkdir rPE_events;
 python real_PE.py;
 
 #script for scaling
-rm -r scaled_events; mkdir scaled_events ; python scaling.py
+rm -r scaled_events; mkdir scaled_events ; python scaling.py;
 
-#moving the events in the desired directory
+
+# making scatter plots
+python plotting.py

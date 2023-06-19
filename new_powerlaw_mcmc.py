@@ -347,7 +347,7 @@ def _get_args(raw_args):
     )
     parser.add_argument(
         "--m-min-max",
-        type=float, default=10.0,
+        type=float, default=20.0,
         help="Maximum m_min allowed.",
     )
 
@@ -366,12 +366,12 @@ def _get_args(raw_args):
     )
     parser.add_argument(
         "--m-max-min",
-        type=float, default=30.0,
+        type=float, default=20.0,
         help="Minimum m_max allowed.",
     )
     parser.add_argument(
         "--m-max-max",
-        type=float, default=100.0,
+        type=float, default=80.0,
         help="Maximum m_max allowed.",
     )
 

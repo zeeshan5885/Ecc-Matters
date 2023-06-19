@@ -24,9 +24,9 @@ for input_file in input_files:
     #print("d1: ", d1, "d2: ", d2, "d3: ", d3)
 
     # Compute the M_chirp from component masses
-    Mc_true = (d1 * d2) ** (3. / 5.) * (d1 + d2) ** (-1. / 5.)
+    Mc_true = (d1 * d2) ** (3./5.) / (d1 + d2) ** (1./5.)
     # Compute symmetric mass ratio (Eta) from component masses
-    eta_true = d1 * d2 / (d1 + d2) / (d1 + d2)
+    eta_true = (d1 * d2) / (d1 + d2)**2
 
     #print("Mc_True: ", Mc_true, "eta_true: ", eta_true)
 
