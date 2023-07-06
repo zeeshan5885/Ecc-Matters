@@ -124,46 +124,64 @@
 
 \affiliation{\RIT}
 \begin{abstract}
-Yet to work. 
+The astrophysical mergers produces gravitational waves which carries the plethora of information of their generator. We use those gravitational waves signals to make the inference of population properties. In this study, we made the inference of non-spinning, eccentric binary black holes. As the current GWs signals do not include the eccentricity in their parameters estimation, we made the four synthetic population with different eccentricity using power law model. We used the MCMC method to constrain the model and successfully recovered the eccentricity from the population.
 \end{abstract}
 \maketitle
 
 \section{Introduction}
-Big Picture
-\begin{itemize}
-    \item GWs are important
-    \item eccentricity is a signature that can be measured with GWs
-    \item it is a unique signature of strong events
-\end{itemize}
-Why Population, smaller picture
-\begin{itemize}
-    \item population inference of eccentricity is important.
-    \item Some events may have unabmoguis eccentricity (refs to PE, Richard will send them), but many will have only faint signatures or none at all.
-    \item critical for astrophysics to acces distribution of eccentricities and any subpopulation
-\end{itemize}
-Previous work
-\begin{itemize}
-    \item What other people have done with eccentricity, 
-    \item cite any previous work related to eccentricity with population.
-    \item mostly it's real events or high mass events
-    \item what sort of eccentricity we expect to appear
-\end{itemize}
-\begin{itemize}
-    \item Explain, what and how you are doing here.
-    \item assesses how well the eccentricity of the population  can be inferred using low mass BHS where eccentricity measurement should be much more precise.
-    \item for simplicity using a proof of concept population model to emphasize eccentric inference
-\end{itemize}
+Black holes are intriguing and compact objects in the universe \cite{Frolic_BH_Book_2011}. They get interesting and enlightening when they coalesce and emit gravitational waves (GWs) \cite{Indrajit_GW_intro_1999}. These waves carry insightful information about the BBH system, such as mass, spin, period, eccentricity, distance, location, formation, and evolution. In addition, gravitational waves may be the only way to detect those chaotic mergers in space because there was no physical evidence before LIGO's \cite{LIGO_2015} first detection of a BBH merger. Afterward, LIGO-VIRGO-KAGRA (LVK) \cite{LIGO_2015,VIRGO_2012,virgo-2015,kagra-2013} are detecting  gravitational waves from various compact binaries such as binary black holes (BBHs), binary neutron stars (BNS), and binary made of neutron stars and black holes. The sensitivity of detectors is increasing with time, leading to a higher detection in each observing run, and we will have hundreds of events in future runs \cite{detection_rate_2016,detection_rate_2015}.
 
-We discussed the various formation scenario of EBBHs in the previous section; each one has a distinct signature in the GW signals. Hence, it's trivial to observe the effect of each scenario or the mixed effect on the merging population. It leads us to make the population model, which considers each scenario and allows distinct merger rates for them.
+Among all the confirmed detection, most of them shows a nearly circular orbit in LVK frequency band. However, we have growing evidences that suggests BBHs such as GW15901 may exhibit unambiguous eccentricity or faint signatures \cite{Gamba_2022_GW190521_dynamical,yumeng-2023,Isobel-2022} which can give us better details about the formation scenario. In addition to have faint signature in LIGO frequnecy band, we may have the higher eccentric mergers at the lower frequency searches \cite{sesana-2016,chen-2017}.
+There are various scenarios which may develop eccentricity in BBHs orbits, such as stellar scattering, dynamic interactions in dense environments, or a third object in a binary. The existence of eccentricity makes things difficult to comprehend and challenges the current understanding of the formation, environment, and evolution of such compact objects. We also have the reasonable disagreement on the masses, spin, event rate and formation scenarios \cite{LSC-BBH-2016,LSC-GW150914-2016} which leads to new models \cite{Mandel-2016,marchant-2016}. The increment of discovery rate of GWs is constantly challenging the theoretical models and pushing the researcher to develop more sophisticated models. 
 
-Most of the eccentric binary black holes (EBBHs) are driven by low masses $(10M_\odot-30M_\odot)$ and if any component of the binary has mass less than $30 M_\odot$ then only $10\%$ of them are able to maintain eccentricity near the last stable orbit.  \cite{mass_ecc_limit_2018}. Therefore,  in this study, we  will consider binaries with non-spinning $(\chi_i = 0)$, eccentric $(0-0.5)$ and moderate mass range $(10M_\odot-50M_\odot)$. In addition, we will use mass ratio $q=m_1/m_2$ with condition $m_1>m_2$ and total mass $M=m_1+m_2=100M_\odot$.
+Therefore, identifying and understanding the populations of EBBHs with growing number of detection of compact binaries will give us more insightful information about formation and evolution of massive stars from birth to death over cosmic time. 
+
+
+Eccentricity is the sharply decreasing function of GWs frequency. \cite{peters-1964}.
+
+The GWs produced by the dynamical formed BBHs can carry the non-negligible eccentricity within the LIGO frequency band \cite{samsing-2018, Rodriguez-2018,Antonini-2014}. 
+
+Currently, LVK is using the ciruclar wave form. However, studies shows that we need to consider the multiple formation channels to get the better understaing because, each channel does not contribute more than 70\% of the observation sample of binary black holes \cite{zevin-2021}.
+
+
+Till now, no modelled search for eccentric signals due to lack of inspiral-merger-ringdown waveform models with eccentricity.
+
+Unmodelled searches mostly efficient for higher mass system whereas effect of eccentricity will be more in the low mass systems.
+
+Despite this, little is known about the formation channels of these mergers. It is difficult to characterize the formation channel of a given merger from the parameters that are usually measured, mass and spin. Unfortunately, many different formation scenarios can produce these combinations. One possible way of determining how a binary may have formed is to better constrain the dynamics of the merger, in addition to these parameters.
+
+Specifically, orbital eccentricity may help distinguish different populations of compact binaries. Slow-forming, low-energy binaries tend to start with low eccentricities, and gravitational wave radiation further circularizes their orbits \cite{Peters-1964}. However, binaries formed in more violent, energetic environments, such as globular clusters, can have large eccentricities. These binaries are expected to retain measurable eccentricities after entering the LIGO sensitivity band, potentially making orbital eccentricity an important parameter in determining formation channel \cite{Rod-2018,zevin-samsing-2019}.
+
+
+
+Recent works investigates how measurements of black hole mass and spin distributions can elucidate the population properties of binary black holes \cite{Dan_2019,Michael-2015,Mandel_2017_Errors,samsing-hamers-2019,belczynski-2016,Colm-2017,Akinobu-2017,Michael-zevin-2017,farr-2017-nature,Richard-2017-natal-kicks,Dan-Richard-2018}. we also have the research to constrain the population models with eccentricity \cite{lower-2018-ecc-pop}. It has also been suggested that the future
+Laser Interferometer Space Antenna (LISA) will be able to
+observe nearby stellar-mass BBH during the early inspiral
+phase. These observations would allow for long-term
+tracking of BBH orbital properties which can be used to
+infer the formation mechanism \cite{Breivik-2016}.
+
+
+
+In Sec. \ref{sec:methods} we described the Bayesian statistical methods which we used to make the population inference, and brief method of volume-time estimation. We also explained the previously constructed\cite{fishbach-2017,2018talbot_bbh_model} power law model with modification for eccentricity by using truncated normal distribution. we used this model to generate synthetic population and it's inference. The Sec. \ref{sec:syn_pop} describes that how we have created synthetic population using power law model and then adding error into each event to make population closer to real population detectable by LVK. Secodnly, we explained about the scaling by removing the eccentricity from the synthetic events to make the comparison between EBBHs and NEBBHs population. 
+
+%In addition to electromagnetic waves spectrum, the gravitational waves also provides the completely new domain to study the formation and environment of such compact object. 
+
+
+
+
+
+%Eccentricity is the unique signature of strong events and can be measured with GWs.
+
+
+%Most of the eccentric binary black holes (EBBHs) are driven by low masses $(10M_\odot-30M_\odot)$ and if any component of the binary has mass less than $30 M_\odot$ then only $10\%$ of them are able to maintain eccentricity near the last stable orbit.  \cite{mass_ecc_limit_2018}. Therefore,  in this study, we  will consider binaries with non-spinning $(\chi_i = 0)$, eccentric $(0-0.5)$ and moderate mass range $(10M_\odot-50M_\odot)$. In addition, we will use mass ratio $q=m_1/m_2$ with condition $m_1>m_2$ and total mass $M=m_1+m_2=100M_\odot$.
 
 
 
 \section{Methods}
 \label{sec:methods}
 
-The coalescing BBH can be completely described by three intrinsic and seven extrinsic parameters. The intrinsic parameters such as mass of binary component ($m_i$), spin $( \chi_i)$, and eccentricity $\epsilon$  are subject to the orbital evolution of the binary. The extrinsic parameters are orientation (orbital phase, polarization, and inclination), sky location (right ascension and declination), luminosity distance, and coalescence time depend on the observer.
+The coalescing BBH can be completely described by three intrinsic and seven extrinsic parameters. The intrinsic parameters, such as the mass of the binary component ($m_i$), spin $( \chi_i)$, and eccentricity $\epsilon$  are subject to the orbital evolution of the binary. The extrinsic parameters are orientation (orbital phase, polarization, and inclination), sky location (right ascension and declination), luminosity distance, and coalescence time depend on the observer.
 
 
 
@@ -214,7 +232,7 @@ We will use the likelihood given in Eq. \ref{eq:likelihood_pop} in the Bayes the
 \label{eq:Bayes}    
 p(\Lambda|d_1,d_2,...,d_N)= \frac{p(\Lambda)p(d_1,d_2,...,d_N|\Lambda)}{p(d_1,d_2,...,d_N)},
 \end{equation}
-
+%
 where $p(\Lambda|d_1,d_2,d_3,...,d_N)$ is posterior, $p(\Lambda)$ is prior, $p(d_1,d_2,d_3,...,d_N)$ is normalization constant or also known as evidence.
 
 To conduct our analysis for mass and eccentricity distribution, we will use the inhomogeneous Poisson process scaled by rate $\mathcal{R} = \frac{dN}{dtdV_c}$ and parameterize by $\Lambda$ to find the likelihood  $\mathcal{L}(\mathcal{R},\Lambda)\equiv p(D|\mathcal{R},\Lambda)$ of an astrophysical population given the merger rate and parameter $\Lambda$. 
@@ -223,18 +241,18 @@ To conduct our analysis for mass and eccentricity distribution, we will use the 
 \label{eq: likelihood}
 \mathcal{L}(\mathcal{R},\Lambda) \propto e^{-\mu(\mathcal{R},\Lambda)}\prod_{n=1}^N\int d\lambda \ell_n(\lambda) \mathcal{R} p(\lambda|\Lambda),
 \end{equation}
-
+%
 where $\mu(\mathcal{R},\Lambda)$ is the expected number of detection under the given population parametrization $\Lambda$ with the overall rate $\mathcal{R}$. $\ell_n(\lambda)=p(d_n|\lambda)$ is the likelihood of the data $d_n$ given binary parameter.
 Finally, we will get our posterior as $p(\mathcal{R},\Lambda | D)\propto p(\mathcal{R},\Lambda)  \mathcal{L}(\mathcal{R},\Lambda)$ by choosing a prior $p(\mathcal{R},\Lambda)$.
 
 These calculations are analytically intractable and must be performed numerically. Specifically, we will use Goodman and Weare's affine invariant Markov chain Monte Carlo (MCMC) \cite{mcmc_paper} to find the posterior distribution of population parameters. This method draws samples from the targeted distribution for $\Lambda$, in our case, it's the power law model given in Eq. \ref{eq:plawg}, then compares it with the given data (collection of individual events) and stores the best-fit sample. We may iterate this as we need and store multiple sample values untill they converge. 
-This method is in a Python package called EMCEE \cite{emcee_paper}.
+The specific implementation we use is a Python package called EMCEE \cite{emcee_paper}.
 
 
 \subsection{Volume Time (VT) Estimation}
 
-To make our study realistic, including the sensitivity of the LVK instruments is significant. This sensitivity is defined by VT estimation. $V$ is the characteristic volume with units $Gpc^{-3}yr^{-1}$, which refers to the possible detection region in the sky for the LVK \cite{Volume_1993}, and $T$ is the time duration of making observations at this sensitivity.
-Existing LVK instruments' sensitivity depends only on the mass; therefore, we will get the same VT calculated previously \cite{Dan_2019} for non-spinning, non-eccentric, and no-precessing binaries. Hence, we briefly explain the calculations, see \cite{Dan_2019} for details.
+To make our study realistic, we include the sensitivity of the LVK instruments. This sensitivity is defined by time-volume to which a census of gravitational wave events is sensitive: inferring the product $VT$.  In this expression, $V$ is the characteristic volume with units $Gpc^{3}$, which refers to the possible detection region in the sky for the LVK \cite{Volume_1993}, and $T$ is the time duration of making observations at this sensitivity.  In practice, $VT$ reflects a suitable time-averaged or cumulative sensitivity, as the true network and sensitivity varies over time.
+Existing LVK instruments' sensitivity depends primarily on the mass and to a lesser extent on binary spin and (if present) modest eccentricity.  Since we neglect spin in this work, we assume the network will have the same  VT versus mass as was previously estimated  \cite{Dan_2019} for non-spinning, non-eccentric, and no-precessing binaries. Hence, we briefly explain the calculations, see \cite{Dan_2019} for details.
 
 The Eq. \ref{eq:volume} calculates the orientation averaged sensitive volume \cite{Abbott_2016,richard2010volume}
 
@@ -261,9 +279,9 @@ We also assume that non-zero probability density only exists for $m_{min}\leq m_
 p(m_1,m_2,\epsilon) = &C(\alpha,k_m,m_{min},m_{max},M_{max},\epsilon)  
 \nonumber \\ & \sqrt{\frac{2}{\pi}} \frac{(m_2/m_1)^{k_m} m_1^{-\alpha} e^{-(\epsilon/\sqrt{2}\sigma_\epsilon)^2}}{(m_1-m_{min})\sigma_\epsilon},
 \end{align}
-
+%
 where $\alpha$ is the power law index, $\mathcal{R}$ is the merger rate, $m_{min}, m_{max}$ are the minimum and maximum masses of the binary components in the population, and $\sigma_e$ is the orbital eccentricity distribution. The Eq. \ref{eq:plawg} represent a truncated power law for primary mass $m_1$ with index $-\alpha$ and conditional power law distribution $p(m_2|m_1)$ for secondary mass $m_2$ using simple power law, and Gaussian distribution for orbital eccentricity $e$. 
-For our analysis, we defined a constant of integration equal to $\int_V dm_1 dm_2 d\epsilon p(m_1,m_2,\epsilon) = 1$.  Our detectors are sensitive to high-mass BBHs, particularly $M_{max}\geq 200 M_\odot$, therefore, we will use $k_m=0$ throughout the studies. As a result, we have our reduced form of the truncated power law in Eq. \ref{eq:plaw}
+For our analysis, we defined a constant of integration equal to $\int_V dm_1 dm_2 d\epsilon p(m_1,m_2,\epsilon) = 1$.  Our detectors are sensitive to high-mass BBHs, particularly $M_{max}\geq 200 M_\odot$. Therefore, we will use $k_m=0$ throughout the studies. As a result, we have our reduced form of the truncated power law in Eq. \ref{eq:plaw}
 
 \begin{align}
 \label{eq:plaw}
@@ -271,12 +289,12 @@ p(m_1,m_2,\epsilon) = \sqrt{\frac{2}{\pi}} \frac{ m_1^{-\alpha}  e^{-(\epsilon/\
 \end{align}
 
 \section{Synthetic Population}
-
-We have created four synthetic populations by choosing the power law parameters $\alpha = -1$, $m_{min} = 10$, $m_{max}=50$. Each population has the same values for $\alpha$, $m_{min}$, and $m_{max}$ except $\sigma_\epsilon$. We selected four values for $\sigma_\epsilon = 0.05, 0.1, 0.15, 0.2$, and  generated synthetic population containing $N=10000$ sources.
+\label{sec:syn_pop}
+We have created four synthetic populations by choosing the power law parameters $\alpha = -1$, $m_{min} = 10$, $m_{max}=50$. Each population has the same values for $\alpha$, $m_{min}$, and $m_{max}$ except $\sigma_\epsilon$. We selected four values for $\sigma_\epsilon = 0.05, 0.1, 0.15, 0.2$, and  generated synthetic population containing $10000$ sources.
 
 \subsection{Synthetic population with eccentricity}
 
-After generating four populations, we find the probability for each event to be detected by computing the VT of each source. Finally, we did the weighting based on these VTs and randomly picked $N=100$ sources from each population to perform our analysis. Our weighted populations with $\sigma_\epsilon=0.05$ and $\sigma_\epsilon=0.2$ are given in Fig. \ref{fig:pop3d0.05_0.2}.  The complete description of each EBBHs population is given in Table \ref{tab:pop_prop}.
+After generating four populations, we find the probability for each event to be detected by computing the VT of each source. Finally, we did the weighting based on these VTs and randomly picked $N=100$ sources from each population to perform our analysis. Our weighted populations with $\sigma_\epsilon=0.05$ and $\sigma_\epsilon=0.2$ are shown in Fig. \ref{fig:pop3d0.05_0.2}.  The complete description of each EBBHs population is provided in Table \ref{tab:pop_prop}.
 
 \begin{figure*}[]
 \includegraphics[width=0.45\textwidth]{paper/figures/pop3d_0.05.png}
@@ -298,7 +316,8 @@ After generating four populations, we find the probability for each event to be 
     \caption{Population Properties of EBBHs}
     \label{tab:pop_prop}
 \end{table*}
-To make our study more realistic, we must add the measurement error in each source. The chirp mass and symmetric mass ratio are well-constrained compared to the primary and secondary masses of BBHs. Therefore, we compute the chirp mass and symmetric mass ratio of each event in the population by using the following relations.
+
+To make our study more realistic, we must add the measurement error in each source.  Rather than generate synthetic gravitational wave sources and perform full Bayesian inference, following previous work \cite{Mandel_2017_Errors} we generate mock measurement errors motivated by real parameter inference investigations. The chirp mass and symmetric mass ratio are well-constrained compared to the primary and secondary masses of BBHs. Therefore, we compute them for each event in a population by using the following relations.
 
 \begin{equation}
     M_c^T = \frac{(m_1 m_2)^{3/5}}{(m_1+m_2)^{1/5}},
@@ -307,8 +326,10 @@ To make our study more realistic, we must add the measurement error in each sour
 \begin{equation}
     \eta^T = \frac{(m_1 m_2)}{(m_1+m_2)^2},
 \end{equation}
+%
 where $M_c^T$ and $\eta^T$ are found using the primary and secondary masses of each event generated by the power law model.
 Furthermore, using the following relations, We add the measurement errors in the $M_c^T$ and $\eta^T$.
+
 \begin{equation}
     M_c = M_c^T\left( 1+\alpha (r_0+r ) \frac{12}{\rho}\right),
 \end{equation}
@@ -327,7 +348,11 @@ Finally, after adding the measurement errors in the $M_c$ and $\eta$, we will co
 \begin{equation}
     m_2 = \frac{1}{2} M_c \eta^{-3/5} (1-\sqrt{\eta_v}), 
 \end{equation}
-where $\eta_v = 1-4\eta$, we kept the samples with non-negative values and ignored the negative samples to avoid the square root issues. We also added the absolute error in the eccentricity by using the truncated normal distribution scaling at $0.05$ to keep the eccentricity positive.
+where $\eta_v = 1-4\eta$, we kept the samples with non-negative values and ignored the negative samples to avoid the square root issues. 
+
+We also added the absolute error in the eccentricity by using the truncated normal distribution scaling at $0.05$ to keep the eccentricity positive.
+\textbf{this is important - refer to other papers.  THIS IS REASONABLE FOR LOW MASS BUT VERY OPTIMISTIC FOR HIGH MASS}
+STRETCH GOAL: what if you ran again, but with large error?
 
 
 
@@ -338,28 +363,31 @@ where $\eta_v = 1-4\eta$, we kept the samples with non-negative values and ignor
 
 \subsection{Synthetic population without eccentricity}
 
-To compare the synthetic EBBHs population with the non-eccentric BBHs (NEBBHS), we created four more populations by scaling the existing populations using the Eq. \ref{eq:scaling} defined in \cite{2021_scaling_paper}. The Eq. \ref{eq:scaling} removes the eccentric component from the population, scales the masses, and eventually, we get non-eccentric populations to compare with the existing eccentric population.
+To compare the synthetic EBBHs population with the non-eccentric BBHs (NEBBHS), we estimate how our sources would be characterized by parameter inferences which omitted the effects of eccentricity.  Following \cite{2021_scaling_paper}, the following effective chirp mass is well-constrained by observations dominated by the inspiral of a slightly eccentric binary:
 \begin{align}
 \label{eq:scaling}
 M^{ecc} = \frac{M}{(1-\frac{157}{24}\epsilon^2)^{3/5}}
 \end{align}
+%
+Our ansatz for source identification and characterization is that the best-fitting parameters and posteriors are directly related to the true posteriors, except that the recovered chirp mass is given by  Eq. \ref{eq:scaling}.  This process removes the eccentric component from the population only by scaling the masses and omitting the eccentricity. 
 
 
 
 
-\begin{table*}[]
-    \centering
-    \begin{tabular}{c|cccc}
-        \hline \hline
-        Populations & $m_{1_{min}} [M_\odot] $ & $m_{1_{max}} [M_\odot]$ & $m_{2_{min}} [M_\odot]$ & $m_{_2{max}} [M_\odot]$ \\ \hline
-        First & 12.09 & 49.6 & 10.17 & 46.27 \\ \hline
-        Second & 15.26 & 49.77 & 10.3 & 47.56 \\ \hline
-        Third & 15.96 & 49.5 & 10.62 & 46.60  \\ \hline
-        Forth & 11.86 & 49.76 & 9.67 & 46.99  \\ \hline
-    \end{tabular}
-    \caption{Population Properties of NEBBHs}
+
+%\begin{table*}[]
+%    \centering
+%    \begin{tabular}{c|cccc}
+%        \hline \hline
+%        Populations & $m_{1_{min}} [M_\odot] $ & $m_{1_{max}} [M_\odot]$ & $m_{2_{min}} [M_\odot]$ & $m_{_2{max}} [M_\odot]$ \\ \hline
+%        First & 12.09 & 49.6 & 10.17 & 46.27 \\ \hline
+%        Second & 15.26 & 49.77 & 10.3 & 47.56 \\ \hline
+%        Third & 15.96 & 49.5 & 10.62 & 46.60  \\ \hline
+%        Forth & 11.86 & 49.76 & 9.67 & 46.99  \\ \hline
+%    \end{tabular}
+%    \caption{Population Properties of NEBBHs}
     \label{tab:popscl_prop}
-\end{table*}
+%\end{table*}
  
 
 \begin{figure*}
@@ -373,7 +401,7 @@ M^{ecc} = \frac{M}{(1-\frac{157}{24}\epsilon^2)^{3/5}}
 
 
 
-To get the non-eccentric population, we apply the Eq. \ref{eq:scaling} on the population given in the table. \ref{tab:pop_prop}. After applying the scaling equation, we get the new populations with scaled masses, giving us the new minimum and maximum values for the primary and secondary masses given in table \ref{tab:popscl_prop}.
+%To get the non-eccentric population, we apply the Eq. \ref{eq:scaling} on the population given in the table. \ref{tab:pop_prop}. After applying the scaling equation, we get the new populations with scaled masses, giving us the new minimum and maximum values for the primary and secondary masses given in table \ref{tab:popscl_prop}.
    
 
 
@@ -383,6 +411,7 @@ The significant effect after scaling is the mass shift, which can be observed in
                             
 
 \section{Population Inference}
+\label{sec:pop_inference}
 %\renewcommand{\arraystretch}{2}
 \begin{table*}[]
     \centering
@@ -412,7 +441,30 @@ The significant effect after scaling is the mass shift, which can be observed in
     \caption{Population Inference for NEBBHs}
     \label{tab:inference_NEBBHS}
 \end{table*}
+
+
+Figure A shows the results of population inference under the most conservative case with $\sigma_\epsilon=0.05$.  In this figure, the ZZ color shows the results of QQ.
+%
+Most notably, this figure shows that even in the limit of extremely small ecctricity, the impact of eccentricity can be measured from a large population of observations, comparable to the current size.  This result depends of course on our assumption that all binaries are equally likely to have eccentricity, and that our measurement uncertainty in eccentricity is both indpeendent of mass and fairly small, both optimisitic assumptions.  In fact, the overall uncertainty in $\sigma_\epsilon$ is expected: given 100 events, each with a measurement error of $0.05$, we expect $\sigma_\epsilon$ to be measured to of order $0.05/\sqrt{N}$ (handwavy -- really a chisquared distribution,etc).
+SUSPECT THAT IF YOU MAKE THIS JUST 3X bigger, STILL GET RESULT -- you will almost always get this result
+
+Also noteworthy is the impact of neglecting eccentricity.  If eccentricity is neglected, then the population inference is biased away from true values: the black contours in the first column do not include the true values for $m_{max}, m_{min}$ example.
+
+
+
+Figure B shows the results of population inference under the most optimistic case with $\sigma_\epsilon=0.2$.  In this figure, the ZZ color shows the results of QQ.
+
+
 we can discuss the corner plots here.
+
+TAKEAWAYS
+
+* Eccentricity can be measured
+
+* If not measured, biases
+
+
+
 
 \begin{figure*}
 
@@ -562,13 +614,23 @@ Need to write it later.
 
 
 
-
-
-
-
 \section{Conclusions}
 \label{sec:conclude}
 In Progress, 
+
+
+
+
+* summarize your calculations
+
+* summarize key takeaways
+
+** we WILL find this, measuremeent error can't be too large/infinite!
+
+* contrast /compare with other papers 
+
+* some comments on what it all means for the big picture (dynamical evolution tests for example could be done)
+
 
 
 
