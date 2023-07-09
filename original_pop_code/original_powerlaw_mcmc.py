@@ -544,7 +544,16 @@ def _main(raw_args=None):
             dtype=numpy.float64,
             verbose=cli_args.verbose,
         )
-
+         fig, axes = plt.subplots(5, figsize=(10, 7), sharex=True)
+         samples = posterior_pos
+         labels = ["log_rate", "alpha", "m_min","m_max","sigma_ecc"]
+         for i in range(ndim):
+            ax = axes[i]
+            ax.plot(samples[:, :, i].T,'-',color='k', alpha=0.3)
+            ax.set_xlim(0, len(samples))
+            ax.set_ylabel(labels[i])
+            plt.savefig("chain.png")
+         axes[-1].set_xlabel("step number");
 
 # Functions which pre-compute quantities that are used at multiple steps
 # in the MCMC, to reduce run time. These specifically compute the rate
