@@ -317,7 +317,7 @@ def _get_args(raw_args):
     )
     parser.add_argument(
         "--m-min-max",
-        type=float, default=10.0,
+        type=float, default=20.0,
         help="Maximum m_min allowed.",
     )
 
@@ -341,7 +341,7 @@ def _get_args(raw_args):
     )
     parser.add_argument(
         "--m-max-max",
-        type=float, default=100.0,
+        type=float, default=80.0,
         help="Maximum m_max allowed.",
     )
 
@@ -544,17 +544,28 @@ def _main(raw_args=None):
             dtype=numpy.float64,
             verbose=cli_args.verbose,
         )
-         fig, axes = plt.subplots(5, figsize=(10, 7), sharex=True)
+         #Making chain plots to check the convergence of the chains
+         import matplotlib.pyplot as plt
+         inj_rate,inj_alpha,inj_m_min,inj_m_max,inj_sigma_ecc = (2,-1,10,50,0.1)
+         fig, axes = plt.subplots(5, figsize=(12, 12), sharex=True)
          samples = posterior_pos
-         labels = ["log_rate", "alpha", "m_min","m_max","sigma_ecc"]
+         labels = ["$log_{10}(\mathcal{R})$",r"$\alpha$", "$m_{min}$","$m_{max}$","$\sigma_\epsilon$"]
          for i in range(ndim):
             ax = axes[i]
             ax.plot(samples[:, :, i].T,'-',color='k', alpha=0.3)
             ax.set_xlim(0, len(samples))
             ax.set_ylabel(labels[i])
+            axes[0].axhline(inj_rate,color='blue')
+            axes[1].axhline(inj_alpha,color='blue')
+            axes[2].axhline(inj_m_min,color='blue')
+            axes[3].axhline(inj_m_max,color='blue')
+            axes[4].axhline(inj_sigma_ecc,color='blue')
             plt.savefig("chain.png")
          axes[-1].set_xlabel("step number");
-
+         #plt.plot(posterior_pos[:,:,0].T, '-', color='k')
+         #plt.axhline(2,color='blue')
+         #plt.savefig('chain1.png')
+         
 # Functions which pre-compute quantities that are used at multiple steps
 # in the MCMC, to reduce run time. These specifically compute the rate
 # from the log10(rate), and the normalization factor for the mass

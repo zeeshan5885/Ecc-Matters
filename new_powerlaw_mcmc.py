@@ -108,7 +108,7 @@ def log_prior_pop(
         alpha_min=None, alpha_max=None,
         m_min_min=None, m_min_max=None,
         m_max_min=None, m_max_max=None,
-        sigma_ecc_min=0, sigma_ecc_max=0.4,
+        sigma_ecc_min=0, sigma_ecc_max=0.5,
         sigma_ecc_scale = "uniform",
         log_rate_scale="uniform", alpha_scale="uniform",
         m_min_scale="uniform", m_max_scale="uniform",
@@ -218,7 +218,7 @@ def init_uniform(
 
         columns.append(m_max)
 
-    sigma_ecc = rand_state.uniform(0,1, nwalkers)
+    sigma_ecc = rand_state.uniform(0,0.5, nwalkers)
     columns.append(sigma_ecc)
 
     return numpy.column_stack(tuple(columns))
@@ -366,7 +366,7 @@ def _get_args(raw_args):
     )
     parser.add_argument(
         "--m-max-min",
-        type=float, default=20.0,
+        type=float, default=30.0,
         help="Minimum m_max allowed.",
     )
     parser.add_argument(
@@ -493,7 +493,7 @@ def _main(raw_args=None):
         cli_args.m_min_min, cli_args.m_min_max,
         cli_args.m_max_min, cli_args.m_max_max,
         log_rate_scale=cli_args.log_rate_initial_cond,
-        sigma_ecc_min=0, sigma_ecc_max=1,
+        sigma_ecc_min=0, sigma_ecc_max=0.5,
         alpha_scale=cli_args.alpha_initial_cond,
         m_min_scale=cli_args.m_min_initial_cond,
         m_max_scale=cli_args.m_max_initial_cond,
@@ -579,20 +579,30 @@ def _main(raw_args=None):
             dtype=numpy.float64,
             verbose=cli_args.verbose,
         )
+         #Making chain plots to check the convergence of the chains
          import matplotlib.pyplot as plt
-         fig, axes = plt.subplots(5, figsize=(10, 7), sharex=True)
+         inj_rate,inj_alpha,inj_m_min,inj_m_max,inj_sigma_ecc = (2,-1,10,50,0.1)
+         fig, axes = plt.subplots(5, figsize=(12, 12), sharex=True)
          samples = posterior_pos
-         labels = ["log_rate", "alpha", "m_min","m_max","sigma_ecc"]
+         labels = ["$log_{10}(\mathcal{R})$",r"$\alpha$", "$m_{min}$","$m_{max}$","$\sigma_\epsilon$"]
          for i in range(ndim):
             ax = axes[i]
             ax.plot(samples[:, :, i].T,'-',color='k', alpha=0.3)
             ax.set_xlim(0, len(samples))
             ax.set_ylabel(labels[i])
+            axes[0].axhline(inj_rate,color='blue')
+            axes[1].axhline(inj_alpha,color='blue')
+            axes[2].axhline(inj_m_min,color='blue')
+            axes[3].axhline(inj_m_max,color='blue')
+            axes[4].axhline(inj_sigma_ecc,color='blue')
             plt.savefig("chain.png")
          axes[-1].set_xlabel("step number");
-
-        # plt.plot(posterior_pos[:,:,0].T, '-', color='k')
-        # plt.savefig('chain1.png')
+         #plt.plot(posterior_pos[:,:,0].T, '-', color='k')
+         #plt.axhline(2,color='blue')
+         #plt.savefig('chain1.png')
+      
+      
+      
       # irint(nsamples,n_walkers,ndim)
 # Functions which pre-compute quantities that are used at multiple steps
 # in the MCMC, to reduce run time. These specifically compute the rate
