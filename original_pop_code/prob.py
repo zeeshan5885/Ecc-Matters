@@ -194,8 +194,8 @@ def joint_pdf(
     tmp_TS = numpy.empty(TS, dtype=numpy.float64)
 
     # Initialize two shape ``T+S`` index arrays, to be reused.
-    tmp_TS_i1 = numpy.empty(TS, dtype=numpy.bool)
-    tmp_TS_i2 = numpy.empty(TS, dtype=numpy.bool)
+    tmp_TS_i1 = numpy.empty(TS, dtype=bool)
+    tmp_TS_i2 = numpy.empty(TS, dtype=bool)
 
     # Create array of booleans determining which combinations of masses and
     # parameters do not correspond to zero probability and also have
@@ -408,7 +408,7 @@ def pdf_const(alpha, m_min, m_max, M_max, out=None, where=True):
         result = out
 
     # Initialize temporary shape ``S`` array to hold booleans.
-    tmp_i = numpy.zeros(S, dtype=numpy.bool)
+    tmp_i = numpy.zeros(S, dtype=bool)
 
     # Determine where the special case ``beta == 0`` occurs, and evaluate the
     # normalization constant there.
@@ -444,7 +444,7 @@ def _pdf_const_special(
     S = m_min.shape
 
     # Initialize temporary shape ``S`` array to hold booleans.
-    tmp_i = numpy.zeros(S, dtype=numpy.bool)
+    tmp_i = numpy.zeros(S, dtype=bool)
 
     # Separately handle populations that are affected by the M_max cutoff and
     # those that are not.
@@ -568,7 +568,7 @@ def _pdf_const_nonspecial(
     # ``False``.
     tmp1 = numpy.zeros(S, dtype=numpy.float64)
     tmp2 = numpy.zeros(S, dtype=numpy.float64)
-    tmp_i = numpy.zeros(S, dtype=numpy.bool)
+    tmp_i = numpy.zeros(S, dtype=bool)
 
     # Compute the indices where ``beta`` is an integer.
     # Then, for each of those indices, compute the normalization constant using
@@ -625,7 +625,7 @@ def _pdf_const_nonspecial_nonintegral(
     # Initialize temporary shape ``S`` boolean array to all ``False``, as we
     # want to use ``where`` to only modify certain indices, and the ones left
     # un-modified need to be ``False``.
-    tmp_i = numpy.zeros(S, dtype=numpy.bool)
+    tmp_i = numpy.zeros(S, dtype=bool)
 
     # Determine which indices need to be computed with the ``M_max`` cutoff
     # in effect, and compute them.

@@ -213,7 +213,7 @@ def quantile(a, q, axis=None, weights=None, out=None,
         a = asanyarray(a)
         wgt = np.asanyarray(weights)
 
-        if issubclass(a.dtype.type, (np.integer, np.bool_)):
+        if issubclass(a.dtype.type, (np.integer, bool_)):
             result_dtype = np.result_type(a.dtype, wgt.dtype, 'f8')
         else:
             result_dtype = np.result_type(a.dtype, wgt.dtype)
