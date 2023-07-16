@@ -589,10 +589,24 @@ def _main(raw_args=None):
             ax.set_xlim(0, len(samples))
             ax.set_ylabel(labels[i])
             plt.savefig("chain.png")
+#            plt.figure()
          axes[-1].set_xlabel("step number");
 
-        # plt.plot(posterior_pos[:,:,0].T, '-', color='k')
-        # plt.savefig('chain1.png')
+         plt.figure()
+         plt.plot(posterior_pos[:,:,0], '-', color='k')
+         plt.savefig('rate.png')
+         plt.figure()
+         plt.plot(posterior_pos[:,:,1], '-', color='k')
+         plt.savefig('alpha.png')
+         plt.figure()
+         plt.plot(posterior_pos[:,:,2], '-', color='k')
+         plt.savefig('min.png')
+         plt.figure()
+         plt.plot(posterior_pos[:,:,3], '-', color='k')
+         plt.savefig('max.png')
+         plt.figure()
+         plt.plot(posterior_pos[:,:,4], '-', color='k')
+         plt.savefig('sigecc.png')
       # irint(nsamples,n_walkers,ndim)
 # Functions which pre-compute quantities that are used at multiple steps
 # in the MCMC, to reduce run time. These specifically compute the rate
