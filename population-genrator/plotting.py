@@ -34,14 +34,14 @@ plt.figure()
 
 
 # Plotting the whole population with median and std of each event
-combined_data = np.loadtxt("mean_std.dat")
-lines={'linestyle': 'None'}
-plt.rc('lines', **lines)
-plt.xlabel("$m_1 [M_\odot]$")
-plt.ylabel("$m_2 [M_\odot]$")
-plt.plot(combined_data[:,0], combined_data[:,1], 'ro', markersize=10)
-plt.savefig("mean_masses.png")
-plt.figure()
+#combined_data = np.loadtxt("mean_std.dat")
+#lines={'linestyle': 'None'}
+#plt.rc('lines', **lines)
+#plt.xlabel("$m_1 [M_\odot]$")
+#plt.ylabel("$m_2 [M_\odot]$")
+#plt.plot(combined_data[:,0], combined_data[:,1], 'ro', markersize=10)
+#plt.savefig("mean_masses.png")
+#plt.figure()
 
 # making population plots
 # Read the data from the text file
