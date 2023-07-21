@@ -317,7 +317,7 @@ def _get_args(raw_args):
     )
     parser.add_argument(
         "--m-min-max",
-        type=float, default=20.0,
+        type=float, default=15.0,
         help="Maximum m_min allowed.",
     )
 
@@ -341,7 +341,7 @@ def _get_args(raw_args):
     )
     parser.add_argument(
         "--m-max-max",
-        type=float, default=80.0,
+        type=float, default=100.0,
         help="Maximum m_max allowed.",
     )
 
@@ -544,20 +544,6 @@ def _main(raw_args=None):
             dtype=numpy.float64,
             verbose=cli_args.verbose,
         )
-         import matplotlib.pyplot as plt
-         fig, axes = plt.subplots(4, figsize=(12, 12), sharex=True)
-         samples = posterior_pos
-         labels = ["$log_{10}(\mathcal{R})$",r"$\alpha$", "$m_{min}$","$m_{max}$"]
-         for i in range(ndim):
-            ax = axes[i]
-            ax.plot(samples[:, :, i],'-', alpha=0.3)
-            ax.set_xlim(0, len(samples))
-            ax.set_ylabel(labels[i])
-            plt.savefig("chain.png")
-         axes[-1].set_xlabel("step number");
-
-        # plt.plot(posterior_pos[:,:,0].T, '-', color='k')
-        # plt.savefig('chain1.png')
 
 # Functions which pre-compute quantities that are used at multiple steps
 # in the MCMC, to reduce run time. These specifically compute the rate

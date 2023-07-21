@@ -579,35 +579,6 @@ def _main(raw_args=None):
             dtype=numpy.float64,
             verbose=cli_args.verbose,
         )
-         import matplotlib.pyplot as plt
-         fig, axes = plt.subplots(5, figsize=(12, 12), sharex=True)
-         samples = posterior_pos
-         labels = ["$log_{10}(\mathcal{R})$",r"$\alpha$", "$m_{min}$","$m_{max}$","$\sigma_\epsilon$"]
-         for i in range(ndim):
-            ax = axes[i]
-            ax.plot(samples[:, :, i],'-', alpha=0.3)
-            ax.set_xlim(0, len(samples))
-            ax.set_ylabel(labels[i])
-            plt.savefig("chain.png")
-#            plt.figure()
-         axes[-1].set_xlabel("step number");
-
-         plt.figure()
-         plt.plot(posterior_pos[:,:,0], '-', color='k')
-         plt.savefig('rate.png')
-         plt.figure()
-         plt.plot(posterior_pos[:,:,1], '-', color='k')
-         plt.savefig('alpha.png')
-         plt.figure()
-         plt.plot(posterior_pos[:,:,2], '-', color='k')
-         plt.savefig('min.png')
-         plt.figure()
-         plt.plot(posterior_pos[:,:,3], '-', color='k')
-         plt.savefig('max.png')
-         plt.figure()
-         plt.plot(posterior_pos[:,:,4], '-', color='k')
-         plt.savefig('sigecc.png')
-      # irint(nsamples,n_walkers,ndim)
 # Functions which pre-compute quantities that are used at multiple steps
 # in the MCMC, to reduce run time. These specifically compute the rate
 # from the log10(rate), and the normalization factor for the mass

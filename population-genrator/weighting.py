@@ -35,7 +35,7 @@ np.savetxt("weighted_population.dat", dat_mass,delimiter="\t", header="\t".join(
 output_dir = './weighted_events/'
 for i in range(dat_mass.shape[0]):
     row = dat_mass[i,:]
-    data = np.repeat([row], 4000, axis=0)
+    data = np.repeat([row], 20000, axis=0)
     output_file_path = os.path.join(output_dir, f'event_{i+1}.dat')
     np.savetxt(output_file_path, data, delimiter="\t",header="\t".join(col_names))
 

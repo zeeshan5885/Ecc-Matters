@@ -61,4 +61,8 @@ figure4 = corner.corner(data_new3,labels=labels
 corner.corner(data_new1,fig=figure4,labels=labels
                       ,show_titles=False,plot_datapoints=False,color='orange',volume=False,range=limits
               )
+legend_texts = ["NEBBHs", "EBBHS","True Value"]  
+legend_colors = ["black", "orange", "red"] 
+legend_handles = [plt.Line2D([],[], color=color, linewidth=2) for color in legend_colors]
+figure4.legend(legend_handles, legend_texts, loc='upper right')
 figure4.savefig("com_cor.png")
