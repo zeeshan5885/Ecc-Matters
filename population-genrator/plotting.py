@@ -43,7 +43,42 @@ plt.figure()
 #plt.savefig("mean_masses.png")
 #plt.figure()
 
-# making population plots
+# making the complete population plots
+# Read the data from the text file
+data = np.loadtxt("population.dat")
+# Extract the columns
+m1 = data[:, 0]
+m2 = data[:, 1]
+ecc = data[:, 2]
+
+# Create a 3D plot
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+
+# Plot the data points as dots with colors
+sc = ax.scatter(m1, m2, ecc, c=ecc, cmap='plasma', marker='o')
+
+# Set labels for the axes
+ax.set_xlabel('$m_1[M_\odot]$')
+ax.set_ylabel('$m_2[M_\odot]$')
+ax.set_zlabel('$\epsilon$')
+
+# Set a title for the plot
+#ax.set_title('Eccentric Synthetic Population')
+
+# Add interactivity with mplcursors
+cursors = mplcursors.cursor(sc, hover=True)
+cursors.connect("add", lambda sel: sel.annotation.set_text(f"({sel.target[0]:.2f}, {sel.target[1]:.2f}, {sel.target[2]:.2f})"))
+
+# Add a colorbar
+cbar = fig.colorbar(sc)
+cbar.set_label('$\epsilon$')
+plt.savefig('pop3dcom_0.05.png', bbox_inches='tight')
+# Display the plot
+plt.figure()
+
+
+# making the weighted population plots
 # Read the data from the text file
 data = np.loadtxt("weighted_population.dat")
 # Extract the columns

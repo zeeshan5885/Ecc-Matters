@@ -8,7 +8,7 @@ input_dir = './rPE_events/'
 output_dir = './scaled_events/'
 col_names = ["m1_source", "m2_source"]
 # Iterate over the text files
-for i in range(1, 101):
+for i in range(1, 10):
     # Generate the file path for the current iteration
     file_path = os.path.join(input_dir, f'event_{i}.dat')
 

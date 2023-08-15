@@ -3,17 +3,22 @@ import matplotlib.pyplot as plt
 import h5py
 import corner
 
-data1 = h5py.File('myout-ecc.hdf5','r')
-data2 = h5py.File('myout.hdf5','r')
+data1 = h5py.File('myout.hdf5','r')
+data2 = h5py.File('myout_org.hdf5','r')
 data_3D1 = np.array(data1['pos'])
 data_3D2 = np.array(data2['pos'])
 print(data_3D1.shape)
-data1_burn = data_3D1[1000:]
-data2_burn = data_3D2[1000:]
+org_steps = data_3D1.shape[0]
+#Burning the initial walkers, you can choose the burning steps by looking at chain plots
+data1_burn = data_3D1[300:]
+data2_burn = data_3D2[300:]
 print(data1_burn.shape)
-
-data_new1 = data1_burn.reshape((300000,5))
-data_new2 = data2_burn.reshape((300000,4))
+walker = data1_burn.shape[1] 
+steps = data1_burn.shape[0]
+points = walker * steps
+#reshaping the converging arrays after burning the initial runs
+data_new1 = data1_burn.reshape((points,5))
+data_new2 = data2_burn.reshape((points,4))
 #data_3D1_col_rm = data_new1[:,:4]
 #print(data_new1)
 #print(data_new2)
@@ -46,12 +51,12 @@ figure2.savefig("cor_org.png")
 
 
 # Create an empty column (filled with None values)
-new_column = np.empty((2500,200,1))
+new_column = np.empty((org_steps,walker,1))
 # Concatenate the new column with the 3D array along the last axis (axis=2)
 data_3D2_col_add = np.concatenate((data_3D2, new_column), axis=2)
-data3_burn = data_3D2_col_add[1000:]
-print(data3_burn.shape)
-data_new3 = data3_burn.reshape((300000,5))
+data3_burn = data_3D2_col_add[300:]
+#print(data3_burn.shape)
+data_new3 = data3_burn.reshape((points,5))
 #print(data_3D2_col_add)
 figure4 = corner.corner(data_new3,labels=labels
                       ,show_titles=False,plot_datapoints=False,color='black',

@@ -2,8 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import h5py
 
-data1 = h5py.File('myout-ecc.hdf5','r')
-data2 = h5py.File('myout.hdf5','r')
+data1 = h5py.File('myout.hdf5','r')
+data2 = h5py.File('myout_org.hdf5','r')
 data_3D1 = np.array(data1['pos'])
 data_3D2 = np.array(data2['pos'])
 fig, axes = plt.subplots(5, figsize=(12, 12), sharex=True)
