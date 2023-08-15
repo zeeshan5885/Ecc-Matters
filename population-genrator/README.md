@@ -1,5 +1,6 @@
 * This directory is created solely to generate the synthetic population using the eccentric power law model. 
 To generate the population, you just need to run the script as follows and it will generate a population with and without eccentricity after scaling. 
+
 ```
 ./run_complete.sh 
 ```
