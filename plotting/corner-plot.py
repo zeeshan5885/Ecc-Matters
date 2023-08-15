@@ -49,25 +49,25 @@ figure2 = corner.corner(data_new2,labels=labels0
                         truths=truth_values1,truth_color='red')
 figure2.savefig("cor_org.png")    
 
-
-# Create an empty column (filled with None values)
-new_column = np.empty((org_steps,walker,1))
-# Concatenate the new column with the 3D array along the last axis (axis=2)
-data_3D2_col_add = np.concatenate((data_3D2, new_column), axis=2)
-data3_burn = data_3D2_col_add[300:]
-#print(data3_burn.shape)
-data_new3 = data3_burn.reshape((points,5))
-#print(data_3D2_col_add)
-figure4 = corner.corner(data_new3,labels=labels
-                      ,show_titles=False,plot_datapoints=False,color='black',
-                        truths=truth_values,truth_color='red',smooth=True,volume=False)
-#figure4.savefig("cor_new.png")
-# Volume in fucntion should be false, then empty column does not create issue in corner plots.
-corner.corner(data_new1,fig=figure4,labels=labels
-                      ,show_titles=False,plot_datapoints=False,color='orange',volume=False,range=limits
-              )
-legend_texts = ["NEBBHs", "EBBHS","True Value"]  
-legend_colors = ["black", "orange", "red"] 
-legend_handles = [plt.Line2D([],[], color=color, linewidth=2) for color in legend_colors]
-figure4.legend(legend_handles, legend_texts, loc='upper right')
-figure4.savefig("com_cor.png")
+# The following code is to create a overplot
+# # Create an empty column (filled with None values)
+# new_column = np.empty((org_steps,walker,1))
+# # Concatenate the new column with the 3D array along the last axis (axis=2)
+# data_3D2_col_add = np.concatenate((data_3D2, new_column), axis=2)
+# data3_burn = data_3D2_col_add[300:]
+# #print(data3_burn.shape)
+# data_new3 = data3_burn.reshape((points,5))
+# #print(data_3D2_col_add)
+# figure4 = corner.corner(data_new3,labels=labels
+#                       ,show_titles=False,plot_datapoints=False,color='black',
+#                         truths=truth_values,truth_color='red',smooth=True,volume=False)
+# #figure4.savefig("cor_new.png")
+# # Volume in fucntion should be false, then empty column does not create issue in corner plots.
+# corner.corner(data_new1,fig=figure4,labels=labels
+#                       ,show_titles=False,plot_datapoints=False,color='orange',volume=False,range=limits
+#               )
+# legend_texts = ["NEBBHs", "EBBHS","True Value"]  
+# legend_colors = ["black", "orange", "red"] 
+# legend_handles = [plt.Line2D([],[], color=color, linewidth=2) for color in legend_colors]
+# figure4.legend(legend_handles, legend_texts, loc='upper right')
+# figure4.savefig("com_cor.png")
