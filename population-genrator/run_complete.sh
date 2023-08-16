@@ -22,4 +22,8 @@ rm -r scaled_events; mkdir scaled_events ; python3 scaling.py;
 
 
 # making scatter plots
-python3 plotting.py
+python3 plotting.py;
+
+#copying generated data to the appropriate direcoty to run the inference
+cp -r weighted_events/*.dat ../weighted_events;
+cp -r scaled_events/*.dat ../original_pop_code/scaled_events;
