@@ -35,10 +35,10 @@ python vt.py 10 50 100 4 vt_m1_m2.hdf5
 ```
 If the above commands run without error and produce readable myout.hdf5 file, you are good to go.
 
-* Now, you can generate a desired population using the directory **population-genrator**. Please follow the steps written in README.md in that directory.
-* if you creates a sythetic population by using **population-genrator** then you need to move those **weighted_events** and **scaled_events** into **main** and **original_pop_code directory**.
+* you can generate a desired population using the directory **population-genrator**. Please follow the steps written in README.md in that directory.
+* if you create a synthetic population by using **population-generator** then generated events in directories **ecc_evetns** and **scaled_evenst** will be auto-moved to the appropriate directory to run. 
 * Once you have the events in a directory and vt_m1_m2.hdf5 file, you can run the script. nohup will put the run in the background, and you can keep working in the terminal.
-*  **Warning:** Do not forget to delete the sample.dat file in the directories (weighted_events, scaled_events) before running the code for synthetic population or real PE.
+*  **Warning: ** Remember to delete the sample.dat file in the directories (weighted_events, scaled_events) before running the code for synthetic population or real PE.
 ```
 nohup ./run.sh &
 ```
