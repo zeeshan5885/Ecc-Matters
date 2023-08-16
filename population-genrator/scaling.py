@@ -2,13 +2,30 @@ import numpy as np
 import os
 
 # Directory containing the input files
-input_dir = './rPE_events/'
+input_dir = './ecc_events/'
 
 # Directory to save the output files
 output_dir = './scaled_events/'
 col_names = ["m1_source", "m2_source"]
+
+def count_dat_files(input_dir):
+    dat_file_count = 0
+
+    # Check if the provided path is a directory
+    if os.path.isdir(input_dir):
+        for filename in os.listdir(input_dir):
+            if filename.endswith(".dat"):
+                dat_file_count += 1
+    else:
+        print("Provided path is not a directory.")
+
+    return dat_file_count
+
+num_dat_files = count_dat_files(input_dir)
+print(f"Number of .dat files in '{input_dir}': {num_dat_files}")
+
 # Iterate over the text files
-for i in range(1, 10):
+for i in range(1, num_dat_files):
     # Generate the file path for the current iteration
     file_path = os.path.join(input_dir, f'event_{i}.dat')
 

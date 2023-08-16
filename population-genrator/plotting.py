@@ -11,7 +11,7 @@ import glob
 from mpl_toolkits.mplot3d import Axes3D
 import mplcursors
 # Get a list of all files matching the pattern
-file_list = glob.glob("./rPE_events/event_*.dat")
+file_list = glob.glob("./ecc_events/event_*.dat")
 
 # Iterate over each file
 for i, file_path in enumerate(file_list):

@@ -9,12 +9,12 @@ python3 genrating.py
 rm -r __pycache__ ;
 rm -r weighted_events ;
 mkdir weighted_events;
-python3 weighting.py --dat population.dat --vt vt_m1_m2.hdf5 --n-out 10
+python3 weighting.py --dat population.dat --vt vt_m1_m2.hdf5 --n-out 20
 
 #Adding Gaussian Uncertainities in the injections
 
-rm -r rPE_events;
-mkdir rPE_events;
+rm -r ecc_events;
+mkdir ecc_events;
 python3 real_PE.py;
 
 #script for scaling
@@ -25,5 +25,5 @@ rm -r scaled_events; mkdir scaled_events ; python3 scaling.py;
 python3 plotting.py;
 
 #copying generated data to the appropriate direcoty to run the inference
-cp -r weighted_events/*.dat ../weighted_events;
-cp -r scaled_events/*.dat ../original_pop_code/scaled_events;
+cp ecc_events/*.dat ../ecc_events;
+cp scaled_events/*.dat ../original_pop_code/scaled_events;

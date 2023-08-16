@@ -6,7 +6,7 @@ import RIFT.lalsimutils as lalsimutils
 
 # Directory paths
 input_directory = "./weighted_events"  # Replace with the path to the input directory
-output_directory = "./rPE_events"  # Replace with the path to the output directory
+output_directory = "./ecc_events"  # Replace with the path to the output directory
 
 # Get a list of all .dat files in the input directory
 input_files = [file for file in os.listdir(input_directory) if file.endswith(".dat")]
@@ -92,7 +92,7 @@ for input_file in input_files:
 # Finding the Median and standard deviation in each colum of all events
 
 # Folder path containing the .dat files
-folder_path = "./rPE_events"
+folder_path = "./ecc_events"
 
 # Initialize lists to store column statistics
 all_medians = []
