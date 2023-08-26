@@ -1,0 +1,2 @@
+[console_scripts]
+gracedb = ligo.gracedb.cli.client:main

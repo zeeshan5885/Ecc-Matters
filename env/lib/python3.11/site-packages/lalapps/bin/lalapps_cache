@@ -1,0 +1,16 @@
+#!/bin/bash
+newexec="${0%/lalapps_cache}/lal_cache"
+echo >&2
+echo "WARNING: 'lalapps_cache' has been renamed to 'lal_cache'" >&2
+echo "WARNING: please update your scripts" >&2
+echo >&2
+if test ! -x "${newexec}"; then
+  echo "ERROR: '${newexec}' is not installed" >&2
+  echo >&2
+  exit 127
+fi
+case "$1" in -h|--help) exit 1;; esac
+echo "WARNING: now running '${newexec}' ..." >&2
+echo >&2
+exec "${newexec}" "$@"
+exit 1

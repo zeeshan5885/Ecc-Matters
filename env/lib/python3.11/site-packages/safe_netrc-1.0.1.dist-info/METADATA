@@ -1,0 +1,56 @@
+Metadata-Version: 2.1
+Name: safe-netrc
+Version: 1.0.1
+Summary: Safe netrc file parser
+Author-email: Leo Singer <leo.p.singer@nasa.gov>
+License: GPL-2.0-or-later
+Project-URL: source, https://git.ligo.org/computing/safe-netrc
+Project-URL: Bug Tracker, https://git.ligo.org/computing/safe-netrc/issues
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: Environment :: Console
+Classifier: License :: OSI Approved :: GNU General Public License v2 or later (GPLv2+)
+Classifier: Operating System :: POSIX
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.7
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Topic :: Internet
+Classifier: Topic :: Security
+Requires-Python: >=3.7
+Description-Content-Type: text/markdown
+License-File: LICENSE.md
+Provides-Extra: test
+Requires-Dist: pytest ; extra == 'test'
+
+# Safe Netrc
+
+This package provides a subclass of the Python standard library
+[`netrc.netrc` class](https://docs.python.org/3/library/netrc.html) to add some
+custom behaviors.
+
+1.   If the ``NETRC`` environment variable is defined, then use it as
+     the default netrc file path.
+
+2.   Backport permissions checks that were added in Python 3.1
+     (see https://bugs.python.org/issue14984).
+
+3.   Apply permissions checks whether or or not we are reading from the
+     default netrc file, and whether or not the file contains passwords.
+
+## Installation
+
+    pip install safe-netrc
+
+## Usage
+
+    >>> from safe_netrc import netrc
+
+## Notes for software packaging
+
+Software packaging files exist for the following systems:
+
+- RPM: https://git.ligo.org/packaging/rhel/python-safe-netrc
+- Debian: https://git.ligo.org/packaging/debian/safe-netrc
+- Conda: https://github.com/conda-forge/safe-netrc-feedstock

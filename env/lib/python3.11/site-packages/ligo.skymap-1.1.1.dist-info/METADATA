@@ -1,0 +1,116 @@
+Metadata-Version: 2.1
+Name: ligo.skymap
+Version: 1.1.1
+Summary: Tools for reading, writing, manipulating, and making LIGO and Virgo sky maps
+Home-page: https://lscsoft.docs.ligo.org/ligo.skymap/
+Author: Leo Singer
+Author-email: leo.singer@ligo.org
+License: GNU GPL v3+
+Project-URL: Bug Tracker, https://git.ligo.org/lscsoft/ligo.skymap/issues
+Project-URL: Change Log, https://lscsoft.docs.ligo.org/ligo.skymap/changes.html
+Project-URL: Documentation, https://lscsoft.docs.ligo.org/ligo.skymap
+Project-URL: GitHub, https://github.com/lpsinger/ligo.skymap
+Project-URL: Source Code, https://git.ligo.org/lscsoft/ligo.skymap
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: Intended Audience :: Science/Research
+Classifier: License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)
+Classifier: Operating System :: MacOS
+Classifier: Operating System :: POSIX
+Classifier: Operating System :: POSIX :: Linux
+Classifier: Operating System :: Unix
+Classifier: Programming Language :: C
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Topic :: Scientific/Engineering :: Astronomy
+Classifier: Topic :: Scientific/Engineering :: Physics
+Requires-Python: >=3.9
+Description-Content-Type: text/x-rst
+License-File: licenses/LICENSE.rst
+Requires-Dist: astroplan (>=0.7)
+Requires-Dist: astropy (>=5.0)
+Requires-Dist: astropy-healpix (>=0.3)
+Requires-Dist: healpy
+Requires-Dist: h5py
+Requires-Dist: lalsuite (!=7.2,>=6.82)
+Requires-Dist: ligo-gracedb (>=2.0.1)
+Requires-Dist: ligo-segments (>=1.2.0)
+Requires-Dist: matplotlib (>=3.5.0)
+Requires-Dist: networkx
+Requires-Dist: numpy (!=1.22.0,>=1.19.3)
+Requires-Dist: pillow (>=2.5.0)
+Requires-Dist: ptemcee
+Requires-Dist: python-ligo-lw (>=1.8.0)
+Requires-Dist: pytz
+Requires-Dist: reproject (>=0.3.2)
+Requires-Dist: scipy (!=1.10.0,>=0.14)
+Requires-Dist: tqdm (>=4.27.0)
+Provides-Extra: docs
+Requires-Dist: sphinx (>=4.0) ; extra == 'docs'
+Requires-Dist: sphinx-argparse (>=0.3.0) ; extra == 'docs'
+Requires-Dist: sphinx-astropy ; extra == 'docs'
+Requires-Dist: sphinxcontrib-mermaid (>=0.7.1) ; extra == 'docs'
+Provides-Extra: test
+Requires-Dist: astroquery ; extra == 'test'
+Requires-Dist: pytest-astropy ; extra == 'test'
+Requires-Dist: pytest-doctestplus (>=0.12.0) ; extra == 'test'
+Requires-Dist: pytest-mpl ; extra == 'test'
+
+###########
+ligo.skymap
+###########
+
+The `ligo.skymap` package provides tools for reading, writing, generating, and
+visualizing gravitational-wave probability maps from LIGO and Virgo. Some of
+the key features of this package are:
+
+*  `Command line tool bayestar-localize-coincs`_ and
+   `bayestar-localize-lvalert`_: BAYESTAR, providing rapid, coherent, Bayesian,
+   3D position reconstruction for compact binary coalescence events
+
+*  `Command line tool ligo-skymap-from-samples`_: Create 3D sky maps from
+   posterior sample chains using kernel density estimation
+
+*  `Command line tool ligo-skymap-plot`_: An everyday tool for plotting
+   HEALPix maps
+
+*  `Module ligo.skymap.plot`_: Astronomical mapmaking tools for
+   perfectionists and figure connoisseurs
+
+To get started, see the `installation instructions`_ or the `full
+documentation`_.
+
+.. figure:: https://lscsoft.docs.ligo.org/ligo.skymap/_images/localization.svg
+   :alt: GW170817 localization
+
+   This illustration of the position of GW170817, prepared using `ligo.skymap`,
+   illustrates the main features of this package: rapid localization of compact
+   binaries with BAYESTAR [#BAYESTAR]_, three-dimensional density estimation
+   [#GoingTheDistance]_ [#GoingTheDistanceSupplement]_, cross-matching with
+   galaxy catalogs, and visualization of gravitational-wave sky maps.
+   Reproduced from [#IlluminatingGravitationalWaves]_.
+
+.. [#BAYESTAR]
+   Singer, L. P., & Price, L. R. 2016, *Phys. Rev. D*, 93, 024013.
+   https://doi.org/10.1103/PhysRevD.93.024013
+
+.. [#GoingTheDistance]
+   Singer, L. P., Chen, H.-Y., Holz, D. E., et al. 2016, *Astropys. J. Lett.*,
+   829, L15. https://doi.org/10.3847/2041-8205/829/1/L15
+
+.. [#GoingTheDistanceSupplement]
+   Singer, L. P., Chen, H.-Y., Holz, D. E., et al. 2016, *Astropys. J. Supp.*,
+   226, 10. https://doi.org/10.3847/0067-0049/226/1/10
+
+.. [#IlluminatingGravitationalWaves]
+   Kasliwal, M. M., Nakar, E., Singer, L. P. et al. 2019, *Science*, 358, 1559.
+   https://doi.org/10.1126/science.aap9455
+
+.. _`Command line tool bayestar-localize-coincs`: https://lscsoft.docs.ligo.org/ligo.skymap/tool/bayestar_localize_coincs.html
+.. _`bayestar-localize-lvalert`: https://lscsoft.docs.ligo.org/ligo.skymap/tool/bayestar_localize_lvalert.html
+.. _`Command line tool ligo-skymap-from-samples`: https://lscsoft.docs.ligo.org/ligo.skymap/tool/ligo_skymap_from_samples.html
+.. _`Command line tool ligo-skymap-plot`: https://lscsoft.docs.ligo.org/ligo.skymap/tool/ligo_skymap_plot.html
+.. _`Module ligo.skymap.plot`: https://lscsoft.docs.ligo.org/ligo.skymap/#plotting-and-visualization-ligo-skymap-plot
+.. _`installation instructions`: https://lscsoft.docs.ligo.org/ligo.skymap/quickstart/install.html
+.. _`full documentation`: https://lscsoft.docs.ligo.org/ligo.skymap

@@ -1,0 +1,5 @@
+#!/bin/sh
+PYTHONPATH="/Users/gitlab/builds/8W6Vn8fZ/0/lscsoft/lalsuite/wheel/build/inst/lib/python3.11/site-packages:${PYTHONPATH}"
+export PYTHONPATH
+exec /Users/gitlab/builds/8W6Vn8fZ/0/lscsoft/lalsuite/env/bin/python '/Users/gitlab/builds/8W6Vn8fZ/0/lscsoft/lalsuite/wheel/build/inst/libexec/lalinference/cbcBayesPlotSpinDisk.py' "$@"
+exit 1
