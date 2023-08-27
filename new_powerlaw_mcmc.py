@@ -295,12 +295,12 @@ def _get_args(raw_args):
     )
     parser.add_argument(
         "--log-rate-min",
-        type=float, default=-3.0,
+        type=float, default=-5.0,
         help="Minimum log10 rate allowed.",
     )
     parser.add_argument(
         "--log-rate-max",
-        type=float, default=3.0,
+        type=float, default=5.0,
         help="Maximum log10 rate allowed.",
     )
 
@@ -371,7 +371,7 @@ def _get_args(raw_args):
     )
     parser.add_argument(
         "--m-max-max",
-        type=float, default=80.0,
+        type=float, default=100.0,
         help="Maximum m_max allowed.",
     )
 
