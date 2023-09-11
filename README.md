@@ -24,9 +24,9 @@ pip install emcee
 * You can play with the code after installing the required packages in the virtual environment.
 
 * First, create the appropriate vt_m1_m2.hdf5 and copy it into the **population-generator**. (you will need it for weighting the synthetic population). You may use the already generated vt_m1_m2.hdf5 file, or you can use the following command to generate a new one according to your requirements.
-* Syntax: Python vt.py m_min m_max samples output_file_name.hdf5
+* Syntax: Python vt.py m_min m_max N_samples duration_in_days output_file_name.hdf5
 ```
-python vt.py 10 50 100 4 vt_m1_m2.hdf5
+python vt.py 10 50 100 1 vt_m1_m2.hdf5
 ```
 * Second, you need data containing three columns: m1_source, m2_source, ecc.
 * TO check the code runs fine, you can use the sample.dat file in the events directory and run the following command.
