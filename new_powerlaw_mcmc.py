@@ -82,7 +82,7 @@ def expval_mc(
     if return_err:
         return rate*I, err_abs, err_rel
     else:
-        return rate*I*124
+        return rate*I
 
 def VT_interp(m1_m2, raw_interpolator, **kwargs):
     import numpy
