@@ -5,6 +5,14 @@ functions for the power law mass distribution model.
 
 from __future__ import division, print_function
 
+import numpy
+import scipy.integrate
+import scipy.special
+from mpmath import hyp2f1
+
+from prob_top import sample_with_cond
+from utils_top import check_random_state
+
 # Names of all (possibly free) parameters of this model, in the order they
 # should appear in any array of samples (e.g., MCMC posterior samples).
 param_names = ["log_rate", "alpha", "m_min", "m_max"]
@@ -41,8 +49,6 @@ def powerlaw_rvs(N, alpha, x_min, x_max, rand_state=None):
     :return: array_like, shape (N,)
         Array of random samples drawn from distribution.
     """
-    import numpy
-    from utils_top import check_random_state
 
     # Upgrade ``rand_state`` to an actual ``numpy.random.RandomState`` object,
     # if it isn't one already.
@@ -60,7 +66,7 @@ def powerlaw_rvs(N, alpha, x_min, x_max, rand_state=None):
     H = numpy.power(x_max, beta)
 
     # Compute the random samples.
-    return numpy.power((1-U)*L + U*H, 1.0/beta)
+    return numpy.power((1 - U) * L + U * H, 1.0 / beta)
 
 
 def joint_rvs(N, alpha, m_min, m_max, M_max, rand_state=None):
@@ -78,9 +84,6 @@ def joint_rvs(N, alpha, m_min, m_max, M_max, rand_state=None):
     rejects samples which do not satisfy the
     :math:`m_1 + m_2 \leq M_{\mathrm{max}}` constraint.
     """
-    import numpy
-    from prob_top import sample_with_cond
-    from utils_top import check_random_state
 
     rand_state = check_random_state(rand_state)
 
@@ -125,19 +128,22 @@ def marginal_rvs(N, alpha, m_min, m_max, M_max, rand_state=None):
     :math:`m_2`.
     """
 
-    from utils_top import check_random_state
-
     rand_state = check_random_state(rand_state)
 
-    return joint_rvs(N, alpha, m_min, m_max, M_max, rand_state=rand_state)[:,0]
+    return joint_rvs(N, alpha, m_min, m_max, M_max, rand_state=rand_state)[:, 0]
 
 
 def joint_pdf(
-        m_1, m_2,
-        alpha, m_min, m_max, M_max,
-        const=None,
-        out=None, where=True,
-    ):
+    m_1,
+    m_2,
+    alpha,
+    m_min,
+    m_max,
+    M_max,
+    const=None,
+    out=None,
+    where=True,
+):
     r"""
     Computes the probability density for the joint mass distribution
     :math:`p(m_1, m_2)` defined in :mod:`pop_models.powerlaw` as
@@ -151,8 +157,6 @@ def joint_pdf(
     by the ``const`` keyword argument.
     """
 
-    import numpy
-
     # Ensure everything is a numpy array of the right shape.
     m_1, m_2 = numpy.broadcast_arrays(m_1, m_2)
     alpha, m_min, m_max = numpy.broadcast_arrays(alpha, m_min, m_max)
@@ -165,16 +169,16 @@ def joint_pdf(
 
     S = m_1.shape
     T = alpha.shape
-    TS = T+S
+    TS = T + S
 
     out_type = m_1.dtype
 
     # Create a version of where which has shape ``T + S``.
     print(where)
-    if where==True:
-        where_TS = numpy.ones( TS,dtype=bool)
+    if where == True:
+        where_TS = numpy.ones(TS, dtype=bool)
     else:
-        where_TS = numpy.broadcast_to(where.T, S[::-1]+T[::-1]).T
+        where_TS = numpy.broadcast_to(where.T, S[::-1] + T[::-1]).T
 
     # Initialize output array.  Fill with zeros because we will only evaluate at
     # the support.  Alternatively use provided ``out`` array, and zero out
@@ -189,7 +193,6 @@ def joint_pdf(
     # shape ``S[::-1]+T[::-1]`` instead of ``T+S``.
     pdf_T = pdf.T
 
-
     # Initialize a shape ``T+S`` float array to be reused.
     tmp_TS = numpy.empty(TS, dtype=numpy.float64)
 
@@ -201,44 +204,58 @@ def joint_pdf(
     # parameters do not correspond to zero probability and also have
     # ``where=True``.
     mmin_lt_m1 = numpy.less.outer(
-        m_min, m_1,
-        out=tmp_TS_i1, where=where_TS,
+        m_min,
+        m_1,
+        out=tmp_TS_i1,
+        where=where_TS,
     )
     mmin_le_m2 = numpy.less_equal.outer(
-        m_min, m_2,
-        out=tmp_TS_i2, where=where_TS,
+        m_min,
+        m_2,
+        out=tmp_TS_i2,
+        where=where_TS,
     )
     mmin_bound = numpy.logical_and(
-        mmin_lt_m1, mmin_le_m2,
-        out=tmp_TS_i1, where=where_TS,
+        mmin_lt_m1,
+        mmin_le_m2,
+        out=tmp_TS_i1,
+        where=where_TS,
     )
     del mmin_lt_m1, mmin_le_m2
 
     mmax_bound = numpy.greater_equal.outer(
-        m_max, m_1,
-        out=tmp_TS_i2, where=where_TS,
+        m_max,
+        m_1,
+        out=tmp_TS_i2,
+        where=where_TS,
     )
     component_bounds = numpy.logical_and(
-        mmin_bound, mmax_bound,
-        out=tmp_TS_i1, where=where_TS,
+        mmin_bound,
+        mmax_bound,
+        out=tmp_TS_i1,
+        where=where_TS,
     )
     del mmin_bound, mmax_bound, tmp_TS_i2
 
     mass_ordering = m_1 >= m_2
     Mmax_cutoff = m_1 + m_2 <= M_max
     Mmax_and_ordering = numpy.logical_and(
-        mass_ordering, Mmax_cutoff,
+        mass_ordering,
+        Mmax_cutoff,
         out=mass_ordering,
     )
     del mass_ordering, Mmax_cutoff
 
     i_eval = numpy.logical_and(
-        component_bounds, Mmax_and_ordering,
-        out=tmp_TS_i1, where=where_TS,
+        component_bounds,
+        Mmax_and_ordering,
+        out=tmp_TS_i1,
+        where=where_TS,
     )
     del component_bounds, Mmax_and_ordering
     i_eval = numpy.logical_and(
-        i_eval, where_TS,
+        i_eval,
+        where_TS,
         out=tmp_TS_i1,
     )
     del tmp_TS_i1
@@ -246,7 +263,6 @@ def joint_pdf(
     # Create transposed view of ``i_eval`` for when we need operations to have
     # shape ``S[::-1]+T[::-1]`` instead of ``T+S``.
     i_eval_T = i_eval.T
-
 
     # Compute the normalization constant if it has not been pre-computed.
     if const is None:
@@ -258,21 +274,29 @@ def joint_pdf(
     # the two, storing the result in ``pdf``.  Finally multiply the normalizing
     # constants on to ``pdf``.
     powerlaw_term = numpy.power.outer(
-        m_1.T, -alpha.T,
-        out=pdf.T, where=i_eval.T,
+        m_1.T,
+        -alpha.T,
+        out=pdf.T,
+        where=i_eval.T,
     ).T
     denom_term = numpy.subtract.outer(
-        m_1.T, m_min.T,
-        out=tmp_TS.T, where=i_eval.T,
+        m_1.T,
+        m_min.T,
+        out=tmp_TS.T,
+        where=i_eval.T,
     ).T
     numpy.divide(
-        powerlaw_term, denom_term,
-        out=pdf, where=i_eval,
+        powerlaw_term,
+        denom_term,
+        out=pdf,
+        where=i_eval,
     )
     del powerlaw_term, denom_term, tmp_TS
     numpy.multiply(
-        const.T, pdf.T,
-        out=pdf.T, where=i_eval.T,
+        const.T,
+        pdf.T,
+        out=pdf.T,
+        where=i_eval.T,
     )
 
     return pdf
@@ -293,7 +317,6 @@ def marginal_pdf(m1, alpha, m_min, m_max, M_max, const=None):
     Computes the normalization constant using :func:`pdf_const` if not provided
     by the ``const`` keyword argument.
     """
-    import numpy
 
     ## Unoptimized version of this code.
     # for i, (alpha, m_min, m_max) in enumerate(zip(alphas, m_mins, m_maxs)):
@@ -310,8 +333,6 @@ def marginal_pdf(m1, alpha, m_min, m_max, M_max, const=None):
     #     )
     #
     #     pdf[i, support] = const * pl_term * cutoff_term
-
-
 
     alpha, m_min, m_max = numpy.broadcast_arrays(alpha, m_min, m_max)
 
@@ -347,8 +368,10 @@ def marginal_pdf(m1, alpha, m_min, m_max, M_max, const=None):
 
     # Store the powerlaw contribution to the probability density in ``pdf``.
     numpy.power.outer(
-        m1, -alpha.T,
-        out=pdf.T, where=support.T,
+        m1,
+        -alpha.T,
+        out=pdf.T,
+        where=support.T,
     )
 
     # Store min(m1, M_max-m1) in ``tmp_S``.
@@ -391,7 +414,6 @@ def pdf_const(alpha, m_min, m_max, M_max, out=None, where=True):
         Daniel Wysocki and Richard O'Shaughnessy,
         `LIGO-T1700479 <https://dcc.ligo.org/LIGO-T1700479>`_
     """
-    import numpy
 
     alpha, m_min, m_max = numpy.broadcast_arrays(alpha, m_min, m_max)
     alpha = numpy.asarray(alpha)
@@ -413,34 +435,45 @@ def pdf_const(alpha, m_min, m_max, M_max, out=None, where=True):
     # Determine where the special case ``beta == 0`` occurs, and evaluate the
     # normalization constant there.
     special = numpy.equal(
-        beta, 0.0,
-        out=tmp_i, where=where,
+        beta,
+        0.0,
+        out=tmp_i,
+        where=where,
     )
     _pdf_const_special(
-        m_min, m_max, M_max,
-        out=result, where=special,
+        m_min,
+        m_max,
+        M_max,
+        out=result,
+        where=special,
     )
 
     # Determine where the special case ``beta == 0`` does not occur, and
     # evaluate the normalization constant there.
     nonspecial = numpy.logical_not(
         special,
-        out=tmp_i, where=where,
+        out=tmp_i,
+        where=where,
     )
     _pdf_const_nonspecial(
-        beta, m_min, m_max, M_max,
-        out=result, where=nonspecial,
+        beta,
+        m_min,
+        m_max,
+        M_max,
+        out=result,
+        where=nonspecial,
     )
 
     return result
 
 
 def _pdf_const_special(
-        m_min, m_max, M_max,
-        out=None, where=True,
-    ):
-    import numpy
-
+    m_min,
+    m_max,
+    M_max,
+    out=None,
+    where=True,
+):
     S = m_min.shape
 
     # Initialize temporary shape ``S`` array to hold booleans.
@@ -449,33 +482,41 @@ def _pdf_const_special(
     # Separately handle populations that are affected by the M_max cutoff and
     # those that are not.
     cutoff = numpy.greater(
-        m_max, 0.5*M_max,
-        out=tmp_i, where=where,
+        m_max,
+        0.5 * M_max,
+        out=tmp_i,
+        where=where,
     )
     _pdf_const_special_cutoff(
-        m_min, m_max, M_max,
-        out=out, where=cutoff,
+        m_min,
+        m_max,
+        M_max,
+        out=out,
+        where=cutoff,
     )
 
     noncutoff = numpy.logical_not(
         cutoff,
-        out=tmp_i, where=where,
+        out=tmp_i,
+        where=where,
     )
     _pdf_const_special_noncutoff(
-        m_min, m_max,
-        out=out, where=noncutoff,
+        m_min,
+        m_max,
+        out=out,
+        where=noncutoff,
     )
 
     return out
 
 
 def _pdf_const_special_cutoff(
-        m_min, m_max, M_max,
-        out=None, where=True,
-    ):
-    import numpy
-    import scipy.special
-
+    m_min,
+    m_max,
+    M_max,
+    out=None,
+    where=True,
+):
     ## Un-optimized version of the code
     # A = numpy.log(0.5) + numpy.log(M_max) - numpy.log(m_min)
 
@@ -532,13 +573,12 @@ def _pdf_const_special_cutoff(
     return C
 
 
-
 def _pdf_const_special_noncutoff(
-        m_min, m_max,
-        out=None, where=True,
-    ):
-    import numpy
-
+    m_min,
+    m_max,
+    out=None,
+    where=True,
+):
     S = m_min.shape
 
     # Initialize temporary shape ``S`` array to hold floats.
@@ -553,12 +593,14 @@ def _pdf_const_special_noncutoff(
 
 
 def _pdf_const_nonspecial(
-        beta, m_min, m_max, M_max,
-        eps=1e-7,
-        out=None, where=True,
-    ):
-    import numpy
-
+    beta,
+    m_min,
+    m_max,
+    M_max,
+    eps=1e-7,
+    out=None,
+    where=True,
+):
     S = beta.shape
 
     # Initialize two temporary shape ``S`` arrays to hold floats when performing
@@ -578,20 +620,30 @@ def _pdf_const_nonspecial(
     # stored in ``tmp2``, so we can free that memory once they're no longer
     # needed.
     integral = numpy.equal(
-        beta.astype(numpy.int64), beta,
-        out=tmp_i, where=where,
+        beta.astype(numpy.int64),
+        beta,
+        out=tmp_i,
+        where=where,
     )
 
     beta_neg = numpy.subtract(beta, eps, out=tmp2, where=integral)
     _pdf_const_nonspecial_nonintegral(
-        beta_neg, m_min, m_max, M_max,
-        out=out, where=integral,
+        beta_neg,
+        m_min,
+        m_max,
+        M_max,
+        out=out,
+        where=integral,
     )
 
     beta_pos = numpy.add(beta, eps, out=tmp2, where=integral)
     _pdf_const_nonspecial_nonintegral(
-        beta_pos, m_min, m_max, M_max,
-        out=tmp1, where=integral,
+        beta_pos,
+        m_min,
+        m_max,
+        M_max,
+        out=tmp1,
+        where=integral,
     )
     del beta_neg, beta_pos, tmp2
 
@@ -602,24 +654,31 @@ def _pdf_const_nonspecial(
     # We'll negate and re-use the same integer array from before.
     nonintegral = numpy.logical_not(
         integral,
-        out=tmp_i, where=where,
+        out=tmp_i,
+        where=where,
     )
     del integral
 
     _pdf_const_nonspecial_nonintegral(
-        beta, m_min, m_max, M_max,
-        out=out, where=nonintegral,
+        beta,
+        m_min,
+        m_max,
+        M_max,
+        out=out,
+        where=nonintegral,
     )
 
     return out
 
 
 def _pdf_const_nonspecial_nonintegral(
-        beta, m_min, m_max, M_max,
-        out=None, where=True,
-    ):
-    import numpy
-
+    beta,
+    m_min,
+    m_max,
+    M_max,
+    out=None,
+    where=True,
+):
     S = beta.shape
 
     # Initialize temporary shape ``S`` boolean array to all ``False``, as we
@@ -630,34 +689,45 @@ def _pdf_const_nonspecial_nonintegral(
     # Determine which indices need to be computed with the ``M_max`` cutoff
     # in effect, and compute them.
     cutoff = numpy.greater(
-        m_max, 0.5*M_max,
-        out=tmp_i, where=where,
+        m_max,
+        0.5 * M_max,
+        out=tmp_i,
+        where=where,
     )
     _pdf_const_nonspecial_cutoff(
-        beta, m_min, m_max, M_max,
-        out=out, where=cutoff,
+        beta,
+        m_min,
+        m_max,
+        M_max,
+        out=out,
+        where=cutoff,
     )
 
     # Now compute the remaining terms.
     noncutoff = numpy.logical_not(
         cutoff,
-        out=tmp_i, where=where,
+        out=tmp_i,
+        where=where,
     )
     _pdf_const_nonspecial_noncutoff(
-        beta, m_min, m_max,
-        out=out, where=noncutoff,
+        beta,
+        m_min,
+        m_max,
+        out=out,
+        where=noncutoff,
     )
 
     return out
 
 
 def _pdf_const_nonspecial_cutoff(
-        beta, m_min, m_max, M_max,
-        out=None, where=None,
-    ):
-    import numpy
-    from mpmath import hyp2f1
-
+    beta,
+    m_min,
+    m_max,
+    M_max,
+    out=None,
+    where=None,
+):
     if where is None:
         _, where = numpy.broadcast_arrays(out, where)
 
@@ -668,19 +738,15 @@ def _pdf_const_nonspecial_cutoff(
             continue
         beta, m_min, m_max = beta_full[i], m_min_full[i], m_max_full[i]
 
-        A = (numpy.power(0.5*M_max, beta) - numpy.power(m_min, beta)) / beta
+        A = (numpy.power(0.5 * M_max, beta) - numpy.power(m_min, beta)) / beta
 
-        B1a = (
-            numpy.power(0.5*M_max, beta) *
-            hyp2f1(1, beta, 1+beta, 0.5*M_max/m_min)
+        B1a = numpy.power(0.5 * M_max, beta) * hyp2f1(
+            1, beta, 1 + beta, 0.5 * M_max / m_min
         )
-        B1b = (
-            numpy.power(m_max, beta) *
-            hyp2f1(1, beta, 1+beta, m_max/m_min)
-        )
-        B1 = (M_max - 2*m_min) * (B1a - B1b) / m_min
+        B1b = numpy.power(m_max, beta) * hyp2f1(1, beta, 1 + beta, m_max / m_min)
+        B1 = (M_max - 2 * m_min) * (B1a - B1b) / m_min
 
-        B2 = numpy.power(0.5*M_max, beta) - numpy.power(m_max, beta)
+        B2 = numpy.power(0.5 * M_max, beta) - numpy.power(m_max, beta)
 
         B = numpy.float64((B1 + B2).real) / beta
 
@@ -690,11 +756,12 @@ def _pdf_const_nonspecial_cutoff(
 
 
 def _pdf_const_nonspecial_noncutoff(
-        beta, m_min, m_max,
-        out=None, where=True,
-    ):
-    import numpy
-
+    beta,
+    m_min,
+    m_max,
+    out=None,
+    where=True,
+):
     ## Un-optimized version of the code
     # return numpy.reciprocal(
     #     (numpy.power(m_max, beta) - numpy.power(m_min, beta)) / beta
@@ -720,14 +787,15 @@ def _pdf_const_nonspecial_noncutoff(
     return out
 
 
-
 def upper_mass_credible_region(
-        quantile, alpha, m_min, m_max, M_max,
-        n_samples=1000, m1_samples=None,
-    ):
-    import numpy
-    import scipy.integrate
-
+    quantile,
+    alpha,
+    m_min,
+    m_max,
+    M_max,
+    n_samples=1000,
+    m1_samples=None,
+):
     if m1_samples is None:
         m1_samples = numpy.linspace(m_min, m_max, n_samples)
 
@@ -740,17 +808,24 @@ def upper_mass_credible_region(
 
 
 def upper_mass_credible_region_detection_weighted(
-        quantile, alpha, m_min, m_max, M_max,
-        VT_from_m1_m2,
-        min_samples_m2=10, max_samples_m2=1000, dm2_ideal=0.5,
-        n_samples_m1=1000, m1_samples=None, dm1=None,
-    ):
-    import numpy
-    import scipy.integrate
-
+    quantile,
+    alpha,
+    m_min,
+    m_max,
+    M_max,
+    VT_from_m1_m2,
+    min_samples_m2=10,
+    max_samples_m2=1000,
+    dm2_ideal=0.5,
+    n_samples_m1=1000,
+    m1_samples=None,
+    dm1=None,
+):
     if m1_samples is None:
         m1_samples, dm1 = numpy.linspace(
-            m_min, m_max, n_samples_m1,
+            m_min,
+            m_max,
+            n_samples_m1,
             retstep=True,
         )
         # Don't need to provide ``x`` for m1 integral, because we have a
@@ -766,7 +841,7 @@ def upper_mass_credible_region_detection_weighted(
     f = numpy.empty_like(m1_samples)
 
     for i, m1 in enumerate(m1_samples):
-        m2_max = min(m1, M_max-m1)
+        m2_max = min(m1, M_max - m1)
         m2_range = m2_max - m_min
 
         n_samples_m2 = m2_range / dm2_ideal
@@ -779,17 +854,17 @@ def upper_mass_credible_region_detection_weighted(
             n_samples_m2 = int(numpy.ceil(n_samples_m2))
 
         m2_samples, dm2 = numpy.linspace(
-            m_min, m2_max, n_samples_m2,
+            m_min,
+            m2_max,
+            n_samples_m2,
             retstep=True,
         )
 
-        integrand = (
-            VT_from_m1_m2(m1, m2_samples) *
-            joint_pdf(m1, m2_samples, alpha, m_min, m_max, M_max, const=1.0)
+        integrand = VT_from_m1_m2(m1, m2_samples) * joint_pdf(
+            m1, m2_samples, alpha, m_min, m_max, M_max, const=1.0
         )
 
         f[i] = scipy.integrate.trapz(integrand, dx=dm2)
-
 
     P = scipy.integrate.cumtrapz(f, x=x_m1_int, dx=dm1, initial=0.0)
     P /= P[-1]

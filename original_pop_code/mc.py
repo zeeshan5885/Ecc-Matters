@@ -1,37 +1,36 @@
 from __future__ import division, print_function
 
+import matplotlib.pyplot as plt
+import numpy as np
+
+from . import utils
+
+
 def integrate_box(f, lower, upper, N, compute_error=False, random_state=None):
     """
     Compute the Monte Carlo integral
     """
-    import numpy
-    from . import utils
 
     rng = utils.check_random_state(random_state)
 
+    V = np.prod(np.subtract(upper, lower))
 
-    V = numpy.prod(numpy.subtract(upper, lower))
-
-    X = numpy.column_stack(
-        rng.uniform(lo, hi, N)
-        for lo, hi in zip(lower, upper)
-    )
-    F = numpy.mean(f(X))
+    X = np.column_stack(rng.uniform(lo, hi, N) for lo, hi in zip(lower, upper))
+    F = np.mean(f(X))
     I = V * F
 
     if not compute_error:
         return I
 
-    F2 = numpy.mean(numpy.power(f(X), 2))
-    dI = V * numpy.sqrt((F2 - F*F) / N)
+    F2 = np.mean(np.power(f(X), 2))
+    dI = V * np.sqrt((F2 - F * F) / N)
 
     return I, dI
 
 
-def integrate_adaptive(p, f,
-                       iter_max=2**16, iter_start=2**10,
-                       err_abs=None, err_rel=None,
-                       plot=False):
+def integrate_adaptive(
+    p, f, iter_max=2**16, iter_start=2**10, err_abs=None, err_rel=None, plot=False
+):
     """
     Compute an adaptive Monte Carlo integral of the form
       Integral p(x) * f(x) dx
@@ -82,8 +81,6 @@ def integrate_adaptive(p, f,
     err_rel: float
         The estimated value of the relative error.
     """
-    import numpy
-
 
     # Define convergence test function. Instead of putting conditions -- which
     # always have the same value -- inside the function, we pull them outside
@@ -103,18 +100,24 @@ def integrate_adaptive(p, f,
     # always fails, and the routine will always end at the max number of
     # iterations.
     if err_abs is None and err_rel is None:
+
         def converged(err_abs_current, err_rel_current):
             return False
+
     elif err_abs is None:
+
         def converged(err_abs_current, err_rel_current):
             return err_rel_current < err_rel
+
     elif err_rel is None:
+
         def converged(err_abs_current, err_rel_current):
             return err_abs_current < err_abs
+
     else:
+
         def converged(err_abs_current, err_rel_current):
             return (err_rel_current < err_rel) and (err_abs_current < err_abs)
-
 
     # Initialize samples and integral accumulators.
     samples = 0
@@ -126,13 +129,10 @@ def integrate_adaptive(p, f,
     # is precisely the value ``True`` is the plot made interactively. Otherwise
     # ``plot`` is assumed to refer to a file to save to, once the routine ends.
     if plot:
-        import matplotlib.pyplot as plt
-        fig, (ax_integral, ax_err_abs, ax_err_rel) = (
-            plt.subplots(3, sharex=True)
-        )
+        fig, (ax_integral, ax_err_abs, ax_err_rel) = plt.subplots(3, sharex=True)
 
         for ax in (ax_integral, ax_err_abs, ax_err_rel):
-            ax.set_xscale('log', basex=2)
+            ax.set_xscale("log", basex=2)
             ax.grid()
 
         ax_err_rel.set_xlabel(r"$N\ \mathrm{samples}$")
@@ -140,7 +140,6 @@ def integrate_adaptive(p, f,
         ax_integral.set_ylabel(r"$\mathrm{Integral}$")
         ax_err_abs.set_ylabel(r"$\mathrm{AbsErr}$")
         ax_err_rel.set_ylabel(r"$\mathrm{RelErr} [\%]$")
-
 
     # Iteratively improve MC integral, until either the convergence criteria
     # set by ``err_abs`` and ``err_rel`` are reached, or the maximum number of
@@ -153,8 +152,8 @@ def integrate_adaptive(p, f,
         # Accumulate the sum of the result in F and the squared result in F2,
         # which will be used to calculate the integral and its uncertainty.
         value = f(X)
-        F += numpy.sum(value)
-        F2 += numpy.sum(value*value)
+        F += np.sum(value)
+        F2 += np.sum(value * value)
 
         # Update the number of samples appropriately.
         # If more samples are needed to converge, the number will be doubled.
@@ -166,9 +165,7 @@ def integrate_adaptive(p, f,
         I_current = F / samples
         # Estimate the absolute error (standard error) and the relative error
         # (standard error divided by the integral).
-        err_abs_current = numpy.sqrt(
-            (F2 - F*F / samples) / (samples*(samples-1.0))
-        )
+        err_abs_current = np.sqrt((F2 - F * F / samples) / (samples * (samples - 1.0)))
         err_rel_current = err_abs_current / I_current
 
         # If a plot was requested, add the new estimates of the integral and
@@ -176,7 +173,7 @@ def integrate_adaptive(p, f,
         if plot:
             ax_integral.scatter(samples, I_current)
             ax_err_abs.scatter(samples, err_abs_current)
-            ax_err_rel.scatter(samples, err_rel_current*100.0)
+            ax_err_rel.scatter(samples, err_rel_current * 100.0)
 
         # Test for convergence, and end the routine if it has been reached.
         if converged(err_abs_current, err_rel_current):
@@ -192,6 +189,5 @@ def integrate_adaptive(p, f,
                 plt.show(fig)
         else:
             fig.savefig(plot)
-
 
     return I_current, err_abs_current, err_rel_current
