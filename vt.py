@@ -10,20 +10,26 @@ implementation is the original code written by Will Farr.
 
 from __future__ import print_function
 
-
+import argparse
+import multiprocessing as multi
+import operator
+import sys
 
 import astropy.cosmology as cosmo
 import astropy.units as u
-import multiprocessing as multi
+import h5py
+import lal
+import lalsimulation as ls
+import matplotlib
+import matplotlib.pyplot as plt
 import numpy as np
-from numpy import (
-    array, linspace,
-    sin, cos,
-    square,
-    trapz,
-)
+import scipy.interpolate
+from numpy import array, cos, linspace, sin, square, trapz
 
-#from pylab import *
+from . import gw
+
+# from pylab import *
+
 
 def draw_thetas(N):
     """Draw `N` random angular factors for the SNR.
@@ -34,25 +40,30 @@ def draw_thetas(N):
 
     cos_thetas = np.random.uniform(low=-1, high=1, size=N)
     cos_incs = np.random.uniform(low=-1, high=1, size=N)
-    phis = np.random.uniform(low=0, high=2*np.pi, size=N)
-    zetas = np.random.uniform(low=0, high=2*np.pi, size=N)
+    phis = np.random.uniform(low=0, high=2 * np.pi, size=N)
+    zetas = np.random.uniform(low=0, high=2 * np.pi, size=N)
 
-    Fps = 0.5*cos(2*zetas)*(1 + square(cos_thetas))*cos(2*phis) - sin(2*zetas)*cos_thetas*sin(2*phis)
-    Fxs = 0.5*sin(2*zetas)*(1 + square(cos_thetas))*cos(2*phis) + cos(2*zetas)*cos_thetas*sin(2*phis)
+    Fps = 0.5 * cos(2 * zetas) * (1 + square(cos_thetas)) * cos(2 * phis) - sin(
+        2 * zetas
+    ) * cos_thetas * sin(2 * phis)
+    Fxs = 0.5 * sin(2 * zetas) * (1 + square(cos_thetas)) * cos(2 * phis) + cos(
+        2 * zetas
+    ) * cos_thetas * sin(2 * phis)
 
-    return np.sqrt(0.25*square(Fps)*square(1 + square(cos_incs)) + square(Fxs)*square(cos_incs))
-
+    return np.sqrt(
+        0.25 * square(Fps) * square(1 + square(cos_incs))
+        + square(Fxs) * square(cos_incs)
+    )
 
 
 def next_pow_two(x):
-    """Return the next (integer) power of two above `x`.
-
-    """
+    """Return the next (integer) power of two above `x`."""
 
     x2 = 1
     while x2 < x:
         x2 = x2 << 1
     return x2
+
 
 def optimal_snr(m1_intrinsic, m2_intrinsic, z, psd_fn=None):
     """Return the optimal SNR of a signal.
@@ -70,8 +81,6 @@ def optimal_snr(m1_intrinsic, m2_intrinsic, z, psd_fn=None):
     :return: The SNR of a face-on, overhead source.
 
     """
-    import lal
-    import lalsimulation as ls
 
     if psd_fn is None:
         psd_fn = ls.SimNoisePSDaLIGOEarlyHighSensitivityP1200087
@@ -85,27 +94,54 @@ def optimal_snr(m1_intrinsic, m2_intrinsic, z, psd_fn=None):
     psdstart = 20.0
 
     # This is a conservative estimate of the chirp time + MR time (2 seconds)
-    tmax = ls.SimInspiralChirpTimeBound(fmin, m1_intrinsic*(1+z)*lal.MSUN_SI, m2_intrinsic*(1+z)*lal.MSUN_SI, 0.0, 0.0) + 2
+    tmax = (
+        ls.SimInspiralChirpTimeBound(
+            fmin,
+            m1_intrinsic * (1 + z) * lal.MSUN_SI,
+            m2_intrinsic * (1 + z) * lal.MSUN_SI,
+            0.0,
+            0.0,
+        )
+        + 2
+    )
 
-    df = 1.0/next_pow_two(tmax)
-    fmax = 2048.0 # Hz --- based on max freq of 5-5 inspiral
+    df = 1.0 / next_pow_two(tmax)
+    fmax = 2048.0  # Hz --- based on max freq of 5-5 inspiral
 
     # Generate the waveform, redshifted as we would see it in the detector, but with zero angles (i.e. phase = 0, inclination = 0)
-## Will's version -- apparently from a different version of lalsim
-##    hp, hc = ls.SimInspiralChooseFDWaveform((1+z)*m1_intrinsic*lal.MSUN_SI, (1+z)*m2_intrinsic*lal.MSUN_SI, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, dL*1e9*lal.PC_SI, 0.0, 0.0, 0.0, 0.0, 0.0, df, fmin, fmax, fref, None, ls.IMRPhenomPv2)
-    hp, hc = ls.SimInspiralChooseFDWaveform((1+z)*m1_intrinsic*lal.MSUN_SI, (1+z)*m2_intrinsic*lal.MSUN_SI, 
-                                            0, 0, 0,0,0,0,
-                                            dL*1e9*lal.PC_SI, 
-                                            0, 0,  0, 0, 0,
-                                            df,
-                                            fmin, fmax, fref, None, ls.IMRPhenomPv2)
+    ## Will's version -- apparently from a different version of lalsim
+    ##    hp, hc = ls.SimInspiralChooseFDWaveform((1+z)*m1_intrinsic*lal.MSUN_SI, (1+z)*m2_intrinsic*lal.MSUN_SI, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, dL*1e9*lal.PC_SI, 0.0, 0.0, 0.0, 0.0, 0.0, df, fmin, fmax, fref, None, ls.IMRPhenomPv2)
+    hp, hc = ls.SimInspiralChooseFDWaveform(
+        (1 + z) * m1_intrinsic * lal.MSUN_SI,
+        (1 + z) * m2_intrinsic * lal.MSUN_SI,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        dL * 1e9 * lal.PC_SI,
+        0,
+        0,
+        0,
+        0,
+        0,
+        df,
+        fmin,
+        fmax,
+        fref,
+        None,
+        ls.IMRPhenomPv2,
+    )
 
-    Nf = int(round(fmax/df)) + 1
+    Nf = int(round(fmax / df)) + 1
     fs = linspace(0, fmax, Nf)
     sel = fs > psdstart
 
     # PSD
-    sffs = lal.CreateREAL8FrequencySeries("psds", 0, 0.0, df, lal.DimensionlessUnit, fs.shape[0])
+    sffs = lal.CreateREAL8FrequencySeries(
+        "psds", 0, 0.0, df, lal.DimensionlessUnit, fs.shape[0]
+    )
     psd_fn(sffs, psdstart)
 
     return ls.MeasureSNRFD(hp, sffs, psdstart, -1.0)
@@ -117,6 +153,7 @@ def optimal_snr(m1_intrinsic, m2_intrinsic, z, psd_fn=None):
 # is called, as one might import this module without calling that function.
 # NOTE: This is a change from Will Farr's original code.
 _thetas = None
+
 
 def fraction_above_threshold(m1_intrinsic, m2_intrinsic, z, snr_thresh, psd_fn=None):
     """Returns the fraction of sources above a given threshold.
@@ -136,8 +173,6 @@ def fraction_above_threshold(m1_intrinsic, m2_intrinsic, z, snr_thresh, psd_fn=N
 
     """
     global _thetas
-
-    import lalsimulation as ls
 
     if psd_fn is None:
         psd_fn = ls.SimNoisePSDaLIGOEarlyHighSensitivityP1200087
@@ -161,6 +196,7 @@ def fraction_above_threshold(m1_intrinsic, m2_intrinsic, z, snr_thresh, psd_fn=N
     else:
         return np.mean(_thetas > theta_min)
 
+
 def vt_from_mass(m1, m2, thresh, analysis_time, calfactor=1.0, psd_fn=None):
     """Returns the sensitive time-volume for a given system.
 
@@ -179,7 +215,6 @@ def vt_from_mass(m1, m2, thresh, analysis_time, calfactor=1.0, psd_fn=None):
       analysis_time is given in years).
 
     """
-    import lalsimulation as ls
 
     if psd_fn is None:
         psd_fn = ls.SimNoisePSDaLIGOEarlyHighSensitivityP1200087
@@ -188,24 +223,33 @@ def vt_from_mass(m1, m2, thresh, analysis_time, calfactor=1.0, psd_fn=None):
         if z == 0.0:
             return 0.0
         else:
-            return 4*np.pi*cosmo.Planck15.differential_comoving_volume(z).to(u.Gpc**3 / u.sr).value/(1+z)*fraction_above_threshold(m1, m2, z, thresh)
+            return (
+                4
+                * np.pi
+                * cosmo.Planck15.differential_comoving_volume(z)
+                .to(u.Gpc**3 / u.sr)
+                .value
+                / (1 + z)
+                * fraction_above_threshold(m1, m2, z, thresh)
+            )
 
     zmax = 1.0
     zmin = 0.001
     assert fraction_above_threshold(m1, m2, zmax, thresh) == 0.0
     assert fraction_above_threshold(m1, m2, zmin, thresh) > 0.0
     while zmax - zmin > 1e-3:
-        zhalf = 0.5*(zmax+zmin)
+        zhalf = 0.5 * (zmax + zmin)
         fhalf = fraction_above_threshold(m1, m2, zhalf, thresh)
 
         if fhalf > 0.0:
-            zmin=zhalf
+            zmin = zhalf
         else:
-            zmax=zhalf
+            zmax = zhalf
 
     zs = linspace(0.0, zmax, 20)
     ys = array([integrand(z) for z in zs])
-    return calfactor*analysis_time*trapz(ys, zs)
+    return calfactor * analysis_time * trapz(ys, zs)
+
 
 class VTFromMassTuple(object):
     def __init__(self, thresh, analyt, calfactor, psd_fn):
@@ -213,21 +257,27 @@ class VTFromMassTuple(object):
         self.analyt = analyt
         self.calfactor = calfactor
         self.psd_fn = psd_fn
+
     def __call__(self, m1m2):
         m1, m2 = m1m2
-        return vt_from_mass(m1, m2, self.thresh, self.analyt, self.calfactor, self.psd_fn)
+        return vt_from_mass(
+            m1, m2, self.thresh, self.analyt, self.calfactor, self.psd_fn
+        )
+
 
 def vts_from_masses(
-        m1s, m2s, thresh, analysis_time,
-        calfactor=1.0,
-        psd_fn=None,
-        processes=None,
-    ):
+    m1s,
+    m2s,
+    thresh,
+    analysis_time,
+    calfactor=1.0,
+    psd_fn=None,
+    processes=None,
+):
     """Returns array of VTs corresponding to the given systems.
 
     Uses multiprocessing for more efficient computation.
     """
-    import lalsimulation as ls
 
     if psd_fn is None:
         psd_fn = ls.SimNoisePSDaLIGOEarlyHighSensitivityP1200087
@@ -272,18 +322,14 @@ def interpolate(m1_grid, m2_grid, VT_grid):
     :return: A function ``VT(m_1, m_2)``.
     """
 
-    import numpy
-    import scipy.interpolate
-
-#    print(m1_grid,m2_grid)
-    points = (m1_grid[0], m2_grid[:,0])
-#    values = VT_grid.flatten()
-#    print(points)
-    interpolator = scipy.interpolate.RegularGridInterpolator( #scipy.interpolate.interp2d(
-        points, VT_grid,
-        method='linear',
-        bounds_error=False,
-        fill_value=0
+    #    print(m1_grid,m2_grid)
+    points = (m1_grid[0], m2_grid[:, 0])
+    #    values = VT_grid.flatten()
+    #    print(points)
+    interpolator = (
+        scipy.interpolate.RegularGridInterpolator(  # scipy.interpolate.interp2d(
+            points, VT_grid, method="linear", bounds_error=False, fill_value=0
+        )
     )
 
     return interpolator
@@ -293,7 +339,6 @@ def _get_args(raw_args):
     """
     Parse command line arguments when run in CLI mode.
     """
-    import argparse
 
     parser = argparse.ArgumentParser()
 
@@ -305,21 +350,15 @@ def _get_args(raw_args):
 
     parser.add_argument("--threshold", type=float, default=8.0)
     parser.add_argument("--calfactor", type=float, default=1.0)
-    parser.add_argument("--psd-fn",
-        default="SimNoisePSDaLIGOEarlyHighSensitivityP1200087"
+    parser.add_argument(
+        "--psd-fn", default="SimNoisePSDaLIGOEarlyHighSensitivityP1200087"
     )
 
     return parser.parse_args(raw_args)
 
 
 def _main(raw_args=None):
-    import sys
-    import numpy
-    import h5py
-    import lalsimulation as ls
-
     if raw_args is None:
-        import sys
         raw_args = sys.argv[1:]
 
     args = _get_args(raw_args)
@@ -329,22 +368,23 @@ def _main(raw_args=None):
     try:
         psd_fn = getattr(ls, args.psd_fn)
     except AttributeError as err:
-        err.message = (
-            "PSD '{}' not found in lalsimulation.".format(args.psd_fn)
-        )
+        err.message = "PSD '{}' not found in lalsimulation.".format(args.psd_fn)
         raise
 
     duration = args.duration / 365.0
 
     with h5py.File(args.output, "w-") as f:
-        masses = numpy.linspace(args.m_min, args.m_max, args.n_samples)
-        M1, M2 = numpy.meshgrid(masses, masses)
+        masses = np.linspace(args.m_min, args.m_max, args.n_samples)
+        M1, M2 = np.meshgrid(masses, masses)
         m1, m2 = M1.ravel(), M2.ravel()
 
         vts = vts_from_masses(
-            m1, m2,
-            args.threshold, duration,
-            calfactor=args.calfactor, psd_fn=psd_fn,
+            m1,
+            m2,
+            args.threshold,
+            duration,
+            calfactor=args.calfactor,
+            psd_fn=psd_fn,
         )
 
         VTs = vts.reshape(M1.shape)
@@ -355,8 +395,6 @@ def _main(raw_args=None):
 
 
 def _get_args_plot(raw_args):
-    import argparse
-
     parser = argparse.ArgumentParser()
 
     parser.add_argument("table")
@@ -373,25 +411,16 @@ def _get_args_plot(raw_args):
         help="Backend to use for matplotlib.",
     )
 
-
     return parser.parse_args(raw_args)
 
 
 def _main_plot(raw_args=None):
     if raw_args is None:
-        import sys
         raw_args = sys.argv[1:]
 
     args = _get_args_plot(raw_args)
 
-    import operator
-    import numpy
-    import h5py
-    import matplotlib
     matplotlib.use(args.mpl_backend)
-    import matplotlib.pyplot as plt
-
-    from . import gw
 
     M_max = args.m_min + args.m_max
 
@@ -399,17 +428,17 @@ def _main_plot(raw_args=None):
         raw_interpolator = interpolate_hdf5(VTs)
 
         def VT_interp(m1_m2):
-            m1 = m1_m2[:,0]
-            m2 = m1_m2[:,1]
+            m1 = m1_m2[:, 0]
+            m2 = m1_m2[:, 1]
 
             return raw_interpolator(m1_m2)
 
     fig, (ax_mchirp, ax_m1_m2) = plt.subplots(1, 2)
 
-    m_linear = numpy.linspace(args.m_min, args.m_max, args.n_samples)
-    m1_mesh, m2_mesh = numpy.meshgrid(m_linear, m_linear)
+    m_linear = np.linspace(args.m_min, args.m_max, args.n_samples)
+    m1_mesh, m2_mesh = np.meshgrid(m_linear, m_linear)
     m1, m2 = m1_mesh.ravel(), m2_mesh.ravel()
-    m1_m2 = numpy.column_stack((m1, m2))
+    m1_m2 = np.column_stack((m1, m2))
 
     mchirp = gw.chirp_mass_full(m1, m2)
 
@@ -419,29 +448,33 @@ def _main_plot(raw_args=None):
         operator.__or__,
         [
             m1 > args.m_max,
-            m1+m2 > M_max,
+            m1 + m2 > M_max,
             m2 < args.m_min,
             m2 > m1,
-        ]
+        ],
     )
     idx_inside = ~idx_outside
 
     VT[idx_outside] = 0.0
 
     ctr = ax_m1_m2.contourf(
-        m1_mesh, m2_mesh,
-        numpy.log10(VT).reshape(m1_mesh.shape),
-        100, cmap=matplotlib.cm.viridis,
+        m1_mesh,
+        m2_mesh,
+        np.log10(VT).reshape(m1_mesh.shape),
+        100,
+        cmap=matplotlib.cm.viridis,
     )
     fig.colorbar(ctr)
 
-    ax_m1_m2.set_ylim([args.m_min, 0.5*M_max])
+    ax_m1_m2.set_ylim([args.m_min, 0.5 * M_max])
     ax_m1_m2.set_xlabel(r"$m_1$")
     ax_m1_m2.set_ylabel(r"$m_2$")
 
     ax_mchirp.scatter(
-        mchirp[idx_inside], VT[idx_inside],
-        color="black", s=10,
+        mchirp[idx_inside],
+        VT[idx_inside],
+        color="black",
+        s=10,
     )
 
     ax_mchirp.set_xlabel(r"$\mathcal{M}_{\mathrm{c}}$")
@@ -451,5 +484,4 @@ def _main_plot(raw_args=None):
 
 
 if __name__ == "__main__":
-    import sys
     sys.exit(_main(sys.argv[1:]))

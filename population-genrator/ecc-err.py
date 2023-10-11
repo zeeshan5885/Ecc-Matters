@@ -1,8 +1,9 @@
-import numpy as np
 import os
-from scipy.stats import truncnorm
+
 import matplotlib.pyplot as plt
+import numpy as np
 import RIFT.lalsimutils as lalsimutils
+from scipy.stats import truncnorm
 
 # Directory paths
 input_directory = "./weighted_events"  # Replace with the path to the input directory
@@ -26,15 +27,14 @@ for input_file in input_files:
     ecc = truncnorm.rvs(0, 1, loc=d3, scale=0.05, size=len(m1))
     output_data = np.column_stack((m1, m2, ecc))
     col_names = ["m1_source", "m2_source", "ecc"]
-    
+
     # Get the output file name by replacing the extension of the input file
     output_file = os.path.splitext(input_file)[0] + ".dat"
     output_path = os.path.join(output_directory, output_file)
 
     # Save the output data to the output file
-    np.savetxt(output_path, output_data, delimiter='\t', header="\t".join(col_names))
+    np.savetxt(output_path, output_data, delimiter="\t", header="\t".join(col_names))
 
 # Finding the Median and standard deviation in each colum of all events
 
 # Folder path containing the .dat files
-

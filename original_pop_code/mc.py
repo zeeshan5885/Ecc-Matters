@@ -16,13 +16,14 @@ def integrate_box(f, lower, upper, N, compute_error=False, random_state=None):
     V = np.prod(np.subtract(upper, lower))
 
     X = np.column_stack(rng.uniform(lo, hi, N) for lo, hi in zip(lower, upper))
-    F = np.mean(f(X))
+    fX = f(X)
+    F = np.mean(fX)
     I = V * F
 
     if not compute_error:
         return I
 
-    F2 = np.mean(np.power(f(X), 2))
+    F2 = np.mean(np.power(fX, 2))
     dI = V * np.sqrt((F2 - F * F) / N)
 
     return I, dI
@@ -118,6 +119,8 @@ def integrate_adaptive(
 
         def converged(err_abs_current, err_rel_current):
             return (err_rel_current < err_rel) and (err_abs_current < err_abs)
+
+    # -- he should have used lambdas
 
     # Initialize samples and integral accumulators.
     samples = 0

@@ -1,5 +1,7 @@
 from __future__ import division, print_function
 
+import numpy as np
+
 
 def sample_with_cond(func, shape=(1,), cond=None):
     """
@@ -17,15 +19,13 @@ def sample_with_cond(func, shape=(1,), cond=None):
     if cond is None:
         return func(shape)
 
-    import numpy
-
     # Generate initial samples
-    samples = numpy.asanyarray(func(shape))
+    samples = np.asanyarray(func(shape))
 
     # Create index array of samples which fail to meet the condition,
     # and count the number of new samples that will be required.
     bad = ~cond(samples)
-    N = numpy.count_nonzero(bad)
+    N = np.count_nonzero(bad)
 
     # Iteratively replace the bad samples until all samples meet the condition.
     while N:
@@ -41,7 +41,7 @@ def sample_with_cond(func, shape=(1,), cond=None):
 
         # Count the number of new samples still needed.
         # If zero, the loop terminates.
-        N = numpy.count_nonzero(new_bad)
+        N = np.count_nonzero(new_bad)
 
     return samples
 
@@ -53,10 +53,8 @@ def oversample_with_cond(func, size=1, cond=None, oversampling=2):
     if cond is None:
         return func(size)
 
-    import numpy
-
     # Generate initial samples
-    samples = numpy.asanyarray(func(int(size*oversampling)))
+    samples = np.asanyarray(func(int(size * oversampling)))
 
     # Pick out the samples that satisfy the condition,
     # and count the number of good samples for indexing purposes.
@@ -70,7 +68,7 @@ def oversample_with_cond(func, size=1, cond=None, oversampling=2):
         return good_samples[:size]
     else:
         # Initialize array with samples to be returned.
-        ret = numpy.empty(size, dtype=samples.dtype)
+        ret = np.empty(size, dtype=samples.dtype)
         ret[:N_good] = good_samples
 
     # Calculate the index to start adding samples to, and the number of samples
@@ -80,7 +78,7 @@ def oversample_with_cond(func, size=1, cond=None, oversampling=2):
 
     while N_bad:
         # Generate more samples
-        samples = numpy.asanyarray(func(int(size*oversampling)))
+        samples = np.asanyarray(func(int(size * oversampling)))
 
         # Pick out the samples that satisfy the condition,
         # and count the number of good samples for indexing purposes.
@@ -90,10 +88,10 @@ def oversample_with_cond(func, size=1, cond=None, oversampling=2):
         # If we drew enough samples, add just enough to the end of ``ret``
         # and break. Otherwise, add them to the end of ``ret`` and continue.
         if N_good >= N_bad:
-            ret[idx_start:idx_start+N_bad] = good_samples[:N_bad]
+            ret[idx_start : idx_start + N_bad] = good_samples[:N_bad]
             break
         else:
-            ret[idx_start:idx_start+N_good] = good_samples
+            ret[idx_start : idx_start + N_good] = good_samples
 
             # Calculate the index to start adding samples to, and the number of
             # samples that are still needed.
