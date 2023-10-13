@@ -3,7 +3,7 @@ from __future__ import division, print_function
 import matplotlib.pyplot as plt
 import numpy as np
 
-from . import utils
+import utils
 
 
 def integrate_box(f, lower, upper, N, compute_error=False, random_state=None):

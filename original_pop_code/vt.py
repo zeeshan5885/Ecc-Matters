@@ -25,7 +25,7 @@ import numpy as np
 import scipy.interpolate
 from numpy import array, cos, linspace, sin, square, trapz
 
-from . import gw
+import gw
 
 # from pylab import *
 
