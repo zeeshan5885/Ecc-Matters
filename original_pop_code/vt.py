@@ -25,7 +25,7 @@ import numpy as np
 import scipy.interpolate
 from numpy import array, cos, linspace, sin, square, trapz
 
-import gw
+import gwpy
 
 # from pylab import *
 
@@ -439,7 +439,7 @@ def _main_plot(raw_args=None):
     m1, m2 = m1_mesh.ravel(), m2_mesh.ravel()
     m1_m2 = np.column_stack((m1, m2))
 
-    mchirp = gw.chirp_mass_full(m1, m2)
+    mchirp = gwpy.chirp_mass_full(m1, m2)
 
     VT = VT_interp(m1_m2)
 

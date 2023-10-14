@@ -12,7 +12,6 @@ from numpy.lib.function_base import (
     asarray,
     concatenate,
     intp,
-    np,
     take,
 )
 from scipy.spatial.distance import cdist
@@ -225,12 +224,12 @@ def quantile(
            [ 2. ,  5. ]])
     """
 
-    q = array(q, dtype=np.float64, copy=True)
+    q = np.array(q, dtype=np.float64, copy=True)
 
     if weights is None:
         wgt = None
     else:
-        a = asanyarray(a)
+        a = np.asanyarray(a)
         wgt = np.asanyarray(weights)
 
         if issubclass(a.dtype.type, (np.integer, bool_)):
