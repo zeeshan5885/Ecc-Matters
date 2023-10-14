@@ -137,10 +137,8 @@ def run_mcmc(intensity_fn,
     if debug_log_prob:
         return log_prob
 
-    sampler_args = (param_names, constants, intensity_fn, expval_fn,
-                    log_prior_fn, data_likelihood_samples,
-                    data_likelihood_weights, before_prior_aux_fn,
-                    after_prior_aux_fn, args, kwargs)
+    sampler_args = (param_names, constants, intensity_fn, expval_fn, log_prior_fn, data_likelihood_samples,
+                    data_likelihood_weights, before_prior_aux_fn, after_prior_aux_fn, args, kwargs)
 
     sampler = emcee.EnsembleSampler(nwalkers,
                                     ndim,
@@ -149,9 +147,7 @@ def run_mcmc(intensity_fn,
                                     threads=nthreads,
                                     pool=pool,
                                     runtime_sortingfn=runtime_sortingfn)
-    sample_iter = sampler.sample(init_state,
-                                 iterations=nsamples,
-                                 rstate0=rand_state)
+    sample_iter = sampler.sample(init_state, iterations=nsamples, rstate0=rand_state)
 
     if verbose:
         progress_pct = 0
@@ -177,9 +173,8 @@ def run_mcmc(intensity_fn,
     return out_pos, out_log_prob
 
 
-def log_prob(params_free, param_names, constants, intensity_fn, expval_fn,
-             log_prior_fn, data_likelihood_samples, data_likelihood_weights,
-             before_prior_aux_fn, after_prior_aux_fn, args, kwargs):
+def log_prob(params_free, param_names, constants, intensity_fn, expval_fn, log_prior_fn, data_likelihood_samples,
+             data_likelihood_weights, before_prior_aux_fn, after_prior_aux_fn, args, kwargs):
     params = get_params(params_free, constants, param_names)
 
     if before_prior_aux_fn is not None:
@@ -196,8 +191,7 @@ def log_prob(params_free, param_names, constants, intensity_fn, expval_fn,
         log_events_contribution = 0.0
         iterables = zip(data_likelihood_samples, data_likelihood_weights)
         for samples, weights in iterables:
-            intensity = intensity_fn(samples, params, aux_info, *args,
-                                     **kwargs)
+            intensity = intensity_fn(samples, params, aux_info, *args, **kwargs)
 
             if weights is not None:
                 intensity *= weights

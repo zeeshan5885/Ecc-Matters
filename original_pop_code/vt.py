@@ -41,13 +41,10 @@ def draw_thetas(N):
     phis = np.random.uniform(low=0, high=2 * np.pi, size=N)
     zetas = np.random.uniform(low=0, high=2 * np.pi, size=N)
 
-    Fps = 0.5 * cos(2 * zetas) * (1 + square(cos_thetas)) * cos(
-        2 * phis) - sin(2 * zetas) * cos_thetas * sin(2 * phis)
-    Fxs = 0.5 * sin(2 * zetas) * (1 + square(cos_thetas)) * cos(
-        2 * phis) + cos(2 * zetas) * cos_thetas * sin(2 * phis)
+    Fps = 0.5 * cos(2 * zetas) * (1 + square(cos_thetas)) * cos(2 * phis) - sin(2 * zetas) * cos_thetas * sin(2 * phis)
+    Fxs = 0.5 * sin(2 * zetas) * (1 + square(cos_thetas)) * cos(2 * phis) + cos(2 * zetas) * cos_thetas * sin(2 * phis)
 
-    return np.sqrt(0.25 * square(Fps) * square(1 + square(cos_incs)) +
-                   square(Fxs) * square(cos_incs))
+    return np.sqrt(0.25 * square(Fps) * square(1 + square(cos_incs)) + square(Fxs) * square(cos_incs))
 
 
 def next_pow_two(x):
@@ -90,8 +87,7 @@ def optimal_snr(m1_intrinsic, m2_intrinsic, z, psd_fn=None):
     # This is a conservative estimate of the chirp time + MR time (2 seconds)
     tmax = (ls.SimInspiralChirpTimeBound(fmin,
                                          m1_intrinsic * (1 + z) * lal.MSUN_SI,
-                                         m2_intrinsic *
-                                         (1 + z) * lal.MSUN_SI, 0.0, 0.0) + 2)
+                                         m2_intrinsic * (1 + z) * lal.MSUN_SI, 0.0, 0.0) + 2)
 
     df = 1.0 / next_pow_two(tmax)
     fmax = 2048.0  # Hz --- based on max freq of 5-5 inspiral
@@ -99,19 +95,16 @@ def optimal_snr(m1_intrinsic, m2_intrinsic, z, psd_fn=None):
     # Generate the waveform, redshifted as we would see it in the detector, but with zero angles (i.e. phase = 0, inclination = 0)
     ## Will's version -- apparently from a different version of lalsim
     ##    hp, hc = ls.SimInspiralChooseFDWaveform((1+z)*m1_intrinsic*lal.MSUN_SI, (1+z)*m2_intrinsic*lal.MSUN_SI, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, dL*1e9*lal.PC_SI, 0.0, 0.0, 0.0, 0.0, 0.0, df, fmin, fmax, fref, None, ls.IMRPhenomPv2)
-    hp, hc = ls.SimInspiralChooseFDWaveform(
-        (1 + z) * m1_intrinsic * lal.MSUN_SI,
-        (1 + z) * m2_intrinsic * lal.MSUN_SI, 0, 0, 0, 0, 0, 0,
-        dL * 1e9 * lal.PC_SI, 0, 0, 0, 0, 0, df, fmin, fmax, fref, None,
-        ls.IMRPhenomPv2)
+    hp, hc = ls.SimInspiralChooseFDWaveform((1 + z) * m1_intrinsic * lal.MSUN_SI, (1 + z) * m2_intrinsic * lal.MSUN_SI,
+                                            0, 0, 0, 0, 0, 0, dL * 1e9 * lal.PC_SI, 0, 0, 0, 0, 0, df, fmin, fmax, fref,
+                                            None, ls.IMRPhenomPv2)
 
     Nf = int(round(fmax / df)) + 1
     fs = linspace(0, fmax, Nf)
     sel = fs > psdstart
 
     # PSD
-    sffs = lal.CreateREAL8FrequencySeries("psds", 0, 0.0, df,
-                                          lal.DimensionlessUnit, fs.shape[0])
+    sffs = lal.CreateREAL8FrequencySeries("psds", 0, 0.0, df, lal.DimensionlessUnit, fs.shape[0])
     psd_fn(sffs, psdstart)
 
     return ls.MeasureSNRFD(hp, sffs, psdstart, -1.0)
@@ -125,11 +118,7 @@ def optimal_snr(m1_intrinsic, m2_intrinsic, z, psd_fn=None):
 _thetas = None
 
 
-def fraction_above_threshold(m1_intrinsic,
-                             m2_intrinsic,
-                             z,
-                             snr_thresh,
-                             psd_fn=None):
+def fraction_above_threshold(m1_intrinsic, m2_intrinsic, z, snr_thresh, psd_fn=None):
     """Returns the fraction of sources above a given threshold.
 
     :param m1_intrinsic: Source-frame mass 1.
@@ -195,8 +184,7 @@ def vt_from_mass(m1, m2, thresh, analysis_time, calfactor=1.0, psd_fn=None):
     def integrand(z):
         if z == 0.0:
             return 0.0
-        return (4 * np.pi * cosmo.Planck15.differential_comoving_volume(z).to(
-            u.Gpc**3 / u.sr).value / (1 + z) *
+        return (4 * np.pi * cosmo.Planck15.differential_comoving_volume(z).to(u.Gpc**3 / u.sr).value / (1 + z) *
                 fraction_above_threshold(m1, m2, z, thresh))
 
     zmax = 1.0
@@ -227,17 +215,10 @@ class VTFromMassTuple(object):
 
     def __call__(self, m1m2):
         m1, m2 = m1m2
-        return vt_from_mass(m1, m2, self.thresh, self.analyt, self.calfactor,
-                            self.psd_fn)
+        return vt_from_mass(m1, m2, self.thresh, self.analyt, self.calfactor, self.psd_fn)
 
 
-def vts_from_masses(m1s,
-                    m2s,
-                    thresh,
-                    analysis_time,
-                    calfactor=1.0,
-                    psd_fn=None,
-                    processes=None):
+def vts_from_masses(m1s, m2s, thresh, analysis_time, calfactor=1.0, psd_fn=None, processes=None):
     """Returns array of VTs corresponding to the given systems.
 
     Uses multiprocessing for more efficient computation.
@@ -291,13 +272,8 @@ def interpolate(m1_grid, m2_grid, VT_grid):
     #    values = VT_grid.flatten()
     #    print(points)
     interpolator = (
-        scipy.interpolate.
-        RegularGridInterpolator(  # scipy.interpolate.interp2d(
-            points,
-            VT_grid,
-            method="linear",
-            bounds_error=False,
-            fill_value=0))
+        scipy.interpolate.RegularGridInterpolator(  # scipy.interpolate.interp2d(
+            points, VT_grid, method="linear", bounds_error=False, fill_value=0))
 
     return interpolator
 
@@ -317,8 +293,7 @@ def _get_args(raw_args):
 
     parser.add_argument("--threshold", type=float, default=8.0)
     parser.add_argument("--calfactor", type=float, default=1.0)
-    parser.add_argument("--psd-fn",
-                        default="SimNoisePSDaLIGOEarlyHighSensitivityP1200087")
+    parser.add_argument("--psd-fn", default="SimNoisePSDaLIGOEarlyHighSensitivityP1200087")
 
     return parser.parse_args(raw_args)
 
@@ -344,12 +319,7 @@ def _main(raw_args=None):
         M1, M2 = np.meshgrid(masses, masses)
         m1, m2 = M1.ravel(), M2.ravel()
 
-        vts = vts_from_masses(m1,
-                              m2,
-                              args.threshold,
-                              duration,
-                              calfactor=args.calfactor,
-                              psd_fn=psd_fn)
+        vts = vts_from_masses(m1, m2, args.threshold, duration, calfactor=args.calfactor, psd_fn=psd_fn)
 
         VTs = vts.reshape(M1.shape)
 
@@ -369,9 +339,7 @@ def _get_args_plot(raw_args):
 
     parser.add_argument("--n-samples", default=100, type=int)
 
-    parser.add_argument("--mpl-backend",
-                        default="Agg",
-                        help="Backend to use for matplotlib.")
+    parser.add_argument("--mpl-backend", default="Agg", help="Backend to use for matplotlib.")
 
     return parser.parse_args(raw_args)
 
@@ -406,18 +374,12 @@ def _main_plot(raw_args=None):
 
     VT = VT_interp(m1_m2)
 
-    idx_outside = reduce(
-        operator.__or__,
-        [m1 > args.m_max, m1 + m2 > M_max, m2 < args.m_min, m2 > m1])
+    idx_outside = reduce(operator.__or__, [m1 > args.m_max, m1 + m2 > M_max, m2 < args.m_min, m2 > m1])
     idx_inside = ~idx_outside
 
     VT[idx_outside] = 0.0
 
-    ctr = ax_m1_m2.contourf(m1_mesh,
-                            m2_mesh,
-                            np.log10(VT).reshape(m1_mesh.shape),
-                            100,
-                            cmap=mlp.cm.viridis)
+    ctr = ax_m1_m2.contourf(m1_mesh, m2_mesh, np.log10(VT).reshape(m1_mesh.shape), 100, cmap=mlp.cm.viridis)
     fig.colorbar(ctr)
 
     ax_m1_m2.set_ylim([args.m_min, 0.5 * M_max])

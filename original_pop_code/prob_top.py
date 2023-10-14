@@ -3,7 +3,7 @@ from __future__ import division, print_function
 import numpy as np
 
 
-def sample_with_cond(func, shape=(1, ), cond=None):
+def sample_with_cond(func, shape=(1,), cond=None):
     """
     Returns an array of shape ``shape`` containing samples from a
     non-deterministic function ``func``, which must optionally satisfy some

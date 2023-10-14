@@ -29,13 +29,7 @@ def integrate_box(f, lower, upper, N, compute_error=False, random_state=None):
     return I, dI
 
 
-def integrate_adaptive(p,
-                       f,
-                       iter_max=2**16,
-                       iter_start=2**10,
-                       err_abs=None,
-                       err_rel=None,
-                       plot=False):
+def integrate_adaptive(p, f, iter_max=2**16, iter_start=2**10, err_abs=None, err_rel=None, plot=False):
     """
     Compute an adaptive Monte Carlo integral of the form
       Integral p(x) * f(x) dx
@@ -136,8 +130,7 @@ def integrate_adaptive(p,
     # is precisely the value ``True`` is the plot made interactively. Otherwise
     # ``plot`` is assumed to refer to a file to save to, once the routine ends.
     if plot:
-        fig, (ax_integral, ax_err_abs, ax_err_rel) = plt.subplots(3,
-                                                                  sharex=True)
+        fig, (ax_integral, ax_err_abs, ax_err_rel) = plt.subplots(3, sharex=True)
 
         for ax in (ax_integral, ax_err_abs, ax_err_rel):
             ax.set_xscale("log", basex=2)
@@ -173,8 +166,7 @@ def integrate_adaptive(p,
         I_current = F / samples
         # Estimate the absolute error (standard error) and the relative error
         # (standard error divided by the integral).
-        err_abs_current = np.sqrt(
-            (F2 - F * F / samples) / (samples * (samples - 1.0)))
+        err_abs_current = np.sqrt((F2 - F * F / samples) / (samples * (samples - 1.0)))
         err_rel_current = err_abs_current / I_current
 
         # If a plot was requested, add the new estimates of the integral and
