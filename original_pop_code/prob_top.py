@@ -3,7 +3,7 @@ from __future__ import division, print_function
 import numpy as np
 
 
-def sample_with_cond(func, shape=(1,), cond=None):
+def sample_with_cond(func, shape=(1, ), cond=None):
     """
     Returns an array of shape ``shape`` containing samples from a
     non-deterministic function ``func``, which must optionally satisfy some
@@ -66,10 +66,10 @@ def oversample_with_cond(func, size=1, cond=None, oversampling=2):
     # and continue drawing more samples.
     if N_good >= size:
         return good_samples[:size]
-    else:
-        # Initialize array with samples to be returned.
-        ret = np.empty(size, dtype=samples.dtype)
-        ret[:N_good] = good_samples
+
+    # Initialize array with samples to be returned.
+    ret = np.empty(size, dtype=samples.dtype)
+    ret[:N_good] = good_samples
 
     # Calculate the index to start adding samples to, and the number of samples
     # that are still needed.
@@ -88,14 +88,14 @@ def oversample_with_cond(func, size=1, cond=None, oversampling=2):
         # If we drew enough samples, add just enough to the end of ``ret``
         # and break. Otherwise, add them to the end of ``ret`` and continue.
         if N_good >= N_bad:
-            ret[idx_start : idx_start + N_bad] = good_samples[:N_bad]
+            ret[idx_start:idx_start + N_bad] = good_samples[:N_bad]
             break
-        else:
-            ret[idx_start : idx_start + N_good] = good_samples
 
-            # Calculate the index to start adding samples to, and the number of
-            # samples that are still needed.
-            idx_start += N_good
-            N_bad = size - idx_start
+        ret[idx_start:idx_start + N_good] = good_samples
+
+        # Calculate the index to start adding samples to, and the number of
+        # samples that are still needed.
+        idx_start += N_good
+        N_bad = size - idx_start
 
     return ret

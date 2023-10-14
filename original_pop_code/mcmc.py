@@ -7,30 +7,28 @@ import emcee
 import numpy as np
 
 
-def run_mcmc(
-    intensity_fn,
-    expval_fn,
-    data_likelihood_samples,
-    log_prior_fn,
-    init_state,
-    param_names,
-    constants=None,
-    data_likelihood_weights=None,
-    args=None,
-    kwargs=None,
-    before_prior_aux_fn=None,
-    after_prior_aux_fn=None,
-    out_pos=None,
-    out_log_prob=None,
-    nsamples=100,
-    rand_state=None,
-    debug_log_prob=False,
-    nthreads=1,
-    pool=None,
-    runtime_sortingfn=None,
-    verbose=False,
-    dtype=np.float64,
-):
+def run_mcmc(intensity_fn,
+             expval_fn,
+             data_likelihood_samples,
+             log_prior_fn,
+             init_state,
+             param_names,
+             constants=None,
+             data_likelihood_weights=None,
+             args=None,
+             kwargs=None,
+             before_prior_aux_fn=None,
+             after_prior_aux_fn=None,
+             out_pos=None,
+             out_log_prob=None,
+             nsamples=100,
+             rand_state=None,
+             debug_log_prob=False,
+             nthreads=1,
+             pool=None,
+             runtime_sortingfn=None,
+             verbose=False,
+             dtype=np.float64):
     """
 
     :param function intensity_fn:
@@ -118,7 +116,6 @@ def run_mcmc(
 
         if ndim_indiv is None:
             ndim_indiv = D
-
         assert ndim_indiv == D
 
     # Ensure number of dimensions equals the number of dimensions in the initial
@@ -140,43 +137,27 @@ def run_mcmc(
     if debug_log_prob:
         return log_prob
 
-    sampler_args = (
-        param_names,
-        constants,
-        intensity_fn,
-        expval_fn,
-        log_prior_fn,
-        data_likelihood_samples,
-        data_likelihood_weights,
-        before_prior_aux_fn,
-        after_prior_aux_fn,
-        args,
-        kwargs,
-    )
+    sampler_args = (param_names, constants, intensity_fn, expval_fn,
+                    log_prior_fn, data_likelihood_samples,
+                    data_likelihood_weights, before_prior_aux_fn,
+                    after_prior_aux_fn, args, kwargs)
 
-    sampler = emcee.EnsembleSampler(
-        nwalkers,
-        ndim,
-        log_prob,
-        args=sampler_args,
-        threads=nthreads,
-        pool=pool,
-        runtime_sortingfn=runtime_sortingfn,
-    )
-    sample_iter = sampler.sample(
-        init_state,
-        iterations=nsamples,
-        rstate0=rand_state,
-    )
+    sampler = emcee.EnsembleSampler(nwalkers,
+                                    ndim,
+                                    log_prob,
+                                    args=sampler_args,
+                                    threads=nthreads,
+                                    pool=pool,
+                                    runtime_sortingfn=runtime_sortingfn)
+    sample_iter = sampler.sample(init_state,
+                                 iterations=nsamples,
+                                 rstate0=rand_state)
 
     if verbose:
         progress_pct = 0
 
         def display_progress(p, s):
-            print(
-                "Progress: {p}%; Samples: {s}".format(p=p, s=s),
-                file=sys.stderr,
-            )
+            print(f"Progress: {p}%; Samples: {s}", file=sys.stderr)
 
         display_progress(progress_pct, 0)
 
@@ -196,20 +177,9 @@ def run_mcmc(
     return out_pos, out_log_prob
 
 
-def log_prob(
-    params_free,
-    param_names,
-    constants,
-    intensity_fn,
-    expval_fn,
-    log_prior_fn,
-    data_likelihood_samples,
-    data_likelihood_weights,
-    before_prior_aux_fn,
-    after_prior_aux_fn,
-    args,
-    kwargs,
-):
+def log_prob(params_free, param_names, constants, intensity_fn, expval_fn,
+             log_prior_fn, data_likelihood_samples, data_likelihood_weights,
+             before_prior_aux_fn, after_prior_aux_fn, args, kwargs):
     params = get_params(params_free, constants, param_names)
 
     if before_prior_aux_fn is not None:
@@ -226,7 +196,8 @@ def log_prob(
         log_events_contribution = 0.0
         iterables = zip(data_likelihood_samples, data_likelihood_weights)
         for samples, weights in iterables:
-            intensity = intensity_fn(samples, params, aux_info, *args, **kwargs)
+            intensity = intensity_fn(samples, params, aux_info, *args,
+                                     **kwargs)
 
             if weights is not None:
                 intensity *= weights
@@ -247,11 +218,7 @@ def get_params(variables, constants, names):
     """ """
     if len(variables) + len(constants) != len(names):
         raise ValueError(
-            "Incorrect number of variables and constants. "
-            "Expected {expected}, but got {actual}.".format(
-                expected=len(names),
-                actual=len(variables) + len(constants),
-            )
+            f"Incorrect number of variables and constants. Expected {len(names)}, but got {len(variables) + len(constants)}."
         )
 
     params = []

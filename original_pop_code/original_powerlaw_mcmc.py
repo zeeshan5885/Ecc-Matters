@@ -25,50 +25,45 @@ def intensity(indiv_params, pop_params, aux_info, M_max=None, **kwargs):
     pdf_const = aux_info["pdf_const"]
     rate = aux_info["rate"]
 
-    return rate * prob.joint_pdf(m_1, m_2, alpha, m_min, m_max, M_max, const=pdf_const)
+    return rate * prob.joint_pdf(
+        m_1, m_2, alpha, m_min, m_max, M_max, const=pdf_const)
 
 
-def expval_mc(
-    pop_params,
-    aux_info,
-    raw_interpolator=None,
-    M_max=None,
-    err_abs=1e-5,
-    err_rel=1e-3,
-    return_err=False,
-    rand_state=None,
-    **kwargs
-):
+def expval_mc(pop_params,
+              aux_info,
+              raw_interpolator=None,
+              M_max=None,
+              err_abs=1e-5,
+              err_rel=1e-3,
+              return_err=False,
+              rand_state=None,
+              **kwargs):
     log_rate, alpha, m_min, m_max = pop_params
     rate = aux_info["rate"]
+
     #    print(" >>> PREP >>> ", raw_interpolator, raw_interpolator.method)
 
     def p(N):
-        return prob.joint_rvs(
-            N,
-            alpha,
-            m_min,
-            m_max,
-            M_max,
-            rand_state=rand_state,
-        )
+        return prob.joint_rvs(N,
+                              alpha,
+                              m_min,
+                              m_max,
+                              M_max,
+                              rand_state=rand_state)
 
     def efficiency_fn(m1_m2, raw_interpolator=raw_interpolator):
         m1 = m1_m2[:, 0]
         m2 = m1_m2[:, 1]
         return raw_interpolator(m1_m2)
 
-    I, err_abs, err_rel = mc.integrate_adaptive(
-        p,
-        efficiency_fn,
-        err_abs=err_abs,
-        err_rel=err_rel,
-    )
+    I, err_abs, err_rel = mc.integrate_adaptive(p,
+                                                efficiency_fn,
+                                                err_abs=err_abs,
+                                                err_rel=err_rel)
 
     if return_err:
         return rate * I, err_abs, err_rel
-    else:
-        return rate * I
+    return rate * I
 
 
 def VT_interp(m1_m2, raw_interpolator, **kwargs):
@@ -78,24 +73,22 @@ def VT_interp(m1_m2, raw_interpolator, **kwargs):
     return raw_interpolator(m1, m2)
 
 
-def log_prior_pop(
-    pop_params,
-    aux_info,
-    M_max=None,
-    log_rate_min=None,
-    log_rate_max=None,
-    alpha_min=None,
-    alpha_max=None,
-    m_min_min=None,
-    m_min_max=None,
-    m_max_min=None,
-    m_max_max=None,
-    log_rate_scale="uniform",
-    alpha_scale="uniform",
-    m_min_scale="uniform",
-    m_max_scale="uniform",
-    **kwargs
-):
+def log_prior_pop(pop_params,
+                  aux_info,
+                  M_max=None,
+                  log_rate_min=None,
+                  log_rate_max=None,
+                  alpha_min=None,
+                  alpha_max=None,
+                  m_min_min=None,
+                  m_min_max=None,
+                  m_max_min=None,
+                  m_max_max=None,
+                  log_rate_scale="uniform",
+                  alpha_scale="uniform",
+                  m_min_scale="uniform",
+                  m_max_scale="uniform",
+                  **kwargs):
     log_rate, alpha, m_min, m_max = pop_params
 
     log_prior = 0.0
@@ -133,27 +126,25 @@ def log_prior_pop(
     return log_prior
 
 
-def init_uniform(
-    nwalkers,
-    nevents,
-    fixed_log_rate,
-    fixed_alpha,
-    fixed_m_min,
-    fixed_m_max,
-    log_rate_min,
-    log_rate_max,
-    alpha_min,
-    alpha_max,
-    m_min_min,
-    m_min_max,
-    m_max_min,
-    m_max_max,
-    log_rate_scale="uniform",
-    alpha_scale="uniform",
-    m_min_scale="uniform",
-    m_max_scale="uniform",
-    rand_state=None,
-):
+def init_uniform(nwalkers,
+                 nevents,
+                 fixed_log_rate,
+                 fixed_alpha,
+                 fixed_m_min,
+                 fixed_m_max,
+                 log_rate_min,
+                 log_rate_max,
+                 alpha_min,
+                 alpha_max,
+                 m_min_min,
+                 m_min_max,
+                 m_max_min,
+                 m_max_max,
+                 log_rate_scale="uniform",
+                 alpha_scale="uniform",
+                 m_min_scale="uniform",
+                 m_max_scale="uniform",
+                 rand_state=None):
     rand_state = utils.check_random_state(rand_state)
 
     columns = []
@@ -199,196 +190,140 @@ def _get_args(raw_args):
     parser.add_argument(
         "events",
         nargs="*",
-        help="List of posterior sample files, one for each event.",
-    )
-    parser.add_argument(
-        "VTs",
-        help="HDF5 file containing VTs.",
-    )
-    parser.add_argument(
-        "posterior_output",
-        help="HDF5 file to store posterior samples in.",
-    )
+        help="List of posterior sample files, one for each event.")
+    parser.add_argument("VTs", help="HDF5 file containing VTs.")
+    parser.add_argument("posterior_output",
+                        help="HDF5 file to store posterior samples in.")
 
-    parser.add_argument(
-        "--fixed-log-rate",
-        type=float,
-        help="Constant to fix log_rate to (optional).",
-    )
-    parser.add_argument(
-        "--fixed-alpha",
-        type=float,
-        help="Constant to fix alpha to (optional).",
-    )
-    parser.add_argument(
-        "--fixed-m-min",
-        type=float,
-        help="Constant to fix m_min to (optional).",
-    )
-    parser.add_argument(
-        "--fixed-m-max",
-        type=float,
-        help="Constant to fix m_max to (optional).",
-    )
+    parser.add_argument("--fixed-log-rate",
+                        type=float,
+                        help="Constant to fix log_rate to (optional).")
+    parser.add_argument("--fixed-alpha",
+                        type=float,
+                        help="Constant to fix alpha to (optional).")
+    parser.add_argument("--fixed-m-min",
+                        type=float,
+                        help="Constant to fix m_min to (optional).")
+    parser.add_argument("--fixed-m-max",
+                        type=float,
+                        help="Constant to fix m_max to (optional).")
 
     parser.add_argument(
         "--n-walkers",
         default=None,
         type=int,
-        help="Number of walkers to use, defaults to twice the number of " "dimensions.",
-    )
-    parser.add_argument(
-        "--n-samples",
-        default=100,
-        type=int,
-        help="Number of MCMC samples per walker.",
-    )
-    parser.add_argument(
-        "--n-threads",
-        default=1,
-        type=int,
-        help="Number of threads to use in MCMC.",
-    )
+        help="Number of walkers to use, defaults to twice the number of "
+        "dimensions.")
+    parser.add_argument("--n-samples",
+                        default=100,
+                        type=int,
+                        help="Number of MCMC samples per walker.")
+    parser.add_argument("--n-threads",
+                        default=1,
+                        type=int,
+                        help="Number of threads to use in MCMC.")
 
-    parser.add_argument(
-        "--log-rate-prior",
-        default="uniform",
-        choices=["uniform"],
-        help="Type of prior used for log rate.",
-    )
-    parser.add_argument(
-        "--log-rate-initial-cond",
-        default="uniform",
-        choices=["uniform"],
-        help="Type of initial condition used for log rate.",
-    )
-    parser.add_argument(
-        "--log-rate-min",
-        type=float,
-        default=-5.0,
-        help="Minimum log10 rate allowed.",
-    )
-    parser.add_argument(
-        "--log-rate-max",
-        type=float,
-        default=5.0,
-        help="Maximum log10 rate allowed.",
-    )
+    parser.add_argument("--log-rate-prior",
+                        default="uniform",
+                        choices=["uniform"],
+                        help="Type of prior used for log rate.")
+    parser.add_argument("--log-rate-initial-cond",
+                        default="uniform",
+                        choices=["uniform"],
+                        help="Type of initial condition used for log rate.")
+    parser.add_argument("--log-rate-min",
+                        type=float,
+                        default=-5.0,
+                        help="Minimum log10 rate allowed.")
+    parser.add_argument("--log-rate-max",
+                        type=float,
+                        default=5.0,
+                        help="Maximum log10 rate allowed.")
 
-    parser.add_argument(
-        "--alpha-prior",
-        default="uniform",
-        choices=["uniform"],
-        help="Type of prior used for power law index 'alpha'.",
-    )
+    parser.add_argument("--alpha-prior",
+                        default="uniform",
+                        choices=["uniform"],
+                        help="Type of prior used for power law index 'alpha'.")
     parser.add_argument(
         "--alpha-initial-cond",
         default="uniform",
         choices=["uniform"],
-        help="Type of initial condition used for power law index 'alpha'.",
-    )
-    parser.add_argument(
-        "--alpha-min",
-        type=float,
-        default=-5,
-        help="Minimum alpha allowed.",
-    )
-    parser.add_argument(
-        "--alpha-max",
-        type=float,
-        default=+5,
-        help="Maximum alpha allowed.",
-    )
+        help="Type of initial condition used for power law index 'alpha'.")
+    parser.add_argument("--alpha-min",
+                        type=float,
+                        default=-5,
+                        help="Minimum alpha allowed.")
+    parser.add_argument("--alpha-max",
+                        type=float,
+                        default=+5,
+                        help="Maximum alpha allowed.")
 
     parser.add_argument(
         "--m-min-prior",
         default="uniform",
         choices=["uniform"],
-        help="Type of prior used for minimum component mass 'm_min'.",
-    )
+        help="Type of prior used for minimum component mass 'm_min'.")
     parser.add_argument(
         "--m-min-initial-cond",
         default="uniform",
         choices=["uniform"],
-        help="Type of initial condition used for minimum component mass " "'m_min'.",
-    )
-    parser.add_argument(
-        "--m-min-min",
-        type=float,
-        default=1.0,
-        help="Minimum m_min allowed.",
-    )
-    parser.add_argument(
-        "--m-min-max",
-        type=float,
-        default=20.0,
-        help="Maximum m_min allowed.",
-    )
+        help=
+        "Type of initial condition used for minimum component mass 'm_min'.")
+    parser.add_argument("--m-min-min",
+                        type=float,
+                        default=1.0,
+                        help="Minimum m_min allowed.")
+    parser.add_argument("--m-min-max",
+                        type=float,
+                        default=20.0,
+                        help="Maximum m_min allowed.")
 
     parser.add_argument(
         "--m-max-prior",
         default="uniform",
         choices=["uniform"],
-        help="Type of prior used for maximum component mass 'm_max'.",
-    )
+        help="Type of prior used for maximum component mass 'm_max'.")
     parser.add_argument(
         "--m-max-initial-cond",
         default="uniform",
         choices=["uniform"],
-        help="Type of initial condition used for maximum component mass " "'m_max'.",
-    )
-    parser.add_argument(
-        "--m-max-min",
-        type=float,
-        default=30.0,
-        help="Minimum m_max allowed.",
-    )
-    parser.add_argument(
-        "--m-max-max",
-        type=float,
-        default=100.0,
-        help="Maximum m_max allowed.",
-    )
+        help="Type of initial condition used for maximum component mass "
+        "'m_max'.")
+    parser.add_argument("--m-max-min",
+                        type=float,
+                        default=30.0,
+                        help="Minimum m_max allowed.")
+    parser.add_argument("--m-max-max",
+                        type=float,
+                        default=100.0,
+                        help="Maximum m_max allowed.")
 
-    parser.add_argument(
-        "--mass-prior",
-        default="uniform",
-        choices=["uniform"],
-        help="Type of prior used for component masses.",
-    )
-    parser.add_argument(
-        "--total-mass-max",
-        type=float,
-        default=100.0,
-        help="Maximum total mass allowed.",
-    )
+    parser.add_argument("--mass-prior",
+                        default="uniform",
+                        choices=["uniform"],
+                        help="Type of prior used for component masses.")
+    parser.add_argument("--total-mass-max",
+                        type=float,
+                        default=100.0,
+                        help="Maximum total mass allowed.")
 
     parser.add_argument(
         "--mc-err-abs",
         type=float,
         default=1e-5,
-        help="Allowed absolute error for Monte Carlo integrator.",
-    )
+        help="Allowed absolute error for Monte Carlo integrator.")
     parser.add_argument(
         "--mc-err-rel",
         type=float,
         default=1e-3,
-        help="Allowed relative error for Monte Carlo integrator.",
-    )
+        help="Allowed relative error for Monte Carlo integrator.")
 
-    parser.add_argument(
-        "--seed",
-        type=int,
-        default=None,
-        help="Random seed.",
-    )
+    parser.add_argument("--seed", type=int, default=None, help="Random seed.")
 
-    parser.add_argument(
-        "-v",
-        "--verbose",
-        action="store_true",
-        help="Use verbose output.",
-    )
+    parser.add_argument("-v",
+                        "--verbose",
+                        action="store_true",
+                        help="Use verbose output.")
 
     return parser.parse_args(raw_args)
 
@@ -407,7 +342,7 @@ def _main(raw_args=None):
     assert M_max is not None
 
     ncpu = cpu_count()
-    print("{0} CPUs".format(ncpu))
+    print(f"{ncpu} CPUs")
 
     constants = {}
     if cli_args.fixed_log_rate is not None:
@@ -424,8 +359,7 @@ def _main(raw_args=None):
     for event_fname in cli_args.events:
         data_table = np.genfromtxt(event_fname, names=True)
         m1_m2 = np.column_stack(
-            (data_table["m1_source"], data_table["m2_source"]),
-        )
+            (data_table["m1_source"], data_table["m2_source"]), )
         data_posterior_samples.append(m1_m2)
 
         del data_table
@@ -453,27 +387,25 @@ def _main(raw_args=None):
     n_walkers = 2 * ndim if cli_args.n_walkers is None else cli_args.n_walkers
 
     # Initialize walkers
-    init_state = init_uniform(
-        n_walkers,
-        n_events,
-        cli_args.fixed_log_rate,
-        cli_args.fixed_alpha,
-        cli_args.fixed_m_min,
-        cli_args.fixed_m_max,
-        cli_args.log_rate_min,
-        cli_args.log_rate_max,
-        cli_args.alpha_min,
-        cli_args.alpha_max,
-        cli_args.m_min_min,
-        cli_args.m_min_max,
-        cli_args.m_max_min,
-        cli_args.m_max_max,
-        log_rate_scale=cli_args.log_rate_initial_cond,
-        alpha_scale=cli_args.alpha_initial_cond,
-        m_min_scale=cli_args.m_min_initial_cond,
-        m_max_scale=cli_args.m_max_initial_cond,
-        rand_state=rand_state,
-    )
+    init_state = init_uniform(n_walkers,
+                              n_events,
+                              cli_args.fixed_log_rate,
+                              cli_args.fixed_alpha,
+                              cli_args.fixed_m_min,
+                              cli_args.fixed_m_max,
+                              cli_args.log_rate_min,
+                              cli_args.log_rate_max,
+                              cli_args.alpha_min,
+                              cli_args.alpha_max,
+                              cli_args.m_min_min,
+                              cli_args.m_min_max,
+                              cli_args.m_max_min,
+                              cli_args.m_max_max,
+                              log_rate_scale=cli_args.log_rate_initial_cond,
+                              alpha_scale=cli_args.alpha_initial_cond,
+                              m_min_scale=cli_args.m_min_initial_cond,
+                              m_max_scale=cli_args.m_max_initial_cond,
+                              rand_state=rand_state)
 
     # Create file to store posterior samples.
     # Fails if file already exists, to avoid accidentally deleting precious
@@ -486,19 +418,12 @@ def _main(raw_args=None):
     #   previous memory.
     with h5py.File(cli_args.posterior_output, "w-") as posterior_output:
         # Store initial position.
-        posterior_output.create_dataset(
-            "init_pos",
-            data=init_state,
-        )
+        posterior_output.create_dataset("init_pos", data=init_state)
         # Create empty arrays for storing walker position and log_prob.
         posterior_pos = posterior_output.create_dataset(
-            "pos",
-            (cli_args.n_samples, n_walkers, ndim),
-        )
+            "pos", (cli_args.n_samples, n_walkers, ndim))
         posterior_log_prob = posterior_output.create_dataset(
-            "log_prob",
-            (cli_args.n_samples, n_walkers),
-        )
+            "log_prob", (cli_args.n_samples, n_walkers))
 
         # Store constants
         for name, value in six.iteritems(constants):
@@ -532,7 +457,7 @@ def _main(raw_args=None):
             "m_max_scale": cli_args.m_max_prior,
             "err_abs": cli_args.mc_err_abs,
             "err_rel": cli_args.mc_err_rel,
-            "rand_state": rand_state,
+            "rand_state": rand_state
         }
         pool = None
         if True:  # with None as pool:
@@ -557,8 +482,7 @@ def _main(raw_args=None):
                 pool=pool,
                 runtime_sortingfn=None,
                 dtype=np.float64,
-                verbose=cli_args.verbose,
-            )
+                verbose=cli_args.verbose)
 
 
 # Functions which pre-compute quantities that are used at multiple steps
@@ -566,7 +490,7 @@ def _main(raw_args=None):
 # from the log10(rate), and the normalization factor for the mass
 # distribution.
 def before_prior_aux_fn(pop_params, **kwargs):
-    log_rate, alpha, m_min, m_max = pop_params
+    log_rate, _, _, _ = pop_params
     rate = 10**log_rate
     aux_info = {"rate": rate}
 
@@ -574,7 +498,7 @@ def before_prior_aux_fn(pop_params, **kwargs):
 
 
 def after_prior_aux_fn(pop_params, aux_info, M_max=None, **kwargs):
-    log_rate, alpha, m_min, m_max = pop_params
+    _, alpha, m_min, m_max = pop_params
 
     aux_info["pdf_const"] = prob.pdf_const(alpha, m_min, m_max, M_max)
 
