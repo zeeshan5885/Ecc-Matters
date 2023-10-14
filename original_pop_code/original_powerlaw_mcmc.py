@@ -20,7 +20,7 @@ LN_TEN = np.log(10.0)
 
 def intensity(indiv_params, pop_params, aux_info, M_max=None, **kwargs):
     m_1, m_2 = indiv_params.T
-    log_rate, alpha, m_min, m_max = pop_params
+    _, alpha, m_min, m_max = pop_params
 
     pdf_const = aux_info["pdf_const"]
     rate = aux_info["rate"]
@@ -37,7 +37,7 @@ def expval_mc(pop_params,
               return_err=False,
               rand_state=None,
               **kwargs):
-    log_rate, alpha, m_min, m_max = pop_params
+    _, alpha, m_min, m_max = pop_params
     rate = aux_info["rate"]
 
     #    print(" >>> PREP >>> ", raw_interpolator, raw_interpolator.method)

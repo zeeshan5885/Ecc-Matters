@@ -24,8 +24,7 @@ def check_random_state(seed):
         return np.random.RandomState(seed)
     if isinstance(seed, np.random.RandomState):
         return seed
-    raise ValueError("%r cannot be used to seed a np.random.RandomState"
-                     " instance" % seed)
+    raise ValueError(f"{seed} cannot be used to seed a np.random.RandomState instance")
 
 
 def quantile(a, q, axis=None, weights=None, out=None, overwrite_input=False, interpolation="linear", keepdims=False):
