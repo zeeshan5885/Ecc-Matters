@@ -1,5 +1,62 @@
 # [mc.py](mc.py)
 
+The `integrate_box` function employs mathematical formulas from Monte Carlo integration to estimate the integral of a given function `f` over a hyperrectangular domain. The key formulas involved are as follows:
+
+1. **Volume of the Hyperrectangular Domain (V):**
+
+   $$V = \prod_i(\text{upper}_i - \text{lower}_i)$$
+
+   This formula calculates the volume of the hyperrectangular domain by taking the product of the differences between the upper and lower bounds ($\text{upper}_i$ and $\text{lower}_i$) along each dimension $i$.
+
+2. **Sample Average (F):**
+
+   $$F = \frac{1}{N} \sum_{i=1}^{N} f(\mathbf{X}_i)$$
+
+   $F$ represents the sample average of the function values $f(\mathbf{X}_i)$ for $N$ random sample points $\mathbf{X}_i$. It is the sum of the function values divided by the total number of samples ($N$). It is also equal to the first moment,
+
+   $$\mu_1 = \frac{1}{N} \sum_{i=1}^{N} f(\mathbf{X}_i)$$
+
+3. **Integral Estimate (I):**
+
+   $$I = V \cdot F$$
+
+   The integral estimate $I$ is calculated by multiplying the volume $V$ of the hyperrectangular domain by the sample average $F$. This provides an estimate of the integral of the function over the specified domain.
+
+4. **Standard Error of the Estimate (dI):**
+   $$\mu_2 = \frac{1}{N} \sum_{i=1}^{N} \left(f(\mathbf{X}_i)\right)^2=F2$$
+   $$dI = V \cdot \sqrt{\frac{{\mu_2 - \mu^2_1}}{N}}$$
+
+   If the `compute_error` flag is set to `True`, the standard error of the estimate $dI$ is calculated. It represents the uncertainty associated with the integral estimate and is computed using the formula. $F2$ is the sample average of the squared function values.
+
+These formulas are fundamental to the Monte Carlo integration method used in the `integrate_box` function. The integral estimate $I$ represents the expected value of the integral, and the standard error $dI$ provides an estimate of the uncertainty in this value based on the variance of the function values.
+
+1.  **Integrating the function in a hyperrecatangular region `integrate_box`:**
+
+    - The `integrate_box` function is designed to compute the Monte Carlo integral of a given function $f$ over a hyperrectangular domain defined by lower and upper bounds (`lower` and `upper`) using $N$ samples.
+
+    - It begins by checking and handling the random number generator state (`random_state`) using a utility function utils.`check_random_state`. This ensures that the function can work with different random number generator types and states.
+
+    - The volume of the hyperrectangular domain ($V$) is calculated by taking the product of the differences between the upper and lower bounds along each dimension.
+      $$V = \prod_i(\text{upper}_i - \text{lower}_i)$$
+
+    - A key part of Monte Carlo integration is generating random samples within the specified domain. This code uses NumPy's column_stack function to stack arrays of random numbers generated using rng.uniform for each dimension. It creates an array `X` where each row represents a point within the domain.
+
+    - The function `f(X)` is evaluated for each of these sample points, and the results are stored in the array `fX`.
+
+    - The Monte Carlo estimate of the integral is computed as follows:
+
+      - Calculate the sample average of the function values, `F`, which is the sum of `fX` divided by `N`.
+        $$F = \frac{1}{N} \sum_{i=1}^{N} f(\mathbf{X}_i)$$
+      - Estimate the integral `I` by multiplying the volume `V` by the sample average `F`.
+        $$I = V \cdot F$$
+
+    - If the `compute_error` flag is set to `True`, the code proceeds to calculate the standard error of the estimate.
+
+    - To calculate the standard error, compute the sample average of the squared function values, `F2`, which is the sum of the element-wise square of `fX` divided by `N`. Use these values to compute the standard error `dI` as the square root of the variance of the function values, which is `(F2 - F^2) / N`, multiplied by the volume `V`.
+      $$dI = V \cdot \sqrt{\frac{{\mu_2 - \mu^2_1}}{N}}$$
+
+    - Depending on whether `compute_error` is `True`, the function returns either just the integral estimate `I` or a tuple containing the integral estimate `I` and the estimated error `dI`.
+
 # [mcmc.py](mcmc.py)
 
 # [original_powerlaw_mcmc.py](original_powerlaw_mcmc.py)
@@ -57,7 +114,7 @@ The break down of the code into its key components with proper mathematical expl
 
 8. **Upper Mass Credible Region Calculation with Detection Weighting (upper_mass_credible_region_detection_weighted):**
    - This function calculates the upper mass credible region for detection-weighted events.
-   - It incorporates detection weighting using the `VT_from_m1_m2` function and follows a similar approach to the `upper_mass_credible_region` function, considering quantile, $\alpha$, $m\_{\text{min}}$, $m_{\text{max}}$, and $M_{\text{max}}$.
+   - It incorporates detection weighting using the `VT_from_m1_m2` function and follows a similar approach to the `upper_mass_credible_region` function, considering quantile, $\alpha$, $m_{\text{min}}$, $m_{\text{max}}$, and $M_{\text{max}}$.
 
 The code provides tools for generating samples from power-law distributions and calculating PDFs and credible regions, particularly useful in astrophysical contexts where power-law distributions are common models. The mathematical explanations provided above should give you a deeper understanding of how the code works.
 

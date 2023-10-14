@@ -187,9 +187,8 @@ def integrate_adaptive(
     # so long as we are not in interactive mode, in which case it should already
     # be visible.
     if plot:
-        if plot is True:
-            if not plt.isinteractive():
-                plt.show(fig)
+        if not plt.isinteractive():
+            plt.show(fig)
         else:
             fig.savefig(plot)
 
