@@ -19,7 +19,7 @@ import astropy.units as u
 import h5py
 import lal
 import lalsimulation as ls
-import matplotlib
+import matplotlib as mlp
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy.interpolate
@@ -419,7 +419,7 @@ def _main_plot(raw_args=None):
 
     args = _get_args_plot(raw_args)
 
-    matplotlib.use(args.mpl_backend)
+    mlp.use(args.mpl_backend)
 
     M_max = args.m_min + args.m_max
 
@@ -461,7 +461,7 @@ def _main_plot(raw_args=None):
         m2_mesh,
         np.log10(VT).reshape(m1_mesh.shape),
         100,
-        cmap=matplotlib.cm.viridis,
+        cmap=mlp.cm.viridis,
     )
     fig.colorbar(ctr)
 

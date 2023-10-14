@@ -580,7 +580,7 @@ class gaussian_kde(object):
 
     Kernel density estimation is a way to estimate the probability density
     function (PDF) of a random variable in a non-parametric way.
-    `gaussian_kde` works for both uni-variate and multi-variate data.   It
+    `gaussian_kde` works for both uni-variate and multi-variate data. It
     includes automatic bandwidth determination.  The estimation works best for
     a unimodal distribution; bimodal or multi-modal distributions tend to be
     oversmoothed.

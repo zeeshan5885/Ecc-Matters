@@ -131,6 +131,7 @@ def run_mcmc(
         out_pos = np.empty((nsamples, nwalkers, ndim), dtype=dtype)
     else:
         assert np.shape(out_pos) == (nsamples, nwalkers, ndim)
+
     if out_log_prob is None:
         out_log_prob = np.empty((nsamples, nwalkers), dtype=dtype)
     else:

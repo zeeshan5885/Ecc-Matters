@@ -4,16 +4,7 @@ import numbers
 import warnings
 
 import numpy as np
-from numpy.lib.function_base import (
-    _ureduce,
-    add,
-    array,
-    asanyarray,
-    asarray,
-    concatenate,
-    intp,
-    take,
-)
+from numpy.lib.function_base import _ureduce, add, asarray, concatenate, intp, take
 from scipy.spatial.distance import cdist
 from six import string_types
 
