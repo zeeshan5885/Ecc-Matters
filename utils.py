@@ -3,16 +3,7 @@ from __future__ import division, print_function
 import numbers
 
 import numpy as np
-from numpy.lib.function_base import (
-    _ureduce,
-    add,
-    array,
-    asanyarray,
-    asarray,
-    concatenate,
-    intp,
-    take,
-)
+from numpy.lib.function_base import (_ureduce, add, array, asanyarray, asarray, concatenate, intp, take)
 from scipy.spatial.distance import cdist
 from six import string_types
 
@@ -32,9 +23,8 @@ def check_random_state(seed):
         return np.random.RandomState(seed)
     if isinstance(seed, np.random.RandomState):
         return seed
-    raise ValueError(
-        "%r cannot be used to seed a np.random.RandomState" " instance" % seed
-    )
+    raise ValueError("%r cannot be used to seed a np.random.RandomState"
+                     " instance" % seed)
 
 
 def quantile(
@@ -238,28 +228,17 @@ def quantile(
 
         broadcastable = False
         if a.ndim == wgt.ndim and a.shape != wgt.shape:
-            broadcastable = all(
-                [
-                    a_dim == w_dim or w_dim == 1
-                    for a_dim, w_dim in zip(a.shape, wgt.shape)
-                ]
-            )
+            broadcastable = all([a_dim == w_dim or w_dim == 1 for a_dim, w_dim in zip(a.shape, wgt.shape)])
 
         if a.shape != wgt.shape and not broadcastable:
             if axis is None:
-                raise TypeError(
-                    "Axis must be specified when shapes of a and weights "
-                    "differ and not broadcastable."
-                )
+                raise TypeError("Axis must be specified when shapes of a and weights "
+                                "differ and not broadcastable.")
             if wgt.ndim != 1:
-                raise TypeError(
-                    "1D weights expected when shapes of a and weights differ "
-                    " and not broadcastable."
-                )
+                raise TypeError("1D weights expected when shapes of a and weights differ "
+                                " and not broadcastable.")
             if wgt.shape[0] != a.shape[axis]:
-                raise ValueError(
-                    "Length of weights not compatible with specified axis."
-                )
+                raise ValueError("Length of weights not compatible with specified axis.")
             if not np.issubdtype(wgt.dtype, np.number):
                 raise ValueError("All weight entries must be numeric.")
 
@@ -326,17 +305,13 @@ def _quantile(
     if q.size < 10:
         for i in range(q.size):
             if q[i] < 0.0 or q[i] > 1.0:
-                raise ValueError(
-                    "Quantiles must be in the range [0,1], "
-                    "or percentiles must be [0,100]."
-                )
+                raise ValueError("Quantiles must be in the range [0,1], "
+                                 "or percentiles must be [0,100].")
     else:
         # faster than any()
         if np.count_nonzero(q < 0.0) or np.count_nonzero(q > 1.0):
-            raise ValueError(
-                "Quantiles must be in the range [0,1] "
-                "or percentiles must be [0,100]."
-            )
+            raise ValueError("Quantiles must be in the range [0,1] "
+                             "or percentiles must be [0,100].")
 
     # prepare a for partioning
     if overwrite_input:
@@ -395,13 +370,10 @@ def _quantile(
         w_slice = ws_sorted  # .copy()
         # in case any input weight is less than 1, we renormalize by min
         if True in (ws_sorted[nonzero_w_inds] < 1.0):
-            ws_sorted[nonzero_w_inds] = (
-                ws_sorted[nonzero_w_inds] / ws_sorted[nonzero_w_inds].min()
-            )
+            ws_sorted[nonzero_w_inds] = (ws_sorted[nonzero_w_inds] / ws_sorted[nonzero_w_inds].min())
 
-        w_slice[nonzero_w_inds] = (
-            normalized_w_upper[nonzero_w_inds] - prior_cum_w[nonzero_w_inds]
-        ) / ws_sorted[nonzero_w_inds]
+        w_slice[nonzero_w_inds] = (normalized_w_upper[nonzero_w_inds] -
+                                   prior_cum_w[nonzero_w_inds]) / ws_sorted[nonzero_w_inds]
 
         w_slice = np.roll(w_slice, -1, axis=-1)
         # now create the lower percentage bound
@@ -444,10 +416,8 @@ def _quantile(
     elif interpolation == "linear":
         pass  # keep index as fraction and interpolate
     else:
-        raise ValueError(
-            "interpolation can only be 'linear', 'lower' 'higher', "
-            "'midpoint', or 'nearest'"
-        )
+        raise ValueError("interpolation can only be 'linear', 'lower' 'higher', "
+                         "'midpoint', or 'nearest'")
 
     inexact = np.issubdtype(a.dtype, np.inexact)
 
@@ -518,9 +488,7 @@ def _quantile(
             r = add(x1, x2)
 
     if np.any(n):
-        warnings.warn(
-            "Invalid value encountered in percentile", RuntimeWarning, stacklevel=3
-        )
+        warnings.warn("Invalid value encountered in percentile", RuntimeWarning, stacklevel=3)
         if zerod:
             if ap.ndim == 1:
                 if out is not None:
@@ -541,9 +509,7 @@ def _quantile(
 
 def contour_levels(contour_grid, p_levels):
     if sorted(p_levels) != p_levels:
-        raise ValueError(
-            "p_levels must be sorted, got: '{p_levels}'".format(p_levels=p_levels)
-        )
+        raise ValueError("p_levels must be sorted, got: '{p_levels}'".format(p_levels=p_levels))
 
     sorted_vals = np.sort(contour_grid, axis=None)
     n = len(sorted_vals)
@@ -765,7 +731,7 @@ class gaussian_kde(object):
                 raise ValueError(msg)
 
         # compute the normalised residuals
-        chi2 = cdist(points.T, self.dataset.T, "mahalanobis", VI=self.inv_cov) ** 2
+        chi2 = cdist(points.T, self.dataset.T, "mahalanobis", VI=self.inv_cov)**2
         # compute the pdf
         result = np.sum(np.exp(-0.5 * chi2) * self.weights, axis=1) / self._norm_factor
 
@@ -777,9 +743,7 @@ class gaussian_kde(object):
         return self.bw_coef * np.power(self.neff, -1.0 / (self.d + 4))
 
     def silverman_factor(self):
-        return self.bw_coef * np.power(
-            self.neff * (self.d + 2.0) / 4.0, -1.0 / (self.d + 4)
-        )
+        return self.bw_coef * np.power(self.neff * (self.d + 2.0) / 4.0, -1.0 / (self.d + 4))
 
     #  Default method to calculate bandwidth, can be overwritten by subclass
     covariance_factor = scotts_factor
@@ -840,9 +804,8 @@ class gaussian_kde(object):
             self._bw_method = bw_method
             self.covariance_factor = lambda: self._bw_method(self)
         else:
-            msg = (
-                "`bw_method` should be 'scott', 'silverman', a scalar " "or a callable."
-            )
+            msg = ("`bw_method` should be 'scott', 'silverman', a scalar "
+                   "or a callable.")
             raise ValueError(msg)
 
         self._compute_covariance()
@@ -859,15 +822,11 @@ class gaussian_kde(object):
             _mean = np.sum(self.weights * self.dataset, axis=1)
             _residual = self.dataset - _mean[:, None]
             # Compute the biased covariance
-            self._data_covariance = np.atleast_2d(
-                np.dot(_residual * self.weights, _residual.T)
-            )
+            self._data_covariance = np.atleast_2d(np.dot(_residual * self.weights, _residual.T))
             # Correct for bias (http://en.wikipedia.org/wiki/Weighted_arithmetic_mean#Weighted_sample_covariance)
             self._data_covariance /= 1 - np.sum(self.weights**2)
             self._data_inv_cov = np.linalg.inv(self._data_covariance)
 
         self.covariance = self._data_covariance * self.factor**2
         self.inv_cov = self._data_inv_cov / self.factor**2
-        self._norm_factor = np.sqrt(
-            np.linalg.det(2 * np.pi * self.covariance)
-        )  # * self.n
+        self._norm_factor = np.sqrt(np.linalg.det(2 * np.pi * self.covariance))  # * self.n

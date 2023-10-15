@@ -7,7 +7,6 @@ The main changes made here are for data I/O, and the majority of the
 implementation is the original code written by Will Farr.
 """
 
-
 from __future__ import print_function
 
 import argparse
@@ -43,17 +42,10 @@ def draw_thetas(N):
     phis = np.random.uniform(low=0, high=2 * np.pi, size=N)
     zetas = np.random.uniform(low=0, high=2 * np.pi, size=N)
 
-    Fps = 0.5 * cos(2 * zetas) * (1 + square(cos_thetas)) * cos(2 * phis) - sin(
-        2 * zetas
-    ) * cos_thetas * sin(2 * phis)
-    Fxs = 0.5 * sin(2 * zetas) * (1 + square(cos_thetas)) * cos(2 * phis) + cos(
-        2 * zetas
-    ) * cos_thetas * sin(2 * phis)
+    Fps = 0.5 * cos(2 * zetas) * (1 + square(cos_thetas)) * cos(2 * phis) - sin(2 * zetas) * cos_thetas * sin(2 * phis)
+    Fxs = 0.5 * sin(2 * zetas) * (1 + square(cos_thetas)) * cos(2 * phis) + cos(2 * zetas) * cos_thetas * sin(2 * phis)
 
-    return np.sqrt(
-        0.25 * square(Fps) * square(1 + square(cos_incs))
-        + square(Fxs) * square(cos_incs)
-    )
+    return np.sqrt(0.25 * square(Fps) * square(1 + square(cos_incs)) + square(Fxs) * square(cos_incs))
 
 
 def next_pow_two(x):
@@ -94,16 +86,13 @@ def optimal_snr(m1_intrinsic, m2_intrinsic, z, psd_fn=None):
     psdstart = 20.0
 
     # This is a conservative estimate of the chirp time + MR time (2 seconds)
-    tmax = (
-        ls.SimInspiralChirpTimeBound(
-            fmin,
-            m1_intrinsic * (1 + z) * lal.MSUN_SI,
-            m2_intrinsic * (1 + z) * lal.MSUN_SI,
-            0.0,
-            0.0,
-        )
-        + 2
-    )
+    tmax = (ls.SimInspiralChirpTimeBound(
+        fmin,
+        m1_intrinsic * (1 + z) * lal.MSUN_SI,
+        m2_intrinsic * (1 + z) * lal.MSUN_SI,
+        0.0,
+        0.0,
+    ) + 2)
 
     df = 1.0 / next_pow_two(tmax)
     fmax = 2048.0  # Hz --- based on max freq of 5-5 inspiral
@@ -139,9 +128,7 @@ def optimal_snr(m1_intrinsic, m2_intrinsic, z, psd_fn=None):
     sel = fs > psdstart
 
     # PSD
-    sffs = lal.CreateREAL8FrequencySeries(
-        "psds", 0, 0.0, df, lal.DimensionlessUnit, fs.shape[0]
-    )
+    sffs = lal.CreateREAL8FrequencySeries("psds", 0, 0.0, df, lal.DimensionlessUnit, fs.shape[0])
     psd_fn(sffs, psdstart)
 
     return ls.MeasureSNRFD(hp, sffs, psdstart, -1.0)
@@ -223,15 +210,8 @@ def vt_from_mass(m1, m2, thresh, analysis_time, calfactor=1.0, psd_fn=None):
         if z == 0.0:
             return 0.0
         else:
-            return (
-                4
-                * np.pi
-                * cosmo.Planck15.differential_comoving_volume(z)
-                .to(u.Gpc**3 / u.sr)
-                .value
-                / (1 + z)
-                * fraction_above_threshold(m1, m2, z, thresh)
-            )
+            return (4 * np.pi * cosmo.Planck15.differential_comoving_volume(z).to(u.Gpc**3 / u.sr).value / (1 + z) *
+                    fraction_above_threshold(m1, m2, z, thresh))
 
     zmax = 1.0
     zmin = 0.001
@@ -252,6 +232,7 @@ def vt_from_mass(m1, m2, thresh, analysis_time, calfactor=1.0, psd_fn=None):
 
 
 class VTFromMassTuple(object):
+
     def __init__(self, thresh, analyt, calfactor, psd_fn):
         self.thresh = thresh
         self.analyt = analyt
@@ -260,9 +241,7 @@ class VTFromMassTuple(object):
 
     def __call__(self, m1m2):
         m1, m2 = m1m2
-        return vt_from_mass(
-            m1, m2, self.thresh, self.analyt, self.calfactor, self.psd_fn
-        )
+        return vt_from_mass(m1, m2, self.thresh, self.analyt, self.calfactor, self.psd_fn)
 
 
 def vts_from_masses(
@@ -328,9 +307,7 @@ def interpolate(m1_grid, m2_grid, VT_grid):
     #    print(points)
     interpolator = (
         scipy.interpolate.RegularGridInterpolator(  # scipy.interpolate.interp2d(
-            points, VT_grid, method="linear", bounds_error=False, fill_value=0
-        )
-    )
+            points, VT_grid, method="linear", bounds_error=False, fill_value=0))
 
     return interpolator
 
@@ -350,9 +327,7 @@ def _get_args(raw_args):
 
     parser.add_argument("--threshold", type=float, default=8.0)
     parser.add_argument("--calfactor", type=float, default=1.0)
-    parser.add_argument(
-        "--psd-fn", default="SimNoisePSDaLIGOEarlyHighSensitivityP1200087"
-    )
+    parser.add_argument("--psd-fn", default="SimNoisePSDaLIGOEarlyHighSensitivityP1200087")
 
     return parser.parse_args(raw_args)
 
