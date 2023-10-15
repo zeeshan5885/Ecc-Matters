@@ -1,29 +1,34 @@
 # TODO: rename "data likelihood" to "sample likelihood"
 from __future__ import division, print_function
 
+import sys
+
+import emcee
+import numpy as np
 
 
-import numpy
-
-
-
-def run_mcmc(
-        intensity_fn, expval_fn, data_likelihood_samples,
-        log_prior_fn,
-        init_state,
-        param_names,
-        constants=None,
-        data_likelihood_weights=None,
-        args=None, kwargs=None,
-        before_prior_aux_fn=None, after_prior_aux_fn=None,
-        out_pos=None, out_log_prob=None,
-        nsamples=100,
-        rand_state=None,
-        debug_log_prob=False,
-        nthreads=1, pool=None, runtime_sortingfn=None,
-        verbose=False,
-        dtype=numpy.float64,
-    ):
+def run_mcmc(intensity_fn,
+             expval_fn,
+             data_likelihood_samples,
+             log_prior_fn,
+             init_state,
+             param_names,
+             constants=None,
+             data_likelihood_weights=None,
+             args=None,
+             kwargs=None,
+             before_prior_aux_fn=None,
+             after_prior_aux_fn=None,
+             out_pos=None,
+             out_log_prob=None,
+             nsamples=100,
+             rand_state=None,
+             debug_log_prob=False,
+             nthreads=1,
+             pool=None,
+             runtime_sortingfn=None,
+             verbose=False,
+             dtype=np.float64):
     """
 
     :param function intensity_fn:
@@ -54,7 +59,7 @@ def run_mcmc(
 
     :param int nsamples: (default 100)
 
-    :param numpy.random.RandomState rand_state: (optional)
+    :param np.random.RandomState rand_state: (optional)
 
     :param bool debug_log_prob: (optional)
 
@@ -79,9 +84,6 @@ def run_mcmc(
         is the log-posterior for the ith sample in the chain, for the jth
         walker.
     """
-    import sys
-    import numpy
-    import emcee
 
     # If no args or kwargs provided, set as empty list/dict
     if args is None:
@@ -110,11 +112,10 @@ def run_mcmc(
     # Ensure samples all have same dimensionality
     ndim_indiv = None
     for samples in data_likelihood_samples:
-        S, D = numpy.shape(samples)
+        S, D = np.shape(samples)
 
         if ndim_indiv is None:
             ndim_indiv = D
-
         assert ndim_indiv == D
 
     # Ensure number of dimensions equals the number of dimensions in the initial
@@ -124,47 +125,37 @@ def run_mcmc(
     # Initialize output arrays if not provided.
     # Otherwise check provided arrays have proper shape.
     if out_pos is None:
-        out_pos = numpy.empty((nsamples, nwalkers, ndim), dtype=dtype)
+        out_pos = np.empty((nsamples, nwalkers, ndim), dtype=dtype)
     else:
-        assert numpy.shape(out_pos) == (nsamples, nwalkers, ndim)
+        assert np.shape(out_pos) == (nsamples, nwalkers, ndim)
+
     if out_log_prob is None:
-        out_log_prob = numpy.empty((nsamples, nwalkers), dtype=dtype)
+        out_log_prob = np.empty((nsamples, nwalkers), dtype=dtype)
     else:
-        assert numpy.shape(out_log_prob) == (nsamples, nwalkers)
-
-
+        assert np.shape(out_log_prob) == (nsamples, nwalkers)
 
     if debug_log_prob:
         return log_prob
 
+    sampler_args = (param_names, constants, intensity_fn, expval_fn, log_prior_fn, data_likelihood_samples,
+                    data_likelihood_weights, before_prior_aux_fn, after_prior_aux_fn, args, kwargs)
 
-    sampler_args = (
-        param_names, constants,
-        intensity_fn, expval_fn, log_prior_fn,
-        data_likelihood_samples, data_likelihood_weights,
-        before_prior_aux_fn, after_prior_aux_fn,
-        args, kwargs,
-    )
-
-    sampler = emcee.EnsembleSampler(
-        nwalkers, ndim, log_prob,
-        args=sampler_args,
-        threads=nthreads, pool=pool, runtime_sortingfn=runtime_sortingfn,
-    )
-    sample_iter = sampler.sample(
-        init_state,
-        iterations=nsamples, rstate0=rand_state,
-    )
+    sampler = emcee.EnsembleSampler(nwalkers,
+                                    ndim,
+                                    log_prob,
+                                    args=sampler_args,
+                                    threads=nthreads,
+                                    pool=pool,
+                                    runtime_sortingfn=runtime_sortingfn)
+    sample_iter = sampler.sample(init_state, iterations=nsamples, rstate0=rand_state)
 
     if verbose:
         progress_pct = 0
-        def display_progress(p, s):
-            print(
-                "Progress: {p}%; Samples: {s}".format(p=p, s=s),
-                file=sys.stderr,
-            )
-        display_progress(progress_pct, 0)
 
+        def display_progress(p, s):
+            print(f"Progress: {p}%; Samples: {s}", file=sys.stderr)
+
+        display_progress(progress_pct, 0)
 
     for i, result in enumerate(sample_iter):
         pos = result[0]
@@ -179,20 +170,11 @@ def run_mcmc(
                 progress_pct = int(new_progress_pct)
                 display_progress(progress_pct, i)
 
-
     return out_pos, out_log_prob
 
 
-def log_prob(
-        params_free,
-        param_names, constants,
-        intensity_fn, expval_fn, log_prior_fn,
-        data_likelihood_samples, data_likelihood_weights,
-        before_prior_aux_fn, after_prior_aux_fn,
-        args, kwargs,
-    ):
-    import numpy
-
+def log_prob(params_free, param_names, constants, intensity_fn, expval_fn, log_prior_fn, data_likelihood_samples,
+             data_likelihood_weights, before_prior_aux_fn, after_prior_aux_fn, args, kwargs):
     params = get_params(params_free, constants, param_names)
 
     if before_prior_aux_fn is not None:
@@ -202,7 +184,7 @@ def log_prob(
 
     log_pi = log_prior_fn(params, aux_info, *args, **kwargs)
 
-    if numpy.isfinite(log_pi):
+    if np.isfinite(log_pi):
         if after_prior_aux_fn is not None:
             aux_info = after_prior_aux_fn(params, aux_info, *args, **kwargs)
 
@@ -214,31 +196,23 @@ def log_prob(
             if weights is not None:
                 intensity *= weights
 
-            log_events_contribution += numpy.log(numpy.mean(intensity))
+            log_events_contribution += np.log(np.mean(intensity))
 
         mean = expval_fn(params, aux_info, *args, **kwargs)
 
         log_prob = log_pi + log_events_contribution - mean
 
-        if numpy.isfinite(log_prob):
+        if np.isfinite(log_prob):
             return log_prob
 
-    return -numpy.inf
-
-
+    return -np.inf
 
 
 def get_params(variables, constants, names):
-    """
-    """
+    """ """
     if len(variables) + len(constants) != len(names):
         raise ValueError(
-            "Incorrect number of variables and constants. "
-            "Expected {expected}, but got {actual}."
-            .format(
-                expected=len(names),
-                actual=len(variables)+len(constants),
-            )
+            f"Incorrect number of variables and constants. Expected {len(names)}, but got {len(variables) + len(constants)}."
         )
 
     params = []

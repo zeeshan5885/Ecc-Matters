@@ -1,5 +1,13 @@
 from __future__ import division, print_function
 
+import numbers
+import warnings
+
+import numpy as np
+from numpy.lib.function_base import (_ureduce, add, asarray, concatenate, intp, take)
+from scipy.spatial.distance import cdist
+from six import string_types
+
 
 # Taken from scikit-learn
 def check_random_state(seed):
@@ -9,8 +17,6 @@ def check_random_state(seed):
     If seed is already a RandomState instance, return it.
     Otherwise raise ValueError.
     """
-    import numbers
-    import numpy as np
 
     if seed is None or seed is np.random:
         return np.random.mtrand._rand
@@ -18,21 +24,17 @@ def check_random_state(seed):
         return np.random.RandomState(seed)
     if isinstance(seed, np.random.RandomState):
         return seed
-    raise ValueError('%r cannot be used to seed a numpy.random.RandomState'
-                     ' instance' % seed)
+    raise ValueError(f"{seed} cannot be used to seed a np.random.RandomState instance")
 
 
-
-
-def quantile(a, q, axis=None, weights=None, out=None,
-             overwrite_input=False, interpolation='linear', keepdims=False):
+def quantile(a, q, axis=None, weights=None, out=None, overwrite_input=False, interpolation="linear", keepdims=False):
     """
     Compute the qth quantile of the data along the specified axis,
     where q = [0, 1].
 
     Returns the qth quantiles(s) of the array elements.
 
-    NOTE: This was taken from a yet-to-be-accepted pull request to numpy.
+    NOTE: This was taken from a yet-to-be-accepted pull request to np.
     Expect this to be merged with numpy at some point.
 
     Parameters
@@ -201,41 +203,33 @@ def quantile(a, q, axis=None, weights=None, out=None,
            [ 2. ,  5. ],
            [ 2. ,  5. ]])
     """
-    from numpy.lib.function_base import (
-        np, array, asanyarray, _ureduce,
-    )
 
-    q = array(q, dtype=np.float64, copy=True)
+    q = np.array(q, dtype=np.float64, copy=True)
 
     if weights is None:
         wgt = None
     else:
-        a = asanyarray(a)
+        a = np.asanyarray(a)
         wgt = np.asanyarray(weights)
 
         if issubclass(a.dtype.type, (np.integer, bool_)):
-            result_dtype = np.result_type(a.dtype, wgt.dtype, 'f8')
+            result_dtype = np.result_type(a.dtype, wgt.dtype, "f8")
         else:
             result_dtype = np.result_type(a.dtype, wgt.dtype)
 
         broadcastable = False
         if a.ndim == wgt.ndim and a.shape != wgt.shape:
-            broadcastable = all([a_dim == w_dim or w_dim == 1
-                                 for a_dim, w_dim
-                                 in zip(a.shape, wgt.shape)])
+            broadcastable = all([a_dim == w_dim or w_dim == 1 for a_dim, w_dim in zip(a.shape, wgt.shape)])
 
         if a.shape != wgt.shape and not broadcastable:
             if axis is None:
-                raise TypeError(
-                    "Axis must be specified when shapes of a and weights "
-                    "differ and not broadcastable.")
+                raise TypeError("Axis must be specified when shapes of a and weights "
+                                "differ and not broadcastable.")
             if wgt.ndim != 1:
-                raise TypeError(
-                    "1D weights expected when shapes of a and weights differ "
-                    " and not broadcastable.")
+                raise TypeError("1D weights expected when shapes of a and weights differ "
+                                " and not broadcastable.")
             if wgt.shape[0] != a.shape[axis]:
-                raise ValueError(
-                    "Length of weights not compatible with specified axis.")
+                raise ValueError("Length of weights not compatible with specified axis.")
             if not np.issubdtype(wgt.dtype, np.number):
                 raise ValueError("All weight entries must be numeric.")
 
@@ -248,7 +242,7 @@ def quantile(a, q, axis=None, weights=None, out=None,
                 raise ValueError("Negative weight not allowed.")
 
             # setup wgt to broadcast along axis
-            wgt = np.broadcast_to(wgt, (a.ndim-1)*(1,) + wgt.shape)
+            wgt = np.broadcast_to(wgt, (a.ndim - 1) * (1,) + wgt.shape)
             wgt = wgt.swapaxes(-1, axis)
         else:  # same shape, or at least broadcastable
             if axis is None:
@@ -256,30 +250,27 @@ def quantile(a, q, axis=None, weights=None, out=None,
 
         scl = wgt.sum(axis=axis, dtype=result_dtype)
         if np.any(scl == 0.0):
-            raise ZeroDivisionError(
-                "Weights sum to zero, can't be normalized")
+            raise ZeroDivisionError("Weights sum to zero, can't be normalized")
         # Obtain a weights array of the same shape as reduced a
         wgt = np.broadcast_to(wgt, a.shape)
         wgt, _ = _ureduce(wgt, func=lambda x, **kwargs: x, axis=axis)
 
-    r, k = _ureduce(a, func=_quantile, q=q, axis=axis, weights=wgt, out=out,
+    r, k = _ureduce(a,
+                    func=_quantile,
+                    q=q,
+                    axis=axis,
+                    weights=wgt,
+                    out=out,
                     overwrite_input=overwrite_input,
                     interpolation=interpolation)
     if keepdims:
         if q.ndim == 0:
             return r.reshape(k)
-        else:
-            return r.reshape((len(q),) + k)
-    else:
-        return r
+        return r.reshape((len(q),) + k)
+    return r
 
 
-def _quantile(a, q, axis=None, weights=None, out=None,
-              overwrite_input=False, interpolation='linear', keepdims=False):
-    from numpy.lib.function_base import (
-        np, add, array, asarray, concatenate, intp, take, _ureduce,
-    )
-
+def _quantile(a, q, axis=None, weights=None, out=None, overwrite_input=False, interpolation="linear", keepdims=False):
     a = asarray(a)
     if q.ndim == 0:
         # Do not allow 0-d arrays because following code fails for scalar
@@ -291,12 +282,12 @@ def _quantile(a, q, axis=None, weights=None, out=None,
     # avoid expensive reductions, relevant for arrays with < O(1000) elements
     if q.size < 10:
         for i in range(q.size):
-            if q[i] < 0. or q[i] > 1.:
+            if q[i] < 0.0 or q[i] > 1.0:
                 raise ValueError("Quantiles must be in the range [0,1], "
                                  "or percentiles must be [0,100].")
     else:
         # faster than any()
-        if np.count_nonzero(q < 0.) or np.count_nonzero(q > 1.):
+        if np.count_nonzero(q < 0.0) or np.count_nonzero(q > 1.0):
             raise ValueError("Quantiles must be in the range [0,1] "
                              "or percentiles must be [0,100].")
 
@@ -323,27 +314,28 @@ def _quantile(a, q, axis=None, weights=None, out=None,
         indices = q * (Nx - 1)
     else:
         # need a copy of weights for later array assignment
-        weights = np.swapaxes(weights.astype('f8'), axis, -1)
-        weights[weights < 0.] = 0.  # negative weights are treated as 0
+        weights = np.swapaxes(weights.astype("f8"), axis, -1)
+        weights[weights < 0.0] = 0.0  # negative weights are treated as 0
         # values with weight=0 are assigned minimum value and later moved left
         abs_min = np.amin(ap)
-        ap[weights == 0.] = abs_min - 1.
+        ap[weights == 0.0] = abs_min - 1.0
 
         def _sort_by_index(vector, vec_indices):
             return vector[vec_indices]
+
         # this func vectorizes sort along axis
-        arraysort = np.vectorize(_sort_by_index, signature='(i),(i)->(i)')
+        arraysort = np.vectorize(_sort_by_index, signature="(i),(i)->(i)")
 
         ind_sorted = np.argsort(ap, axis=-1)  # sort values long axis
-        ap_sorted = arraysort(ap, ind_sorted).astype('f8')
+        ap_sorted = arraysort(ap, ind_sorted).astype("f8")
 
         n = np.isnan(ap_sorted[..., -1:])
         if n.ndim > 1:
             n = np.swapaxes(n, axis, -1)
 
-        ws_sorted = arraysort(weights, ind_sorted).astype('f8')
-        ws_sorted[np.isnan(ap_sorted)] = 0.  # neglect nans from calculation
-        nonzero_w_inds = ws_sorted > 0.
+        ws_sorted = arraysort(weights, ind_sorted).astype("f8")
+        ws_sorted[np.isnan(ap_sorted)] = 0.0  # neglect nans from calculation
+        nonzero_w_inds = ws_sorted > 0.0
 
         cum_w = ws_sorted.cumsum(axis=-1)
         cum_w_max = cum_w.max(axis=-1)
@@ -351,17 +343,15 @@ def _quantile(a, q, axis=None, weights=None, out=None,
         # some manipulation to get lower/upper percentage bounds
         normalized_w_upper = (cum_w.T / cum_w_max.T).T
         prior_cum_w = np.roll(normalized_w_upper, 1, axis=-1)
-        prior_cum_w[..., 0] = 0.
+        prior_cum_w[..., 0] = 0.0
 
         w_slice = ws_sorted  # .copy()
         # in case any input weight is less than 1, we renormalize by min
         if True in (ws_sorted[nonzero_w_inds] < 1.0):
-            ws_sorted[nonzero_w_inds] =\
-                ws_sorted[nonzero_w_inds] / ws_sorted[nonzero_w_inds].min()
+            ws_sorted[nonzero_w_inds] = (ws_sorted[nonzero_w_inds] / ws_sorted[nonzero_w_inds].min())
 
-        w_slice[nonzero_w_inds] = ((normalized_w_upper[nonzero_w_inds] -
-                                    prior_cum_w[nonzero_w_inds]) /
-                                   ws_sorted[nonzero_w_inds])
+        w_slice[nonzero_w_inds] = (normalized_w_upper[nonzero_w_inds] -
+                                   prior_cum_w[nonzero_w_inds]) / ws_sorted[nonzero_w_inds]
 
         w_slice = np.roll(w_slice, -1, axis=-1)
         # now create the lower percentage bound
@@ -380,8 +370,7 @@ def _quantile(a, q, axis=None, weights=None, out=None,
         normalized_w_lower = (new_w_lower.T / new_w_upper[..., -1].T).T
 
         # combine and resort
-        cum_w_bands = np.concatenate([normalized_w_upper, normalized_w_lower],
-                                     axis=-1)
+        cum_w_bands = np.concatenate([normalized_w_upper, normalized_w_lower], axis=-1)
         inds_resort = np.argsort(cum_w_bands, axis=-1)
         cum_w_bands = arraysort(cum_w_bands, inds_resort)
 
@@ -391,28 +380,26 @@ def _quantile(a, q, axis=None, weights=None, out=None,
         # interpolate
         Nx = ap.shape[-1]
         indices_hard = np.arange(Nx)
-        vec_interp_func = np.vectorize(np.interp, signature='(n),(m),(m)->(n)')
+        vec_interp_func = np.vectorize(np.interp, signature="(n),(m),(m)->(n)")
         indices = vec_interp_func(q, cum_w_bands, indices_hard)
 
-    if interpolation == 'lower':
+    if interpolation == "lower":
         indices = np.floor(indices).astype(intp)
-    elif interpolation == 'higher':
+    elif interpolation == "higher":
         indices = np.ceil(indices).astype(intp)
-    elif interpolation == 'midpoint':
+    elif interpolation == "midpoint":
         indices = 0.5 * (np.floor(indices) + np.ceil(indices))
-    elif interpolation == 'nearest':
+    elif interpolation == "nearest":
         indices = np.around(indices).astype(intp)
-    elif interpolation == 'linear':
+    elif interpolation == "linear":
         pass  # keep index as fraction and interpolate
     else:
-        raise ValueError(
-            "interpolation can only be 'linear', 'lower' 'higher', "
-            "'midpoint', or 'nearest'")
+        raise ValueError("interpolation can only be 'linear', 'lower' 'higher', "
+                         "'midpoint', or 'nearest'")
 
     inexact = np.issubdtype(a.dtype, np.inexact)
 
     if indices.dtype == intp:
-
         if weights is None:
             if inexact:
                 indices = concatenate((indices, [-1]))  # to move nan's to end
@@ -457,7 +444,7 @@ def _quantile(a, q, axis=None, weights=None, out=None,
         def _take1d(vec, inds, wts):
             return take(vec, inds) * wts
 
-        vec_take = np.vectorize(_take1d, signature='(n),(m),(m)->(m)')
+        vec_take = np.vectorize(_take1d, signature="(n),(m),(m)->(m)")
 
         x1 = vec_take(ap, indices_below, weights_below)
         x2 = vec_take(ap, indices_above, weights_above)
@@ -479,8 +466,7 @@ def _quantile(a, q, axis=None, weights=None, out=None,
             r = add(x1, x2)
 
     if np.any(n):
-        warnings.warn("Invalid value encountered in percentile",
-                      RuntimeWarning, stacklevel=3)
+        warnings.warn("Invalid value encountered in percentile", RuntimeWarning, stacklevel=3)
         if zerod:
             if ap.ndim == 1:
                 if out is not None:
@@ -500,37 +486,32 @@ def _quantile(a, q, axis=None, weights=None, out=None,
 
 
 def contour_levels(contour_grid, p_levels):
-    import numpy
-
     if sorted(p_levels) != p_levels:
-        raise ValueError(
-            "p_levels must be sorted, got: '{p_levels}'"
-            .format(p_levels=p_levels)
-        )
+        raise ValueError("p_levels must be sorted, got: '{p_levels}'".format(p_levels=p_levels))
 
-    sorted_vals = numpy.sort(contour_grid, axis=None)
+    sorted_vals = np.sort(contour_grid, axis=None)
     n = len(sorted_vals)
 
-    cdf = numpy.cumsum(sorted_vals)
+    cdf = np.cumsum(sorted_vals)
     cdf /= cdf[-1]
 
-    P_prev = -numpy.inf
+    P_prev = -np.inf
     i_start = 0
-    vals = numpy.empty_like(p_levels)
+    vals = np.empty_like(p_levels)
     for j, p in enumerate(p_levels):
         for i in range(i_start, n):
             P = cdf[i]
 
             if P_prev <= p <= P:
                 # Use linear interpolation to get value
-                val = (sorted_vals[i]-sorted_vals[i-1])/(P-P_prev) * p
+                val = (sorted_vals[i] - sorted_vals[i - 1]) / (P - P_prev) * p
                 i_start = i
                 P_prev = P
                 break
             else:
                 P_prev = P
         else:
-            val = numpy.nan
+            val = np.nan
 
         vals[j] = val
 
@@ -675,9 +656,8 @@ class gaussian_kde(object):
     >>> plt.show()
 
     """
-    def __init__(self, dataset, bw_method=None, bw_coef=1.0, weights=None):
-        import numpy as np
 
+    def __init__(self, dataset, bw_method=None, bw_coef=1.0, weights=None):
         self.dataset = np.atleast_2d(dataset)
         if not self.dataset.size > 1:
             raise ValueError("`dataset` input should have multiple elements.")
@@ -688,9 +668,9 @@ class gaussian_kde(object):
         else:
             self.weights = np.ones(self.n) / self.n
 
-        # Compute the effective sample size 
+        # Compute the effective sample size
         # http://surveyanalysis.org/wiki/Design_Effects_and_Effective_Sample_Size#Kish.27s_approximate_formula_for_computing_effective_sample_size
-        self.neff = 1.0 / np.sum(self.weights ** 2)
+        self.neff = 1.0 / np.sum(self.weights**2)
         self.bw_coef = bw_coef
 
         self.set_bandwidth(bw_method=bw_method)
@@ -715,8 +695,6 @@ class gaussian_kde(object):
                      the dimensionality of the KDE.
 
         """
-        import numpy as np
-        from scipy.spatial.distance import cdist
 
         points = np.atleast_2d(points)
 
@@ -727,32 +705,23 @@ class gaussian_kde(object):
                 points = np.reshape(points, (self.d, 1))
                 m = 1
             else:
-                msg = "points have dimension %s, dataset has dimension %s" % (d,
-                    self.d)
+                msg = "points have dimension %s, dataset has dimension %s" % (d, self.d)
                 raise ValueError(msg)
 
         # compute the normalised residuals
-        chi2 = cdist(points.T, self.dataset.T, 'mahalanobis', VI=self.inv_cov) ** 2
+        chi2 = cdist(points.T, self.dataset.T, "mahalanobis", VI=self.inv_cov)**2
         # compute the pdf
-        result = np.sum(np.exp(-.5 * chi2) * self.weights, axis=1) / self._norm_factor
+        result = np.sum(np.exp(-0.5 * chi2) * self.weights, axis=1) / self._norm_factor
 
         return result
 
     __call__ = evaluate
 
     def scotts_factor(self):
-        import numpy as np
-        return (
-            self.bw_coef *
-            np.power(self.neff, -1./(self.d+4))
-        )
+        return self.bw_coef * np.power(self.neff, -1.0 / (self.d + 4))
 
     def silverman_factor(self):
-        import numpy as np
-        return (
-            self.bw_coef *
-            np.power(self.neff*(self.d+2.0)/4.0, -1./(self.d+4))
-        )
+        return self.bw_coef * np.power(self.neff * (self.d + 2.0) / 4.0, -1.0 / (self.d + 4))
 
     #  Default method to calculate bandwidth, can be overwritten by subclass
     covariance_factor = scotts_factor
@@ -799,24 +768,22 @@ class gaussian_kde(object):
         >>> plt.show()
 
         """
-        import numpy as np
-        from six import string_types
 
         if bw_method is None:
             pass
-        elif bw_method == 'scott':
+        elif bw_method == "scott":
             self.covariance_factor = self.scotts_factor
-        elif bw_method == 'silverman':
+        elif bw_method == "silverman":
             self.covariance_factor = self.silverman_factor
         elif np.isscalar(bw_method) and not isinstance(bw_method, string_types):
-            self._bw_method = 'use constant'
+            self._bw_method = "use constant"
             self.covariance_factor = lambda: bw_method
         elif callable(bw_method):
             self._bw_method = bw_method
             self.covariance_factor = lambda: self._bw_method(self)
         else:
-            msg = "`bw_method` should be 'scott', 'silverman', a scalar " \
-                  "or a callable."
+            msg = ("`bw_method` should be 'scott', 'silverman', a scalar "
+                   "or a callable.")
             raise ValueError(msg)
 
         self._compute_covariance()
@@ -825,20 +792,19 @@ class gaussian_kde(object):
         """Computes the covariance matrix for each Gaussian kernel using
         covariance_factor().
         """
-        import numpy as np
 
         self.factor = self.covariance_factor()
         # Cache covariance and inverse covariance of the data
-        if not hasattr(self, '_data_inv_cov'):
+        if not hasattr(self, "_data_inv_cov"):
             # Compute the mean and residuals
             _mean = np.sum(self.weights * self.dataset, axis=1)
-            _residual = (self.dataset - _mean[:, None])
+            _residual = self.dataset - _mean[:, None]
             # Compute the biased covariance
             self._data_covariance = np.atleast_2d(np.dot(_residual * self.weights, _residual.T))
             # Correct for bias (http://en.wikipedia.org/wiki/Weighted_arithmetic_mean#Weighted_sample_covariance)
-            self._data_covariance /= (1 - np.sum(self.weights ** 2))
+            self._data_covariance /= 1 - np.sum(self.weights**2)
             self._data_inv_cov = np.linalg.inv(self._data_covariance)
 
         self.covariance = self._data_covariance * self.factor**2
         self.inv_cov = self._data_inv_cov / self.factor**2
-        self._norm_factor = np.sqrt(np.linalg.det(2*np.pi*self.covariance)) #* self.n
+        self._norm_factor = np.sqrt(np.linalg.det(2 * np.pi * self.covariance))  # * self.n
