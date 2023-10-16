@@ -164,7 +164,7 @@ def joint_pdf(m_1, m_2, alpha, m_min, m_max, M_max, const=None, out=None, where=
     out_type = m_1.dtype
 
     # Create a version of where which has shape ``T + S``.
-    print(where)
+    # print(where)
     if where:
         where_TS = np.ones(TS, dtype=bool)
     else:
