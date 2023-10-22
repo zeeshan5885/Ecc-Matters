@@ -3,6 +3,7 @@ from __future__ import division, print_function
 import argparse
 import sys
 from multiprocessing import Pool, cpu_count
+import os
 
 import h5py
 import numpy as np
@@ -11,7 +12,7 @@ import six
 import mc
 import mcmc  # copy over
 import prob
-import utils
+import sklearn.utils as utils
 import vt  # not in pop models anymore, this is old material
 from prob import ndim_pop, param_names
 
@@ -50,7 +51,8 @@ def expval_mc(pop_params,
         m2 = m1_m2[:, 1]
         return raw_interpolator(m1_m2)
 
-    I, err_abs, err_rel = mc.integrate_adaptive(p, efficiency_fn, err_abs=err_abs, err_rel=err_rel)
+    I, err_abs, err_rel = mc.integrate_adaptive(
+        p, efficiency_fn, err_abs=err_abs, err_rel=err_rel)
 
     if return_err:
         return rate * I, err_abs, err_rel
@@ -178,21 +180,29 @@ def init_uniform(nwalkers,
 def _get_args(raw_args):
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("events", nargs="*", help="List of posterior sample files, one for each event.")
+    parser.add_argument(
+        "events", nargs="*", help="List of posterior sample files, one for each event.")
     parser.add_argument("VTs", help="HDF5 file containing VTs.")
-    parser.add_argument("posterior_output", help="HDF5 file to store posterior samples in.")
+    parser.add_argument("posterior_output",
+                        help="HDF5 file to store posterior samples in.")
 
-    parser.add_argument("--fixed-log-rate", type=float, help="Constant to fix log_rate to (optional).")
-    parser.add_argument("--fixed-alpha", type=float, help="Constant to fix alpha to (optional).")
-    parser.add_argument("--fixed-m-min", type=float, help="Constant to fix m_min to (optional).")
-    parser.add_argument("--fixed-m-max", type=float, help="Constant to fix m_max to (optional).")
+    parser.add_argument("--fixed-log-rate", type=float,
+                        help="Constant to fix log_rate to (optional).")
+    parser.add_argument("--fixed-alpha", type=float,
+                        help="Constant to fix alpha to (optional).")
+    parser.add_argument("--fixed-m-min", type=float,
+                        help="Constant to fix m_min to (optional).")
+    parser.add_argument("--fixed-m-max", type=float,
+                        help="Constant to fix m_max to (optional).")
 
     parser.add_argument("--n-walkers",
                         default=None,
                         type=int,
                         help="Number of walkers to use, defaults to twice the number of dimensions.")
-    parser.add_argument("--n-samples", default=100, type=int, help="Number of MCMC samples per walker.")
-    parser.add_argument("--n-threads", default=1, type=int, help="Number of threads to use in MCMC.")
+    parser.add_argument("--n-samples", default=100, type=int,
+                        help="Number of MCMC samples per walker.")
+    parser.add_argument("--n-threads", default=1, type=int,
+                        help="Number of threads to use in MCMC.")
 
     parser.add_argument("--log-rate-prior",
                         default="uniform",
@@ -202,8 +212,10 @@ def _get_args(raw_args):
                         default="uniform",
                         choices=["uniform"],
                         help="Type of initial condition used for log rate.")
-    parser.add_argument("--log-rate-min", type=float, default=-5.0, help="Minimum log10 rate allowed.")
-    parser.add_argument("--log-rate-max", type=float, default=5.0, help="Maximum log10 rate allowed.")
+    parser.add_argument("--log-rate-min", type=float,
+                        default=-5.0, help="Minimum log10 rate allowed.")
+    parser.add_argument("--log-rate-max", type=float,
+                        default=5.0, help="Maximum log10 rate allowed.")
 
     parser.add_argument("--alpha-prior",
                         default="uniform",
@@ -213,8 +225,10 @@ def _get_args(raw_args):
                         default="uniform",
                         choices=["uniform"],
                         help="Type of initial condition used for power law index 'alpha'.")
-    parser.add_argument("--alpha-min", type=float, default=-5, help="Minimum alpha allowed.")
-    parser.add_argument("--alpha-max", type=float, default=+5, help="Maximum alpha allowed.")
+    parser.add_argument("--alpha-min", type=float,
+                        default=-5, help="Minimum alpha allowed.")
+    parser.add_argument("--alpha-max", type=float,
+                        default=+5, help="Maximum alpha allowed.")
 
     parser.add_argument("--m-min-prior",
                         default="uniform",
@@ -224,8 +238,10 @@ def _get_args(raw_args):
                         default="uniform",
                         choices=["uniform"],
                         help="Type of initial condition used for minimum component mass 'm_min'.")
-    parser.add_argument("--m-min-min", type=float, default=1.0, help="Minimum m_min allowed.")
-    parser.add_argument("--m-min-max", type=float, default=20.0, help="Maximum m_min allowed.")
+    parser.add_argument("--m-min-min", type=float,
+                        default=1.0, help="Minimum m_min allowed.")
+    parser.add_argument("--m-min-max", type=float,
+                        default=20.0, help="Maximum m_min allowed.")
 
     parser.add_argument("--m-max-prior",
                         default="uniform",
@@ -236,14 +252,17 @@ def _get_args(raw_args):
                         choices=["uniform"],
                         help="Type of initial condition used for maximum component mass "
                         "'m_max'.")
-    parser.add_argument("--m-max-min", type=float, default=30.0, help="Minimum m_max allowed.")
-    parser.add_argument("--m-max-max", type=float, default=100.0, help="Maximum m_max allowed.")
+    parser.add_argument("--m-max-min", type=float,
+                        default=30.0, help="Minimum m_max allowed.")
+    parser.add_argument("--m-max-max", type=float,
+                        default=100.0, help="Maximum m_max allowed.")
 
     parser.add_argument("--mass-prior",
                         default="uniform",
                         choices=["uniform"],
                         help="Type of prior used for component masses.")
-    parser.add_argument("--total-mass-max", type=float, default=100.0, help="Maximum total mass allowed.")
+    parser.add_argument("--total-mass-max", type=float,
+                        default=100.0, help="Maximum total mass allowed.")
 
     parser.add_argument("--mc-err-abs",
                         type=float,
@@ -256,16 +275,26 @@ def _get_args(raw_args):
 
     parser.add_argument("--seed", type=int, default=None, help="Random seed.")
 
-    parser.add_argument("-v", "--verbose", action="store_true", help="Use verbose output.")
+    parser.add_argument("-v", "--verbose", action="store_true",
+                        help="Use verbose output.")
 
     return parser.parse_args(raw_args)
 
 
 def _main(raw_args=None):
+
     if raw_args is None:
         raw_args = sys.argv[1:]
 
     cli_args = _get_args(raw_args)
+
+    if os.path.exists('../plotting/'+cli_args.posterior_output):
+        print("Output file already exists. Overwrite? [Y/n]")
+        if input().lower() in ["y", "yes", "Y", "YES", ""]:
+            os.remove('../plotting/'+cli_args.posterior_output)
+        else:
+            sys.exit(0)
+
     print(cli_args)
 
     rand_state = np.random.RandomState(cli_args.seed)
@@ -291,7 +320,8 @@ def _main(raw_args=None):
     data_posterior_samples = []
     for event_fname in cli_args.events:
         data_table = np.genfromtxt(event_fname, names=True)
-        m1_m2 = np.column_stack((data_table["m1_source"], data_table["m2_source"]),)
+        m1_m2 = np.column_stack(
+            (data_table["m1_source"], data_table["m2_source"]),)
         data_posterior_samples.append(m1_m2)
 
         del data_table
@@ -348,12 +378,19 @@ def _main(raw_args=None):
     #   drawn so far. This way if it's interrupted, we know which samples can
     #   be trusted, and which might be corrupted or just have the contents of
     #   previous memory.
+
+    # Check if some file as cli_args.posterior_output exists, and if
+    # so ask the user if we should delete that and if y or enter is
+    # returned, delete, that otherwise terminate the program
+
     with h5py.File(cli_args.posterior_output, "w-") as posterior_output:
         # Store initial position.
         posterior_output.create_dataset("init_pos", data=init_state)
         # Create empty arrays for storing walker position and log_prob.
-        posterior_pos = posterior_output.create_dataset("pos", (cli_args.n_samples, n_walkers, ndim))
-        posterior_log_prob = posterior_output.create_dataset("log_prob", (cli_args.n_samples, n_walkers))
+        posterior_pos = posterior_output.create_dataset(
+            "pos", (cli_args.n_samples, n_walkers, ndim))
+        posterior_log_prob = posterior_output.create_dataset(
+            "log_prob", (cli_args.n_samples, n_walkers))
 
         # Store constants
         for name, value in six.iteritems(constants):
@@ -390,29 +427,28 @@ def _main(raw_args=None):
             "rand_state": rand_state
         }
         pool = None
-        if True:  # with None as pool:
-            mcmc.run_mcmc(
-                intensity,
-                expval_mc,
-                data_posterior_samples,
-                log_prior_pop,
-                init_state,
-                param_names,
-                constants=constants,
-                #            event_posterior_sample_priors=prior,
-                args=args,
-                kwargs=kwargs,
-                before_prior_aux_fn=before_prior_aux_fn,
-                after_prior_aux_fn=after_prior_aux_fn,
-                out_pos=posterior_pos,
-                out_log_prob=posterior_log_prob,
-                nsamples=cli_args.n_samples,
-                rand_state=rand_state,
-                nthreads=cli_args.n_threads,
-                pool=pool,
-                runtime_sortingfn=None,
-                dtype=np.float64,
-                verbose=cli_args.verbose)
+        mcmc.run_mcmc(
+            intensity,
+            expval_mc,
+            data_posterior_samples,
+            log_prior_pop,
+            init_state,
+            param_names,
+            constants=constants,
+            #            event_posterior_sample_priors=prior,
+            args=args,
+            kwargs=kwargs,
+            before_prior_aux_fn=before_prior_aux_fn,
+            after_prior_aux_fn=after_prior_aux_fn,
+            out_pos=posterior_pos,
+            out_log_prob=posterior_log_prob,
+            nsamples=cli_args.n_samples,
+            rand_state=rand_state,
+            nthreads=cli_args.n_threads,
+            pool=pool,
+            runtime_sortingfn=None,
+            dtype=np.float64,
+            verbose=cli_args.verbose)
 
 
 # Functions which pre-compute quantities that are used at multiple steps

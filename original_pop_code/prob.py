@@ -11,7 +11,7 @@ import scipy.special
 from mpmath import hyp2f1
 
 from prob_top import sample_with_cond
-from utils_top import check_random_state
+import sklearn.utils as utils
 
 # Names of all (possibly free) parameters of this model, in the order they
 # should appear in any array of samples (e.g., MCMC posterior samples).
@@ -52,7 +52,7 @@ def powerlaw_rvs(N, alpha, x_min, x_max, rand_state=None):
 
     # Upgrade ``rand_state`` to an actual ``np.random.RandomState`` object,
     # if it isn't one already.
-    rand_state = check_random_state(rand_state)
+    rand_state = utils.check_random_state(rand_state)
 
     # Power law index ``alpha`` only appears as ``1 - alpha`` in the equations,
     # so define this quantity as ``beta`` and use it henceforth.
@@ -85,7 +85,7 @@ def joint_rvs(N, alpha, m_min, m_max, M_max, rand_state=None):
     :math:`m_1 + m_2 \leq M_{\mathrm{max}}` constraint.
     """
 
-    rand_state = check_random_state(rand_state)
+    rand_state = utils.check_random_state(rand_state)
 
     def rvs(N):
         """
@@ -128,7 +128,7 @@ def marginal_rvs(N, alpha, m_min, m_max, M_max, rand_state=None):
     :math:`m_2`.
     """
 
-    rand_state = check_random_state(rand_state)
+    rand_state = utils.check_random_state(rand_state)
 
     return joint_rvs(N, alpha, m_min, m_max, M_max, rand_state=rand_state)[:, 0]
 
