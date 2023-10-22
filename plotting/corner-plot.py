@@ -1,6 +1,5 @@
 import corner
 import h5py
-import matplotlib.pyplot as plt
 import numpy as np
 
 data1 = h5py.File("myout.hdf5", "r")
