@@ -6,7 +6,6 @@ As an overview the code works this way:
 - Calculate constants based on fixed values.
 - Read data from event files.
 - Load VTs from an HDF5 file.
-- Compute prior probabilities for population parameters.
 - Initialize walker positions using init_uniform().
 - Create an HDF5 file to store posterior samples.
 - Store initial positions in the HDF5 file.
