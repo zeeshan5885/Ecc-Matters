@@ -86,10 +86,6 @@ def run_mcmc(intensity_fn,
     """
 
     # If no args or kwargs provided, set as empty list/dict
-    if args is None:
-        args = []
-    if kwargs is None:
-        kwargs = {}
 
     # If no constants provides, set as empty dict
     if constants is None:

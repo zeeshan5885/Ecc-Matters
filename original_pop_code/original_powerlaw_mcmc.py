@@ -47,8 +47,6 @@ def expval_mc(pop_params,
         return prob.joint_rvs(N, alpha, m_min, m_max, M_max, rand_state=rand_state)
 
     def efficiency_fn(m1_m2, raw_interpolator=raw_interpolator):
-        m1 = m1_m2[:, 0]
-        m2 = m1_m2[:, 1]
         return raw_interpolator(m1_m2)
 
     I, err_abs, err_rel = mc.integrate_adaptive(
@@ -62,7 +60,6 @@ def expval_mc(pop_params,
 def VT_interp(m1_m2, raw_interpolator, **kwargs):
     m1 = m1_m2[:, 0]
     m2 = m1_m2[:, 1]
-
     return raw_interpolator(m1, m2)
 
 
@@ -86,29 +83,20 @@ def log_prior_pop(pop_params,
 
     log_prior = 0.0
 
-    if log_rate_scale == "uniform":
-        if not (log_rate_min <= log_rate <= log_rate_max):
-            return -np.inf
-    else:
+    if [log_rate_scale, alpha_scale, m_min_scale, m_max_scale] != ["uniform"] * 4:
         raise NotImplementedError
 
-    if alpha_scale == "uniform":
-        if not (alpha_min <= alpha <= alpha_max):
-            return -np.inf
-    else:
-        raise NotImplementedError
+    if not (log_rate_min <= log_rate <= log_rate_max):
+        return -np.inf
 
-    if m_min_scale == "uniform":
-        if not (m_min_min <= m_min <= m_min_max):
-            return -np.inf
-    else:
-        raise NotImplementedError
+    if not (alpha_min <= alpha <= alpha_max):
+        return -np.inf
 
-    if m_max_scale == "uniform":
-        if not (m_max_min <= m_max <= m_max_max):
-            return -np.inf
-    else:
-        raise NotImplementedError
+    if not (m_min_min <= m_min <= m_min_max):
+        return -np.inf
+
+    if not (m_max_min <= m_max <= m_max_max):
+        return -np.inf
 
     if m_min >= m_max:
         return -np.inf
@@ -142,36 +130,23 @@ def init_uniform(nwalkers,
 
     columns = []
 
-    if fixed_log_rate is None:
-        if log_rate_scale == "uniform":
-            log_rate = rand_state.uniform(log_rate_min, log_rate_max, nwalkers)
-        else:
-            raise NotImplementedError
+    if [log_rate_scale, alpha_scale, m_min_scale, m_max_scale] != ["uniform"] * 4:
+        raise NotImplementedError
 
+    if fixed_log_rate is None:
+        log_rate = rand_state.uniform(log_rate_min, log_rate_max, nwalkers)
         columns.append(log_rate)
 
     if fixed_alpha is None:
-        if alpha_scale == "uniform":
-            alpha = rand_state.uniform(alpha_min, alpha_max, nwalkers)
-        else:
-            raise NotImplementedError
-
+        alpha = rand_state.uniform(alpha_min, alpha_max, nwalkers)
         columns.append(alpha)
 
     if fixed_m_min is None:
-        if m_min_scale == "uniform":
-            m_min = rand_state.uniform(m_min_min, m_min_max, nwalkers)
-        else:
-            raise NotImplementedError
-
+        m_min = rand_state.uniform(m_min_min, m_min_max, nwalkers)
         columns.append(m_min)
 
     if fixed_m_max is None:
-        if m_max_scale == "uniform":
-            m_max = rand_state.uniform(m_max_min, m_max_max, nwalkers)
-        else:
-            raise NotImplementedError
-
+        m_max = rand_state.uniform(m_max_min, m_max_max, nwalkers)
         columns.append(m_max)
 
     return np.column_stack(tuple(columns))
@@ -344,6 +319,17 @@ def _main(raw_args=None):
 
     # Determine number of dimensions for MCMC
     ndim = ndim_pop - len(constants)
+    # open a text.txt file and write ndim in there
+    with open('ndim.txt', 'w') as f:
+        f.write(str(ndim_pop))
+        f.write(str(constants))
+    # write constants
+        # f.write('\n')
+        # for key, value in constants.items():
+        #     f.write(str(key) + ' ' + str(value) + '\n')
+    # write ndim_pop
+        # f.write(str(ndim_pop))
+
     # Set number of walkers for MCMC. If already provided use that, otherwise
     # use 2*ndim, which is the minimum allowed by the sampler.
     n_walkers = 2 * ndim if cli_args.n_walkers is None else cli_args.n_walkers
