@@ -13,10 +13,10 @@ def run_mcmc(intensity_fn,
              log_prior_fn,
              init_state,
              param_names,
-             constants=None,
+             constants={},
              data_likelihood_weights=None,
-             args=None,
-             kwargs=None,
+             args=[],
+             kwargs={},
              before_prior_aux_fn=None,
              after_prior_aux_fn=None,
              out_pos=None,
@@ -27,8 +27,7 @@ def run_mcmc(intensity_fn,
              nthreads=1,
              pool=None,
              runtime_sortingfn=None,
-             verbose=False,
-             dtype=np.float64):
+             verbose=False, dtype=np.float64):
     """
 
     :param function intensity_fn:
@@ -85,12 +84,6 @@ def run_mcmc(intensity_fn,
         walker.
     """
 
-    # If no args or kwargs provided, set as empty list/dict
-
-    # If no constants provides, set as empty dict
-    if constants is None:
-        constants = {}
-
     # Count the number of free parameter dimensions
     ndim = len(param_names) - len(constants)
 
@@ -103,7 +96,7 @@ def run_mcmc(intensity_fn,
     # are no weights, we at least need to make it into a list of the proper
     # size.
     if data_likelihood_weights is None:
-        data_likelihood_weights = [None for _ in data_likelihood_samples]
+        data_likelihood_weights = [None] * len(data_likelihood_samples)
 
     # Ensure samples all have same dimensionality
     ndim_indiv = None
@@ -148,10 +141,10 @@ def run_mcmc(intensity_fn,
     if verbose:
         progress_pct = 0
 
-        def display_progress(p, s):
-            print(f"Progress: {p}%; Samples: {s}", file=sys.stderr)
+        # def display_progress(p, s):
+        #     print(f"Progress: {p}%; Samples: {s}", file=sys.stderr)
 
-        display_progress(progress_pct, 0)
+        print(f"Progress: {progress_pct}%; Samples: {0}", file=sys.stderr)
 
     for i, result in enumerate(sample_iter):
         pos = result[0]
@@ -164,7 +157,7 @@ def run_mcmc(intensity_fn,
             new_progress_pct = i / nsamples * 100
             if new_progress_pct >= progress_pct + 1:
                 progress_pct = int(new_progress_pct)
-                display_progress(progress_pct, i)
+                print(f"Progress: {progress_pct}%; Samples: {i}", file=sys.stderr)
 
     return out_pos, out_log_prob
 
