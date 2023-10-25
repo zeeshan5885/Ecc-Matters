@@ -98,24 +98,16 @@ def integrate_adaptive(p, f, iter_max=2**16, iter_start=2**10, err_abs=None, err
     # always fails, and the routine will always end at the max number of
     # iterations.
     if err_abs is None and err_rel is None:
-
-        def converged(err_abs_current, err_rel_current):
-            return False
+        converged = lambda err_abs_current, err_rel_current: False
 
     elif err_abs is None:
-
-        def converged(err_abs_current, err_rel_current):
-            return err_rel_current < err_rel
+        converged = lambda err_abs_current, err_rel_current: err_rel_current < err_rel
 
     elif err_rel is None:
-
-        def converged(err_abs_current, err_rel_current):
-            return err_abs_current < err_abs
+        converged = lambda err_abs_current, err_rel_current: err_abs_current < err_abs
 
     else:
-
-        def converged(err_abs_current, err_rel_current):
-            return (err_rel_current < err_rel) and (err_abs_current < err_abs)
+        converged = lambda err_abs_current, err_rel_current: (err_rel_current < err_rel) and (err_abs_current < err_abs)
 
     # -- he should have used lambdas
 
