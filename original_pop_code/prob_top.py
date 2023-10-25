@@ -20,23 +20,22 @@ def sample_with_cond(func, shape=(1,), cond=None):
         return func(shape)
 
     # Generate initial samples
-    samples = np.asanyarray(func(shape))
-
     # Create index array of samples which fail to meet the condition,
     # and count the number of new samples that will be required.
-    bad = ~cond(samples)
     # This line of code creates a boolean array called bad which contains the logical
     # negation of the condition cond evaluated on the samples array. In other words,
     # it creates an array of the same shape as samples where each element is True if
     # the corresponding element in samples does not satisfy the condition cond, and
     # False otherwise. This array is used to keep track of which samples need to be
     # replaced in the sample_with_cond function.
+    samples = np.asanyarray(func(shape))
+    bad = ~cond(samples)
     N = np.count_nonzero(bad)
 
     # Iteratively replace the bad samples until all samples meet the condition.
     while N:
         # Overwrite bad samples with new (possibly bad) samples
-        samples[bad] = func(N)
+
         # In NumPy, arrays can be used to index other arrays. When an array is used to
         # index another array, NumPy uses the values in the index array to select
         # elements from the indexed array. In the code you provided, bad is a boolean
@@ -52,11 +51,12 @@ def sample_with_cond(func, shape=(1,), cond=None):
         # on the known bad samples, in case the function call is expensive.
         # Note that evaluating ``samples[bad]`` creates a new array, not a
         # view, and may waste a lot of memory.
-        new_bad = ~cond(samples[bad])
-        bad[bad] = new_bad
 
         # Count the number of new samples still needed.
         # If zero, the loop terminates.
+        samples[bad] = func(N)
+        new_bad = ~cond(samples[bad])
+        bad[bad] = new_bad
         N = np.count_nonzero(new_bad)
 
     return samples
@@ -104,10 +104,10 @@ def oversample_with_cond(func, size=1, cond=None, oversampling=2):
         # If we drew enough samples, add just enough to the end of ``ret``
         # and break. Otherwise, add them to the end of ``ret`` and continue.
         if N_good >= N_bad:
-            ret[idx_start : idx_start + N_bad] = good_samples[:N_bad]
+            ret[idx_start: idx_start + N_bad] = good_samples[:N_bad]
             break
 
-        ret[idx_start : idx_start + N_good] = good_samples
+        ret[idx_start: idx_start + N_good] = good_samples
 
         # Calculate the index to start adding samples to, and the number of
         # samples that are still needed.

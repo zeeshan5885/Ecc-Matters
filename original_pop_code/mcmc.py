@@ -33,8 +33,7 @@ def run_mcmc(intensity_fn,
     :param function intensity_fn:
 
     :param function expval_fn:
-
-    :param array_like data_likelihood_samples:
+:param array_like data_likelihood_samples:
 
     :param array_like init_state:
 

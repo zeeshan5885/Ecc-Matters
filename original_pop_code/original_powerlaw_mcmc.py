@@ -86,25 +86,11 @@ def log_prior_pop(pop_params,
     if [log_rate_scale, alpha_scale, m_min_scale, m_max_scale] != ["uniform"] * 4:
         raise NotImplementedError
 
-    if not (log_rate_min <= log_rate <= log_rate_max):
-        return -np.inf
+    conditions = [log_rate_min <= log_rate <= log_rate_max, alpha_min <= alpha <= alpha_max,
+                  m_min_min <= m_min <= m_min_max, m_max_min <= m_max <= m_max_max, m_min >= m_max,
+                  m_min + m_max > M_max]
 
-    if not (alpha_min <= alpha <= alpha_max):
-        return -np.inf
-
-    if not (m_min_min <= m_min <= m_min_max):
-        return -np.inf
-
-    if not (m_max_min <= m_max <= m_max_max):
-        return -np.inf
-
-    if m_min >= m_max:
-        return -np.inf
-
-    if m_min + m_max > M_max:
-        return -np.inf
-
-    return log_prior
+    return (False in conditions)*(-np.inf) + (conditions == [True]*6)*log_prior
 
 
 def init_uniform(nwalkers,
@@ -256,10 +242,7 @@ def _get_args(raw_args):
     return parser.parse_args(raw_args)
 
 
-def _main(raw_args=None):
-
-    if raw_args is None:
-        raw_args = sys.argv[1:]
+def _main(raw_args=sys.argv[1:]):
 
     cli_args = _get_args(raw_args)
 
@@ -319,16 +302,6 @@ def _main(raw_args=None):
 
     # Determine number of dimensions for MCMC
     ndim = ndim_pop - len(constants)
-    # open a text.txt file and write ndim in there
-    with open('ndim.txt', 'w') as f:
-        f.write(str(ndim_pop))
-        f.write(str(constants))
-    # write constants
-        # f.write('\n')
-        # for key, value in constants.items():
-        #     f.write(str(key) + ' ' + str(value) + '\n')
-    # write ndim_pop
-        # f.write(str(ndim_pop))
 
     # Set number of walkers for MCMC. If already provided use that, otherwise
     # use 2*ndim, which is the minimum allowed by the sampler.
@@ -442,16 +415,14 @@ def _main(raw_args=None):
 # from the log10(rate), and the normalization factor for the mass
 # distribution.
 def before_prior_aux_fn(pop_params, **kwargs):
-    log_rate, _, _, _ = pop_params
-    rate = 10**log_rate
-    aux_info = {"rate": rate}
+    log_rate = pop_params[0]
+    aux_info = {"rate": 10**log_rate}
 
     return aux_info
 
 
 def after_prior_aux_fn(pop_params, aux_info, M_max=None, **kwargs):
-    _, alpha, m_min, m_max = pop_params
-
+    alpha, m_min, m_max = pop_params[1:]
     aux_info["pdf_const"] = prob.pdf_const(alpha, m_min, m_max, M_max)
 
     return aux_info
