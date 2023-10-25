@@ -16,7 +16,8 @@ import sklearn.utils as utils
 # Names of all (possibly free) parameters of this model, in the order they
 # should appear in any array of samples (e.g., MCMC posterior samples).
 param_names = ["log_rate", "alpha", "m_min", "m_max"]
-# Number of (possibly free) parameters for this population model. ndim_pop = len(param_names)
+# Number of (possibly free) parameters for this population model. 
+ndim_pop = len(param_names)
 
 def pdf_const(alpha, m_min, m_max, M_max, out=None, where=True):
     r"""
