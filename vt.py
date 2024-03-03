@@ -239,7 +239,7 @@ def vts_from_masses(
         vts = array(pool.map(vt_m_tuple, zip(m1s, m2s)))
     finally:
         pool.close()
-
+    #print("vts :", vts)
     return vts
 
 
@@ -275,10 +275,10 @@ def interpolate(m1_grid, m2_grid, VT_grid):
     import numpy
     import scipy.interpolate
 
-#    print(m1_grid,m2_grid)
+    #print(m1_grid,m2_grid)
     points = (m1_grid[0], m2_grid[:,0])
-#    values = VT_grid.flatten()
-#    print(points)
+    values = VT_grid.flatten()
+    #print(points)
     interpolator = scipy.interpolate.RegularGridInterpolator( #scipy.interpolate.interp2d(
         points, VT_grid,
         method='linear',
@@ -338,8 +338,12 @@ def _main(raw_args=None):
 
     with h5py.File(args.output, "w-") as f:
         masses = numpy.linspace(args.m_min, args.m_max, args.n_samples)
+        #print("masses :", masses)
         M1, M2 = numpy.meshgrid(masses, masses)
+        #print("M1, M2 :", M1, M2)
         m1, m2 = M1.ravel(), M2.ravel()
+        #print("m1, :", m1)
+        print("m2, :", m2)
 
         vts = vts_from_masses(
             m1, m2,

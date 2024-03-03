@@ -80,9 +80,9 @@ def expval_mc(
     )
 
     if return_err:
-        return rate*I, err_abs, err_rel
+        return rate*I*230, err_abs, err_rel
     else:
-        return rate*I
+        return rate*I*230
 
 def VT_interp(m1_m2, raw_interpolator, **kwargs):
     import numpy
@@ -452,6 +452,7 @@ def _main(raw_args=None):
 
     # TODO: open tabular file for events
     data_posterior_samples = []
+    #print(data_posterior_samples)
     for event_fname in cli_args.events:
         data_table = numpy.genfromtxt(event_fname, names=True)
         m1_m2_ecc = numpy.column_stack(    #how it's reading the file and how we are telling him to look for specific data file. 
