@@ -76,7 +76,7 @@ for input_file in input_files:
         etaV_sqrt[np.logical_not(indx_ok)] = 0  # Set negative cases to 0, so no sqrt problems
     m1 = 0.5 * Mc * eta ** (-3. / 5.) * (1. + etaV_sqrt)
     m2 = 0.5 * Mc * eta ** (-3. / 5.) * (1. - etaV_sqrt)
-    ecc = truncnorm.rvs(0, 1, loc=d3, scale=0.05, size=size)
+    ecc = truncnorm.rvs(0, 1, loc=d3, scale=0.1, size=size)
     output_data = np.column_stack((m1, m2, ecc))
     print(input_file, np.sum(indx_ok))
     output_data = output_data[indx_ok,:]

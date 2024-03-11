@@ -10,8 +10,8 @@ data_3D2 = np.array(data2['pos'])
 print(data_3D1.shape)
 org_steps = data_3D1.shape[0]
 #Burning the initial walkers, you can choose the burning steps by looking at chain plots
-data1_burn = data_3D1[300:]
-data2_burn = data_3D2[300:]
+data1_burn = data_3D1[600:]
+data2_burn = data_3D2[600:]
 print(data1_burn.shape)
 walker = data1_burn.shape[1] 
 steps = data1_burn.shape[0]
@@ -28,11 +28,11 @@ data_new2 = data2_burn.reshape((points,4))
 labels=[r"$log_{10}(\frac{\mathcal{R}}{Gpc^{-3}yr^-1})$", r"$\alpha$", r"$m_{min} [M_\odot$]",r"$m_{max} [M_\odot]$",
         "$\sigma_\epsilon$"]
 
-limits = [(1, 2.8),(-4,1),(0,12),(40,100),(0.03,0.06)]
+#limits = [(1, 2.8),(-4,1),(0,12),(40,100),(0.03,0.06)]
 # Calculate the mean values along each dimension
 #mean_values1 = np.mean(data_new1, axis=0)
 #provide true values if any
-truth_values = [2, -2, 10, 50, 0.05]
+truth_values = [2, -1, 5, 50, 0.05]
 #plotting the corner plot
 figure1 = corner.corner(data_new1,labels=labels
                       ,show_titles=True,plot_datapoints=False,color='orange',
@@ -42,7 +42,7 @@ figure1.savefig("cor_ecc.png")
 labels0=[r"$log_{10}(\frac{\mathcal{R}}{Gpc^{-3}yr^-1})$", r"$\alpha$", r"$m_{min} [M_\odot]$",r"$m_{max} [M_\odot]$"]
 #limits0 = [(1.2, 2.8),(-6,2),(0,12),(40,90)]
 
-truth_values1 = [2, -2, 10, 50]
+truth_values1 = [2, -1, 5, 50]
 #plotting the corner plot
 figure2 = corner.corner(data_new2,labels=labels0
                       ,show_titles=True,plot_datapoints=False,color='orange',

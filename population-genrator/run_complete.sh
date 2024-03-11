@@ -9,7 +9,7 @@ python3 genrating.py
 rm -r __pycache__ ;
 rm -r weighted_events ;
 mkdir weighted_events;
-python3 weighting.py --dat population.dat --vt vt_m1_m2.hdf5 --n-out 20
+python3 weighting.py --dat population.dat --vt vt_1_200_1000.hdf5 --n-out 100
 
 #Adding Gaussian Uncertainities in the injections
 
