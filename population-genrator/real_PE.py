@@ -36,7 +36,7 @@ for input_file in input_files:
     v_PN_param = (np.pi* Mc_true*20*lalsimutils.MsunInSec)**(1./3.)  # 'v' parameter
     v_PN_param_max = 0.2
     v_PN_param = np.min([v_PN_param,v_PN_param_max])
-    snr_fac = row/15
+    snr_fac = row/12
     ln_mc_error_pseudo_fisher = 1.5*0.3*(v_PN_param/v_PN_param_max)**(7.)/snr_fac  # this ignores range due to redshift / distance, based on a low-order esti
 
 #    print(ln_mc_error_pseudo_fisher, v_PN_param,Mc_true)
@@ -53,11 +53,11 @@ for input_file in input_files:
     
     # Changing the width across the shifted mean
     r = np.random.normal(0, std_dev, size)
-    rp = np.random.normal(0,std_dev, size)
+    rp = np.random.normal(0, std_dev, size)
     
     # Defining the relation
     Mc = Mc_true * (1 + alpha * (ro + r))
-    eta = eta_true * (1 + 0.03 * (8 / row) * (rop + rp))
+    eta = eta_true * (1 + 0.03 * (12 / row) * (rop + rp))
 
     #print("Mc_array: ", Mc, "eta_array: ", eta)
 
@@ -73,7 +73,7 @@ for input_file in input_files:
         indx_ok = etaV >= 0
         etaV_sqrt = np.zeros(len(etaV), dtype=float)
         etaV_sqrt[indx_ok] = np.sqrt(etaV[indx_ok])
-        etaV_sqrt[np.logical_not(indx_ok)] = 0  # Set negative cases to 0, so no sqrt problems
+        etaV_sqrt[np.logical_not(indx_ok)] == 0  # Set negative cases to 0, so no sqrt problems
     m1 = 0.5 * Mc * eta ** (-3. / 5.) * (1. + etaV_sqrt)
     m2 = 0.5 * Mc * eta ** (-3. / 5.) * (1. - etaV_sqrt)
     ecc = truncnorm.rvs(0, 1, loc=d3, scale=0.1, size=size)
