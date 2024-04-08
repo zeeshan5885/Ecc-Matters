@@ -115,8 +115,8 @@ plt.figure()
 scaled_data = np.loadtxt("scaled_population.dat")
 scaled_m1 = scaled_data[:,0]
 scaled_m2 = scaled_data[:,1]
-plt.plot(m1,m2,'o',label = 'EBBHs')
-plt.plot(scaled_m1,scaled_m2,'.',label = 'NEBBHs')
+plt.plot(m1,m2,'o',label = 'EBBH',color = 'orange')
+plt.plot(scaled_m1,scaled_m2,'.',label = 'CBBH',color = 'black')
 plt.legend()
 plt.xlabel('$m_1 [M_\odot]$')
 plt.ylabel('$m_2[M_\odot]$')
