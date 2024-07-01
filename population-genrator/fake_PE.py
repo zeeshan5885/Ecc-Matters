@@ -36,7 +36,7 @@ for input_file in input_files:
     v_PN_param = (np.pi* Mc_true*20*lalsimutils.MsunInSec)**(1./3.)  # 'v' parameter
     v_PN_param_max = 0.2
     v_PN_param = np.min([v_PN_param,v_PN_param_max])
-    snr_fac = row/15
+    snr_fac = row/12
     ln_mc_error_pseudo_fisher = 1.5*0.3*(v_PN_param/v_PN_param_max)**(7.)/snr_fac  # this ignores range due to redshift / distance, based on a low-order esti
 
 #    print(ln_mc_error_pseudo_fisher, v_PN_param,Mc_true)
@@ -76,7 +76,7 @@ for input_file in input_files:
         etaV_sqrt[np.logical_not(indx_ok)] == 0  # Set negative cases to 0, so no sqrt problems
     m1 = 0.5 * Mc * eta ** (-3. / 5.) * (1. + etaV_sqrt)
     m2 = 0.5 * Mc * eta ** (-3. / 5.) * (1. - etaV_sqrt)
-    ecc = truncnorm.rvs(0, 1, loc=d3, scale=0.06, size=size)
+    ecc = truncnorm.rvs(0, 1, loc=d3, scale=0.2, size=size)
     output_data = np.column_stack((m1, m2, ecc))
     print(input_file, np.sum(indx_ok))
     output_data = output_data[indx_ok,:]
