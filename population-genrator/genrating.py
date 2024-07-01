@@ -9,7 +9,7 @@ import syn_pop_prob
 
 # syn_pop_prob.joint_rvs(N,alpha,m_min,m_max,M_max=m1+m2,sigma_e)
 
-array = syn_pop_prob.joint_rvs(10000,-1,10,50,100,0.05)
+array = syn_pop_prob.joint_rvs(10000,-1,10,50,100,0.15)
 
 
 col_names = ["m1_source", "m2_source", "ecc"]

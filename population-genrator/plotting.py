@@ -22,7 +22,7 @@ for i, file_path in enumerate(file_list):
     ecc = data[:,2]
 
     # Scatter plot with different colors for each file
-    plt.scatter(m1, m2, label=f"event {i+1}")
+    plt.scatter(m1, m2, marker='.',s=10)
 
 # Set plot title and labels
 plt.title("Scatter Plot")
