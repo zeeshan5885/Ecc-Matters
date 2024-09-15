@@ -2,7 +2,7 @@
 To generate the population, you just need to run the script as follows and it will generate a population with and without eccentricity after scaling. 
 
 ```
-./run_complete.sh 
+./pop_gen.sh 
 ```
 * By default, this code will generate the population with set parameters **$N= 10000$ , $\alpha = -2$ , $m_{min} = 10$ , $m_{max} = 50$ , $M = 100$ , $\sigma_\epsilon =0.05$.**
 
