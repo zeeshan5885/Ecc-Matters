@@ -1,3 +1,4 @@
+* Assuming that you have installed the virtual environment using the [instructions](https://github.com/zeeshan5885/Ecc-Matters/blob/ff33a6580a2b649d0b6f50f8d4905471b6ecd835/README.md)
 * This directory is created solely to generate the synthetic population using the eccentric power law model. 
 To generate the population, you just need to run the script as follows and it will generate a population with and without eccentricity after scaling. 
 
@@ -10,7 +11,7 @@ To generate the population, you just need to run the script as follows and it wi
 
 * First,  **generating.py**  creates the 10000 random events from the power_law_model with eccentricity.
 
-* Second, The **weighting.py** chooses the 100 weighted events out of 10000. These 100 are those which are well suited to be observed with LVK, or you can say they may be in the sensitivity range of the LVK.
+* Second, The **weighting.py** chooses the 100 weighted events out of 10000. These 100 are well suited to be observed with LVK, or you can say they may be in the sensitivity range of the LVK. One can change the desired number of events by changing the `--n-out 100` value. 
 * Third, **fake_PE.py** takes the masses and eccentricity to add Gaussian uncertainties in each of them.
 * Finally, **scaling.py** removes the eccentricity from those 100 events and gives us scaled events without eccentricity using equation 1.1 given in the paper. 
 * https://arxiv.org/abs/2108.05861 (Scaling equation 1.1)
