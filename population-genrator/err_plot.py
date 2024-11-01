@@ -28,7 +28,7 @@ true_m2 = true_data[:, 1]
 true_ecc = true_data[:, 2]
 
 # Plot true points with a distinct color, marker, and higher zorder
-ax.scatter(true_m1, true_m2, true_ecc, color='red', marker='*', s=20, label="True Points",alpha=1)
+ax.scatter(true_m1, true_m2, true_ecc, color='black', marker='*', s=20, label="True Points",alpha=1)
 
 # Set labels and add color bar
 ax.set_xlabel('m1')
